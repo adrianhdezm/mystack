@@ -1,0 +1,9 @@
+interface:
+  display_name: "Product Builder"
+  short_description: "Turn product ideas into working products"
+  brand_color: "#F38020"
+  default_prompt: "Turn my product idea into a working product with a landing page, authentication, protected pages, and a dashboard."
+  icon_small: "./assets/product-builder-small.svg"
+  icon_large: "./assets/app-icon.png"
+policy:
+  allow_implicit_invocation: true
