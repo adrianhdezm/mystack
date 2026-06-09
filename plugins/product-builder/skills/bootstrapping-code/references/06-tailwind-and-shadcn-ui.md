@@ -305,11 +305,24 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
-11. Add the shadcn/ui Button component.
+11. Add the required shadcn/ui components using the shadcn CLI.
 
 ```sh
 pnpm dlx shadcn@latest add button
+pnpm dlx shadcn@latest add input
+pnpm dlx shadcn@latest add label
+pnpm dlx shadcn@latest add card
 ```
+
+Use only `pnpm dlx shadcn@latest` for shadcn/ui component installation. Do not
+install components with `pnpm shadcn`, `npx shadcn`, or a locally installed
+`shadcn` binary.
+
+`app/components/ui/button.tsx` must import Button primitives from
+`@base-ui/react/button`.
+
+`app/components/ui/input.tsx` must import Input primitives from
+`@base-ui/react/input`.
 
 12. Update `app/routes/home.tsx` to use the Button component.
 
@@ -355,4 +368,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 - `vite.config.ts` imports `tailwindcss` from `@tailwindcss/vite` and includes `tailwindcss()` in the plugin list.
 - `app/lib/utils.ts` exists with the `cn` helper.
 - `components.json` exists with shadcn/ui aliases that match the `~/*` app path alias.
-- The shadcn/ui Button component exists and `app/routes/home.tsx` renders a centered welcome page with a meaningful Button.
+- The shadcn/ui Button, Input, Label, and Card components exist.
+- The Button component imports primitives from `@base-ui/react/button`.
+- The Input component imports primitives from `@base-ui/react/input`.
+- `app/routes/home.tsx` renders a centered welcome page with a meaningful Button.
