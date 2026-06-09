@@ -65,3 +65,4 @@ different D1 binding.
 - [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.
 - [ ] `AGENTS.md` documents database-specific project instructions agents must follow.
 - [ ] `pnpm db:generate`, `pnpm db:migrate`, and `pnpm db:local:migrate` work or failures are explained.
+- [ ] Generated and updated files were committed with a Conventional Commit message.

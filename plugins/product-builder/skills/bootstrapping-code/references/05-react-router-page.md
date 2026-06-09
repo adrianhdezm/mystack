@@ -171,7 +171,7 @@ export default [index("routes/home.tsx")] satisfies RouteConfig;
 import { createContext } from "react-router";
 
 export const appContext = createContext<{
-  claudflare: {
+  cloudflare: {
     env: Env;
     ctx: ExecutionContext;
   };
@@ -193,7 +193,7 @@ export function meta() {
 
 export function loader({ context }: Route.LoaderArgs) {
   const app = context.get(appContext);
-  return { message: `Welcome to ${app.claudflare.env.APP_NAME}` };
+  return { message: `Welcome to ${app.cloudflare.env.APP_NAME}` };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
@@ -222,7 +222,7 @@ export default {
   async fetch(request, env, ctx) {
     const routerContext = new RouterContextProvider();
     routerContext.set(appContext, {
-      claudflare: { env, ctx },
+      cloudflare: { env, ctx },
     });
 
     return requestHandler(request, routerContext);
@@ -234,9 +234,9 @@ Context checklist:
 
 - Treat `v8_middleware: true` as always enabled for this project.
 - Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
-- Include Cloudflare bindings under `appContext` as `claudflare: { env, ctx }`.
+- Include Cloudflare bindings under `appContext` as `cloudflare: { env, ctx }`.
 - Create a `RouterContextProvider` for each request in `workers/app.ts`.
-- Set dependencies with `routerContext.set(appContext, { claudflare: { env, ctx } })`.
+- Set dependencies with `routerContext.set(appContext, { cloudflare: { env, ctx } })`.
 - Pass `routerContext` as the second argument to `requestHandler(request, routerContext)`.
 - Read dependencies in routes from `context.get(appContext)`.
 - Do not use `AppLoadContext`, plain object context, or `context.cloudflare`.
@@ -279,8 +279,8 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx` exists with the layout, outlet, and route error boundary.
 - `app/entry.server.tsx`, `app/routes.ts`, `app/context.ts`, and `app/routes/home.tsx` exist.
-- `app/context.ts` exports `appContext` with `claudflare: { env, ctx }`.
-- `app/routes/home.tsx` loads `APP_NAME` from `context.get(appContext).claudflare.env`.
+- `app/context.ts` exports `appContext` with `cloudflare: { env, ctx }`.
+- `app/routes/home.tsx` loads `APP_NAME` from `context.get(appContext).cloudflare.env`.
 - `public/favicon.ico` exists.
 - `workers/app.ts` is updated from the minimal Cloudflare handler to the React Router request handler.
 - `workers/app.ts` creates a per-request `RouterContextProvider`, sets `appContext`, and does not use `AppLoadContext`.
