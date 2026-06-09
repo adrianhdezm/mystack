@@ -190,6 +190,11 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 10. Update the previously created `workers/app.ts` to use the React Router request handler.
 
+Use React Router framework mode's `AppLoadContext` to pass dependencies from the
+HTTP server into loaders and actions. Do not use `RouterContextProvider` here;
+that API is for lower-level/custom server integrations and is not the framework
+mode context shape used by route `loader` and `action` arguments.
+
 ```ts
 import { createRequestHandler } from "react-router";
 
@@ -215,6 +220,14 @@ export default {
   },
 } satisfies ExportedHandler<Env>;
 ```
+
+Context checklist:
+
+- Declare `AppLoadContext` with `declare module "react-router"` in `workers/app.ts`.
+- Include every server dependency routes need under `AppLoadContext`, such as `cloudflare.env` and `cloudflare.ctx`.
+- Pass an object matching `AppLoadContext` as the second argument to `requestHandler(request, context)`.
+- Read dependencies in routes from `context` on `Route.LoaderArgs` or `Route.ActionArgs`.
+- Do not import, instantiate, or pass `RouterContextProvider` for this framework mode setup.
 
 11. Add React Router scripts to `package.json`.
 
@@ -257,5 +270,6 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 - `app/routes/home.tsx` loads `APP_NAME` from `context.cloudflare.env`.
 - `public/favicon.ico` exists.
 - `workers/app.ts` is updated from the minimal Cloudflare handler to the React Router request handler.
+- `workers/app.ts` declares and passes framework mode `AppLoadContext`; it does not use `RouterContextProvider`.
 - `package.json` includes `dev`, `build`, `preview`, and `deploy` scripts for React Router and Wrangler.
 - `vite.config.ts` uses `reactRouter()` after `cloudflare({ viteEnvironment: { name: "ssr" } })`.
