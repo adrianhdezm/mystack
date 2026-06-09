@@ -14,12 +14,8 @@ LOCAL_REPOSITORY_PATH: <absolute path>
 REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
 ```
 
-If those values are missing, run `preparing-repositories` first with:
-
-```text
-REPOSITORY: <owner>/<repo-name>
-LOCAL_FOLDER: <parent-folder>
-```
+If those values are missing, stop before bootstrapping and prepare the
+repository first.
 
 Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
@@ -36,7 +32,7 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 ## Workflow
 
 1. Confirm `preparing-repositories` returned `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.
-2. If only `REPOSITORY` and `LOCAL_FOLDER` are provided, use `preparing-repositories` first.
+2. If `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS` are missing, stop before bootstrapping and prepare the repository first.
 3. Validate `LOCAL_REPOSITORY_PATH` exists, is a git repository, and contains no pre-existing files other than repository metadata.
 4. Initialize pnpm and base files using [01-initialize-pnpm-and-base-files.md](references/01-initialize-pnpm-and-base-files.md).
 5. Add TypeScript using [02-typescript.md](references/02-typescript.md).

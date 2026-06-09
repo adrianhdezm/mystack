@@ -1,20 +1,46 @@
 ---
 name: preparing-repositories
-description: Prepares a GitHub repository for Product Builder work by validating inputs, creating or finding the remote with gh, reusing an existing local clone when safe, or cloning an empty repo. Use before bootstrapping-code when the user provides REPOSITORY and LOCAL_FOLDER values or asks to create, inspect, validate, clone, or prepare a GitHub repository.
+description: Prepares a GitHub repository for Product Builder work by deriving or validating repository inputs, creating or finding the remote with gh, reusing an existing local clone when safe, or cloning an empty repo. Use before bootstrapping-code when the user asks to create, inspect, validate, clone, prepare, or bootstrap a GitHub repository.
 ---
 
 # Preparing Repositories
 
-## Required inputs
+## Input discovery
 
-Require these values before taking action:
+Derive these values from the user's prompt before taking action:
 
 ```text
 REPOSITORY: <owner>/<repo-name>
 LOCAL_FOLDER: <parent-folder>
 ```
 
-Validate `REPOSITORY` as exactly `owner/repo`, with no URL, branch, spaces, or extra path parts. Expand `LOCAL_FOLDER` to an absolute parent folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo-name>`.
+Prefer inference over asking. The user does not need to provide explicit
+`REPOSITORY:` or `LOCAL_FOLDER:` labels when the prompt contains enough
+information.
+
+Derive `REPOSITORY` from:
+
+- An explicit `owner/repo` GitHub repository slug.
+- A GitHub repository URL such as `https://github.com/owner/repo` or
+  `git@github.com:owner/repo.git`; normalize it to `owner/repo`.
+- A repository name plus a clear GitHub owner or account in the prompt.
+
+Derive `LOCAL_FOLDER` from:
+
+- An explicit parent folder such as `/Users/name/Code`.
+- A requested local repository path such as `/Users/name/Code/repo-name`; use
+  the parent folder as `LOCAL_FOLDER`.
+- Wording such as "in", "under", "inside", "clone to", or "create at" followed
+  by a local path.
+
+If either value cannot be derived with high confidence, ask the user for only
+the missing value before taking repository actions. If a derived value is
+ambiguous, state the candidates and ask the user to choose. Do not invent a
+GitHub owner or local folder.
+
+Validate the final `REPOSITORY` as exactly `owner/repo`, with no branch, spaces,
+empty segments, or extra path parts. Expand `LOCAL_FOLDER` to an absolute parent
+folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo-name>`.
 
 ## Hard rules
 
@@ -26,9 +52,11 @@ Validate `REPOSITORY` as exactly `owner/repo`, with no URL, branch, spaces, or e
 
 ## Workflow
 
-1. Validate `REPOSITORY` as exactly `owner/repo`. Reject URLs, branches, spaces, empty segments, and extra path parts.
-2. Expand `LOCAL_FOLDER` to an absolute parent folder and derive `LOCAL_REPOSITORY_PATH` as `<LOCAL_FOLDER>/<repo-name>`.
-3. Verify required local tools and GitHub authentication:
+1. Derive `REPOSITORY` and `LOCAL_FOLDER` from the user's prompt using the input discovery rules above.
+2. If either value is missing or ambiguous, ask for only the missing or ambiguous value and wait before continuing.
+3. Validate `REPOSITORY` as exactly `owner/repo`. Reject branches, spaces, empty segments, and extra path parts after URL normalization.
+4. Expand `LOCAL_FOLDER` to an absolute parent folder and derive `LOCAL_REPOSITORY_PATH` as `<LOCAL_FOLDER>/<repo-name>`.
+5. Verify required local tools and GitHub authentication:
 
    ```sh
    command -v gh
@@ -37,17 +65,17 @@ Validate `REPOSITORY` as exactly `owner/repo`, with no URL, branch, spaces, or e
 
    Stop if either command fails.
 
-4. If the local target already exists, verify it using [01-existing-local-target.md](references/01-existing-local-target.md); if safe, return `existing-local`.
-5. If the local target does not exist, verify or create the remote using [02-missing-local-target.md](references/02-missing-local-target.md).
-6. Confirm the remote is empty using [03-empty-remote-check.md](references/03-empty-remote-check.md).
-7. Clone the empty remote repository:
+6. If the local target already exists, verify it using [01-existing-local-target.md](references/01-existing-local-target.md); if safe, return `existing-local`.
+7. If the local target does not exist, verify or create the remote using [02-missing-local-target.md](references/02-missing-local-target.md).
+8. Confirm the remote is empty using [03-empty-remote-check.md](references/03-empty-remote-check.md).
+9. Clone the empty remote repository:
 
    ```sh
    gh repo clone "$REPOSITORY" "$LOCAL_REPOSITORY_PATH"
    cd "$LOCAL_REPOSITORY_PATH"
    ```
 
-8. Return the output contract below with `REPOSITORY_STATUS: cloned | created-and-cloned`.
+10. Return the output contract below with `REPOSITORY_STATUS: cloned | created-and-cloned`.
 
 ## Output contract
 
@@ -73,6 +101,7 @@ Include the local or remote files found when available.
 ## Validation checklist
 
 - [ ] `gh auth status` succeeds.
+- [ ] `REPOSITORY` and `LOCAL_FOLDER` were derived from the prompt or requested only when missing.
 - [ ] `REPOSITORY` and `LOCAL_FOLDER` are valid.
 - [ ] Existing local clone, when present, points to `REPOSITORY`.
 - [ ] Local target has no pre-existing files beyond repository metadata before handoff.
