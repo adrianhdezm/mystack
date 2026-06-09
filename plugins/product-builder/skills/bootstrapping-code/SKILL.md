@@ -41,7 +41,9 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 8. Add the React Router page using [05-react-router-page.md](references/05-react-router-page.md).
 9. Add Tailwind and shadcn/ui using [06-tailwind-and-shadcn-ui.md](references/06-tailwind-and-shadcn-ui.md).
 10. Run final verification using [07-final-verification.md](references/07-final-verification.md).
-11. Summarize what was created and list any command that failed.
+11. Update the project `README.md` so it reflects the bootstrapped application, including the stack, local development commands, verification commands, and Cloudflare deployment target.
+12. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+13. Summarize what was created, include the commit hash, and list any command that failed.
 
 ## Stop message
 
@@ -62,3 +64,5 @@ Include the files found when available.
 - [ ] Cloudflare types are generated with `wrangler types`.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass after fixing generated-file issues.
 - [ ] Final file structure and `git status --short` were reviewed.
+- [ ] `README.md` documents the bootstrapped app, commands, and Cloudflare target.
+- [ ] Generated and updated files were committed with a Conventional Commit message.
