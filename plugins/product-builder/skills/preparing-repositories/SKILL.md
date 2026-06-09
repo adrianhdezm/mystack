@@ -33,10 +33,16 @@ Derive `LOCAL_FOLDER` from:
 - Wording such as "in", "under", "inside", "clone to", or "create at" followed
   by a local path.
 
-If either value cannot be derived with high confidence, ask the user for only
-the missing value before taking repository actions. If a derived value is
-ambiguous, state the candidates and ask the user to choose. Do not invent a
-GitHub owner or local folder.
+If `REPOSITORY` cannot be derived with high confidence, ask the user for only
+the repository before taking repository actions.
+
+If `LOCAL_FOLDER` cannot be derived with high confidence, ask the user where the
+code should be located before taking repository actions. Do not derive
+`LOCAL_FOLDER` from the current working directory, the repository name, the
+GitHub owner, or nearby existing folders.
+
+If a derived value is ambiguous, state the candidates and ask the user to choose.
+Do not invent a GitHub owner or local folder.
 
 Validate the final `REPOSITORY` as exactly `<owner>/<repo>`, with no branch, spaces,
 empty segments, or extra path parts. Expand `LOCAL_FOLDER` to an absolute parent
