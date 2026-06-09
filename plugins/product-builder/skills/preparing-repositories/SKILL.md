@@ -10,7 +10,7 @@ description: Prepares a GitHub repository for Product Builder work by deriving o
 Derive these values from the user's prompt before taking action:
 
 ```text
-REPOSITORY: <owner>/<repo-name>
+REPOSITORY: <owner>/<repo>
 LOCAL_FOLDER: <parent-folder>
 ```
 
@@ -20,15 +20,15 @@ information.
 
 Derive `REPOSITORY` from:
 
-- An explicit `owner/repo` GitHub repository slug.
-- A GitHub repository URL such as `https://github.com/owner/repo` or
-  `git@github.com:owner/repo.git`; normalize it to `owner/repo`.
+- An explicit `<owner>/<repo>` GitHub repository slug.
+- A GitHub repository URL such as `https://github.com/<owner>/<repo>` or
+  `git@github.com:<owner>/<repo>.git`; normalize it to `<owner>/<repo>`.
 - A repository name plus a clear GitHub owner or account in the prompt.
 
 Derive `LOCAL_FOLDER` from:
 
-- An explicit parent folder such as `/Users/name/Code`.
-- A requested local repository path such as `/Users/name/Code/repo-name`; use
+- An explicit parent folder such as `~/Code`.
+- A requested local repository path such as `~/Code/<repo>`; use
   the parent folder as `LOCAL_FOLDER`.
 - Wording such as "in", "under", "inside", "clone to", or "create at" followed
   by a local path.
@@ -38,9 +38,9 @@ the missing value before taking repository actions. If a derived value is
 ambiguous, state the candidates and ask the user to choose. Do not invent a
 GitHub owner or local folder.
 
-Validate the final `REPOSITORY` as exactly `owner/repo`, with no branch, spaces,
+Validate the final `REPOSITORY` as exactly `<owner>/<repo>`, with no branch, spaces,
 empty segments, or extra path parts. Expand `LOCAL_FOLDER` to an absolute parent
-folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo-name>`.
+folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo>`.
 
 ## Hard rules
 
@@ -54,8 +54,8 @@ folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo-name>`.
 
 1. Derive `REPOSITORY` and `LOCAL_FOLDER` from the user's prompt using the input discovery rules above.
 2. If either value is missing or ambiguous, ask for only the missing or ambiguous value and wait before continuing.
-3. Validate `REPOSITORY` as exactly `owner/repo`. Reject branches, spaces, empty segments, and extra path parts after URL normalization.
-4. Expand `LOCAL_FOLDER` to an absolute parent folder and derive `LOCAL_REPOSITORY_PATH` as `<LOCAL_FOLDER>/<repo-name>`.
+3. Validate `REPOSITORY` as exactly `<owner>/<repo>`. Reject branches, spaces, empty segments, and extra path parts after URL normalization.
+4. Expand `LOCAL_FOLDER` to an absolute parent folder and derive `LOCAL_REPOSITORY_PATH` as `<LOCAL_FOLDER>/<repo>`.
 5. Verify required local tools and GitHub authentication:
 
    ```sh
@@ -93,7 +93,7 @@ Downstream skills, especially `bootstrapping-code`, should use `LOCAL_REPOSITORY
 When stopping because a repository is not empty, say this directly:
 
 ```text
-The repository <owner>/<repo-name> is not empty, so I stopped before preparing it. Remove the existing files or provide a new empty repository.
+The repository <owner>/<repo> is not empty, so I stopped before preparing it. Remove the existing files or provide a new empty repository.
 ```
 
 Include the local or remote files found when available.
