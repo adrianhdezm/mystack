@@ -15,10 +15,10 @@ dashboards, and polished product screens.
 
 ### Installation
 
-Add this repository as a local Codex marketplace, then install the plugin:
+Add this repository as a Codex marketplace, then install the plugin:
 
 ```sh
-codex plugin marketplace add /Users/adrian/Code/mystack
+codex plugin marketplace add https://github.com/adrianhdezm/mystack
 codex plugin add product-builder@my-stack
 ```
 
