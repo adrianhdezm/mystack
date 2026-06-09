@@ -165,9 +165,23 @@ import { index, type RouteConfig } from "@react-router/dev/routes";
 export default [index("routes/home.tsx")] satisfies RouteConfig;
 ```
 
-8. Create `app/routes/home.tsx`.
+8. Create `app/context.ts`.
+
+```ts
+import { createContext } from "react-router";
+
+export const appContext = createContext<{
+  claudflare: {
+    env: Env;
+    ctx: ExecutionContext;
+  };
+}>();
+```
+
+9. Create `app/routes/home.tsx`.
 
 ```tsx
+import { appContext } from "../context";
 import type { Route } from "./+types/home";
 
 export function meta() {
@@ -178,7 +192,8 @@ export function meta() {
 }
 
 export function loader({ context }: Route.LoaderArgs) {
-  return { message: `Welcome to ${context.cloudflare.env.APP_NAME}` };
+  const app = context.get(appContext);
+  return { message: `Welcome to ${app.claudflare.env.APP_NAME}` };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
@@ -186,50 +201,47 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 }
 ```
 
-9. Create a `public` folder with a `favicon.ico` file.
+10. Create a `public` folder with a `favicon.ico` file.
 
-10. Update the previously created `workers/app.ts` to use the React Router request handler.
+11. Update the previously created `workers/app.ts` to use the React Router request handler.
 
-Use React Router framework mode's `AppLoadContext` to pass dependencies from the
-HTTP server into loaders and actions. Do not use `RouterContextProvider` here;
-that API is for lower-level/custom server integrations and is not the framework
-mode context shape used by route `loader` and `action` arguments.
+This project always enables React Router's `v8_middleware` future flag, so pass
+request-scoped server dependencies with `RouterContextProvider`. Do not use
+`AppLoadContext` or a plain object context in this setup.
 
 ```ts
-import { createRequestHandler } from "react-router";
+import { createRequestHandler, RouterContextProvider } from "react-router";
+import { appContext } from "../app/context";
 
 const requestHandler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
 );
 
-declare module "react-router" {
-  export interface AppLoadContext {
-    cloudflare: {
-      env: Env;
-      ctx: ExecutionContext;
-    };
-  }
-}
-
 export default {
   async fetch(request, env, ctx) {
-    return requestHandler(request, {
-      cloudflare: { env, ctx },
+    const routerContext = new RouterContextProvider();
+    routerContext.set(appContext, {
+      claudflare: { env, ctx },
     });
+
+    return requestHandler(request, routerContext);
   },
 } satisfies ExportedHandler<Env>;
 ```
 
 Context checklist:
 
-- Declare `AppLoadContext` with `declare module "react-router"` in `workers/app.ts`.
-- Include every server dependency routes need under `AppLoadContext`, such as `cloudflare.env` and `cloudflare.ctx`.
-- Pass an object matching `AppLoadContext` as the second argument to `requestHandler(request, context)`.
-- Read dependencies in routes from `context` on `Route.LoaderArgs` or `Route.ActionArgs`.
-- Do not import, instantiate, or pass `RouterContextProvider` for this framework mode setup.
+- Treat `v8_middleware: true` as always enabled for this project.
+- Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
+- Include Cloudflare bindings under `appContext` as `claudflare: { env, ctx }`.
+- Create a `RouterContextProvider` for each request in `workers/app.ts`.
+- Set dependencies with `routerContext.set(appContext, { claudflare: { env, ctx } })`.
+- Pass `routerContext` as the second argument to `requestHandler(request, routerContext)`.
+- Read dependencies in routes from `context.get(appContext)`.
+- Do not use `AppLoadContext`, plain object context, or `context.cloudflare`.
 
-11. Add React Router scripts to `package.json`.
+12. Add React Router scripts to `package.json`.
 
 ```json
 {
@@ -242,7 +254,7 @@ Context checklist:
 }
 ```
 
-12. Update `vite.config.ts` to use the React Router Vite plugin after the Cloudflare plugin.
+13. Update `vite.config.ts` to use the React Router Vite plugin after the Cloudflare plugin.
 
 ```ts
 import { reactRouter } from "@react-router/dev/vite";
@@ -266,10 +278,11 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 - `react-router.config.ts` exists with SSR enabled and the React Router v8 future flags configured.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx` exists with the layout, outlet, and route error boundary.
-- `app/entry.server.tsx`, `app/routes.ts`, and `app/routes/home.tsx` exist.
-- `app/routes/home.tsx` loads `APP_NAME` from `context.cloudflare.env`.
+- `app/entry.server.tsx`, `app/routes.ts`, `app/context.ts`, and `app/routes/home.tsx` exist.
+- `app/context.ts` exports `appContext` with `claudflare: { env, ctx }`.
+- `app/routes/home.tsx` loads `APP_NAME` from `context.get(appContext).claudflare.env`.
 - `public/favicon.ico` exists.
 - `workers/app.ts` is updated from the minimal Cloudflare handler to the React Router request handler.
-- `workers/app.ts` declares and passes framework mode `AppLoadContext`; it does not use `RouterContextProvider`.
+- `workers/app.ts` creates a per-request `RouterContextProvider`, sets `appContext`, and does not use `AppLoadContext`.
 - `package.json` includes `dev`, `build`, `preview`, and `deploy` scripts for React Router and Wrangler.
 - `vite.config.ts` uses `reactRouter()` after `cloudflare({ viteEnvironment: { name: "ssr" } })`.
