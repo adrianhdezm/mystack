@@ -48,8 +48,8 @@ different D1 binding.
    setup, required environment variables, and migration commands.
 7. Run formatting, typecheck, lint, build, and the migration commands available
    for the current environment.
-8. Commit the changes with the repository's Conventional Commit format when the
-   user requested a commit or the active Product Builder workflow expects one.
+8. Commit the generated and updated files in the repository using the
+   repository's Conventional Commits format.
 
 ## Validation checklist
 
