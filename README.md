@@ -13,4 +13,9 @@ helps define the audience, value proposition, workflow, pages, and data model,
 then guides Codex through building landing pages, auth, protected routes,
 dashboards, and polished product screens.
 
+Current skills:
+
+- `preparing-repositories`: prepares an empty GitHub repository and local clone for Product Builder work.
+- `bootstrapping-code`: bootstraps the initial Product Builder codebase after repository preparation completes.
+
 Path: `plugins/product-builder`

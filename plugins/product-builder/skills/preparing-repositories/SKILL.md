@@ -1,9 +1,9 @@
 ---
-name: managing-github-repositories
-description: Prepares a GitHub repository for Product Builder work by validating inputs, creating or finding the remote with gh, reusing an existing local clone when safe, or cloning an empty repo. Use when the user provides REPOSITORY and LOCAL_FOLDER values or asks to create, inspect, validate, clone, or prepare a GitHub repository.
+name: preparing-repositories
+description: Prepares a GitHub repository for Product Builder work by validating inputs, creating or finding the remote with gh, reusing an existing local clone when safe, or cloning an empty repo. Use before bootstrapping-code when the user provides REPOSITORY and LOCAL_FOLDER values or asks to create, inspect, validate, clone, or prepare a GitHub repository.
 ---
 
-# Managing GitHub Repositories
+# Preparing Repositories
 
 ## Required inputs
 
@@ -58,7 +58,7 @@ LOCAL_REPOSITORY_PATH: <absolute path>
 REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
 ```
 
-Downstream skills should use `LOCAL_REPOSITORY_PATH` as their working directory.
+Downstream skills, especially `bootstrapping-code`, should use `LOCAL_REPOSITORY_PATH` as their working directory and preserve `REPOSITORY_STATUS` in their context.
 
 ## Stop message
 
