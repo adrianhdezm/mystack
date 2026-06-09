@@ -29,6 +29,7 @@ Current skills:
 
 - `preparing-repositories`: prepares an empty GitHub repository and local clone for Product Builder work.
 - `bootstrapping-code`: bootstraps the initial Product Builder codebase after repository preparation completes.
+- `adding-database`: adds Cloudflare D1 persistence with Drizzle ORM, Wrangler bindings, migrations, and React Router context.
 
 ### Example Usage
 
@@ -52,6 +53,12 @@ Existing empty repository already cloned locally:
 
 ```text
 Use Product Builder to turn the empty repository already cloned at ~/Code/example-product into a habit tracker for remote engineering teams.
+```
+
+Existing Product Builder project that needs a database:
+
+```text
+Use Product Builder to add a database to the existing project at ~/Code/example-product.
 ```
 
 Path: `plugins/product-builder`
