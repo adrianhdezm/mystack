@@ -44,6 +44,12 @@ GitHub owner, or nearby existing folders.
 If a derived value is ambiguous, state the candidates and ask the user to choose.
 Do not invent a GitHub owner or local folder.
 
+Missing repository or local target information is blocking, not optional. Never
+continue by creating a fallback folder such as `work/`, `./work`, the current
+workspace, a temporary directory, or any other agent-chosen location. Never say
+that the missing repository or destination will not block the work. Ask for the
+missing value and wait.
+
 Validate the final `REPOSITORY` as exactly `<owner>/<repo>`, with no branch, spaces,
 empty segments, or extra path parts. Expand `LOCAL_FOLDER` to an absolute parent
 folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo>`.
@@ -52,9 +58,13 @@ folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo>`.
 
 - Use the GitHub CLI (`gh`) for GitHub operations: auth checks, repository lookup, repository creation, remote inspection, and cloning.
 - Stop if `gh auth status` fails.
+- Stop before creating files, scaffolding code, or bootstrapping if either
+  `REPOSITORY` or `LOCAL_FOLDER` is missing or ambiguous.
 - Stop before returning a repository path if the local target contains pre-existing app files or user files.
 - Stop before cloning if the remote repository has any tracked files, including only `README.md`, `.gitignore`, license, or other starter files.
 - Never delete, overwrite, or clean user files to make a repository usable.
+- Never create a local-only Product Builder app. Product Builder must prepare a
+  GitHub repository and an explicit local destination first.
 
 ## Workflow
 
@@ -95,6 +105,19 @@ REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
 Downstream skills, especially `bootstrapping-code`, should use `LOCAL_REPOSITORY_PATH` as their working directory and preserve `REPOSITORY_STATUS` in their context.
 
 ## Stop message
+
+When stopping because the prompt does not identify a repository or destination,
+ask only for the missing value:
+
+```text
+I need the GitHub repository and local parent folder before I can prepare the Product Builder project. Please provide the missing value.
+```
+
+Do not use this kind of fallback:
+
+```text
+No GitHub repository or destination folder was provided, so I will create the application locally inside work/.
+```
 
 When stopping because a repository is not empty, say this directly:
 

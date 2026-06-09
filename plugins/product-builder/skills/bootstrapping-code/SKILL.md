@@ -15,7 +15,7 @@ REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
 ```
 
 If those values are missing, stop before bootstrapping and prepare the
-repository first.
+repository first. Do not choose a fallback directory yourself.
 
 Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
@@ -24,9 +24,13 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 - Use `pnpm` for package initialization, package version checks, and package installation.
 - Do not trust remembered package versions. Check latest versions with `pnpm view <package> version` before installing, then install with `@latest`.
 - Stop before bootstrapping if `preparing-repositories` has not completed successfully.
+- Stop before bootstrapping if the repository or local destination was missing
+  from the user's request and `preparing-repositories` has not resolved it.
 - Stop before bootstrapping if `LOCAL_REPOSITORY_PATH` already contains files other than repository metadata.
 - After bootstrap starts, treat files created by the bootstrap as project source and reuse or update them in later steps.
 - Never delete or overwrite user files to force a bootstrap.
+- Never create a local-only Product Builder app in `work/`, `./work`, a
+  temporary directory, the current workspace, or any agent-chosen folder.
 - Keep Cloudflare spelled correctly in generated files, package names, and user-facing output.
 
 ## Workflow
@@ -47,6 +51,13 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 14. Summarize what was created, include the commit hash, and list any command that failed.
 
 ## Stop message
+
+When stopping because repository preparation has not provided the required
+inputs, say this directly:
+
+```text
+I need a prepared GitHub repository and explicit local destination before I can bootstrap the Product Builder project.
+```
 
 When stopping because the local repository has pre-existing files, say this directly:
 
