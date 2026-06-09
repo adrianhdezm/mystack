@@ -44,8 +44,8 @@ different D1 binding.
    [03-app-integration.md](references/03-app-integration.md).
 5. Generate and apply migrations using
    [04-migrations-validation.md](references/04-migrations-validation.md).
-6. Update project documentation with the D1 setup, required environment
-   variables, and migration commands.
+6. Update project documentation in `README.md` and `AGENTS.md` with the D1
+   setup, required environment variables, and migration commands.
 7. Run formatting, typecheck, lint, build, and the migration commands available
    for the current environment.
 8. Commit the changes with the repository's Conventional Commit format when the
@@ -62,4 +62,6 @@ different D1 binding.
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.
 - [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
+- [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.
+- [ ] `AGENTS.md` documents database-specific project instructions agents must follow.
 - [ ] `pnpm db:generate`, `pnpm db:migrate`, and `pnpm db:local:migrate` work or failures are explained.
