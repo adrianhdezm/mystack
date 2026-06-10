@@ -27,6 +27,9 @@ skills are loaded.
 
 Current skills:
 
+- `creating-products`: interviews the user, classifies project complexity,
+  orchestrates the required Product Builder skills, proposes the data model and
+  page map, and implements after approval.
 - `preparing-repositories`: prepares an empty GitHub repository and local clone for Product Builder work.
 - `bootstrapping-code`: bootstraps the initial Product Builder codebase after repository preparation completes.
 - `adding-database`: adds Cloudflare D1 persistence with Drizzle ORM, Wrangler bindings, migrations, and React Router context.
@@ -54,6 +57,12 @@ Existing empty repository with no local clone:
 
 ```text
 Use Product Builder to bootstrap github.com/<username>/example-product under ~/Code as a lightweight CRM for freelance consultants.
+```
+
+Product creation entry point:
+
+```text
+Use Product Builder to create github.com/<username>/example-product under ~/Code as a client portal where freelancers can share project updates, invoices, and files with clients.
 ```
 
 Existing empty repository already cloned locally:
