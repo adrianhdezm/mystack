@@ -52,12 +52,25 @@ Update `.env.example` with a placeholder, not the real value:
 AUTH_SECRET=
 ```
 
-For remote Cloudflare deployments, set the secret through Wrangler when the user
-has an authenticated Wrangler session:
+For remote Cloudflare deployments, do not set the secret from the agent
+workflow. Document this requirement in the target project's `README.md`:
 
 ```sh
 pnpm wrangler secret put AUTH_SECRET
 ```
 
-If the remote secret cannot be set in the current environment, document the
-command in the final response and in project docs.
+Use wording like:
+
+````md
+### Remote Cloudflare deployment
+
+Before deploying to Cloudflare, set `AUTH_SECRET` in the remote Worker
+environment from an authenticated Wrangler session:
+
+```sh
+pnpm wrangler secret put AUTH_SECRET
+```
+````
+
+Explain that the application requires this remote secret before Cloudflare
+deployments can run successfully.
