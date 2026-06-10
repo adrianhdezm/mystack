@@ -1,6 +1,6 @@
 {
   "name": "product-builder",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Turn product ideas into working products with landing pages, authentication, protected routes, and dashboard pages.",
   "author": {
     "name": "Adrian Hernandez-Mendez"
@@ -13,6 +13,9 @@
     "ui",
     "payments",
     "database",
+    "storage",
+    "uploads",
+    "r2",
     "cloudflare",
     "react",
     "tailwind",
@@ -22,7 +25,7 @@
   "interface": {
     "displayName": "Product Builder",
     "shortDescription": "Build products from product ideas.",
-    "longDescription": "Helps turn an early product idea into a usable product. Product Builder first clarifies the audience, value proposition, core workflow, page map, and data model, then guides Codex through building the experience with a marketing landing page, login, registration, protected routes, dashboard pages, and polished shadcn/ui screens on the repo's Cloudflare Workers, React Router v7, Better Auth, and Tailwind CSS v4 stack.",
+    "longDescription": "Helps turn an early product idea into a usable product. Product Builder first clarifies the audience, value proposition, core workflow, page map, and data model, then guides Codex through building the experience with a marketing landing page, login, registration, protected routes, dashboard pages, file storage, and polished shadcn/ui screens on the repo's Cloudflare Workers, React Router v7, Better Auth, D1, R2, and Tailwind CSS v4 stack.",
     "developerName": "Adrian Hernandez-Mendez",
     "category": "Developer Tools",
     "capabilities": ["Interactive", "Read", "Write"],
