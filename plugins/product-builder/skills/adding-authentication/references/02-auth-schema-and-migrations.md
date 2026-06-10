@@ -124,9 +124,6 @@ export const schema = {
 };
 ```
 
-Do not add a `files` table as part of authentication. Only preserve non-auth
-tables that already exist in the target project.
-
 ## Generate and apply migrations
 
 Use the project's existing scripts when they exist:
