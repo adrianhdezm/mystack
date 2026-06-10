@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding Authentication"
+  short_description: "Add Better Auth login and signup to Product Builder projects."
+  default_prompt: "Add Better Auth login, signup, logout, auth routes, and migrations to this Product Builder project."

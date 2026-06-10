@@ -30,6 +30,7 @@ Current skills:
 - `preparing-repositories`: prepares an empty GitHub repository and local clone for Product Builder work.
 - `bootstrapping-code`: bootstraps the initial Product Builder codebase after repository preparation completes.
 - `adding-database`: adds Cloudflare D1 persistence with Drizzle ORM, Wrangler bindings, migrations, and React Router context.
+- `adding-authentication`: adds Better Auth login, signup, logout, auth routes, secrets, and D1 migrations.
 
 ### Example Usage
 
@@ -64,6 +65,12 @@ Existing Product Builder project that needs a database:
 
 ```text
 Use Product Builder to add a database to the existing project at ~/Code/example-product.
+```
+
+Existing Product Builder project that needs authentication:
+
+```text
+Use Product Builder to add authentication to the existing project at ~/Code/example-product.
 ```
 
 Path: `plugins/product-builder`
