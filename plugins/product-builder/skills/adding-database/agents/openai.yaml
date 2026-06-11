@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding Database"
+  short_description: "Add a Cloudflare D1 database with Drizzle ORM and migrations."
+  default_prompt: "Add a Cloudflare D1 database to this Product Builder project using Drizzle ORM, Wrangler bindings, and migrations."
