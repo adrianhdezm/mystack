@@ -60,6 +60,6 @@ Before running foundation skills, state:
 
 ```text
 PROJECT_COMPLEXITY: simple | standard | advanced
-FOUNDATION_CAPABILITIES: database=<yes/no>, file_storage=<yes/no>, authentication=<yes/no>
+FOUNDATION_CAPABILITIES: database=<yes/no>, authentication=<yes/no>, file_storage=<yes/no>
 RATIONALE: <short reason>
 ```
