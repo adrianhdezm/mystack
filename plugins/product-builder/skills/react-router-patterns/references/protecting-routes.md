@@ -150,24 +150,24 @@ Login actions should:
 1. Validate credentials or delegate to Better Auth.
 2. Reject invalid input with a structured 400 response.
 3. Establish the session through the existing auth integration.
-4. Redirect to a safe `redirectTo` target or dashboard.
+4. Redirect to a safe `redirectTo` target or the home page.
 
 Sanitize redirect targets:
 
 ```ts
-function safeRedirect(
-  value: FormDataEntryValue | null,
-  fallback = "/dashboard",
+function safeRedirectTo(
+  to: FormDataEntryValue | string | null | undefined,
+  defaultRedirect = "/",
 ) {
-  if (
-    typeof value !== "string" ||
-    !value.startsWith("/") ||
-    value.startsWith("//")
-  ) {
-    return fallback;
+  if (!to || typeof to !== "string") {
+    return defaultRedirect;
   }
 
-  return value;
+  if (!to.startsWith("/") || to.startsWith("//")) {
+    return defaultRedirect;
+  }
+
+  return to;
 }
 ```
 
