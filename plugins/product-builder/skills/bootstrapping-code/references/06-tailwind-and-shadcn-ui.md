@@ -328,6 +328,7 @@ install components with `pnpm shadcn`, `npx shadcn`, or a locally installed
 
 ```tsx
 import { Button } from "~/components/ui/button";
+import { appContext } from "~/context";
 import type { Route } from "./+types/home";
 
 export function meta() {
@@ -338,7 +339,8 @@ export function meta() {
 }
 
 export function loader({ context }: Route.LoaderArgs) {
-  return { message: `Welcome to ${context.cloudflare.env.APP_NAME}` };
+  const app = context.get(appContext);
+  return { message: `Welcome to ${app.cloudflare.env.APP_NAME}` };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
