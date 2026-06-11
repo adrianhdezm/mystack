@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding File Storage"
+  short_description: "Add Cloudflare R2 file storage with a Drizzle metadata table."
+  default_prompt: "Add Cloudflare R2 file storage to this Product Builder project with Wrangler bindings, a Drizzle file metadata table, and React Router server context."
