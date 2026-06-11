@@ -58,7 +58,6 @@ export default {
   migrations: {
     prefix: "timestamp",
     table: "__migrations__",
-    schema: "public",
   },
 } satisfies Config;
 ```
