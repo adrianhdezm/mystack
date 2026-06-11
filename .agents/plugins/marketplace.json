@@ -7,8 +7,10 @@
     {
       "name": "product-builder",
       "source": {
-        "source": "local",
-        "path": "./plugins/product-builder"
+        "source": "git-subdir",
+        "url": "https://github.com/adrianhdezm/mystack.git",
+        "path": "./plugins/product-builder",
+        "ref": "main"
       },
       "policy": {
         "installation": "AVAILABLE",
