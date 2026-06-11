@@ -1,0 +1,4 @@
+interface:
+  display_name: "Creating Products"
+  short_description: "Turn a product idea into a working application end-to-end."
+  default_prompt: "Turn my product idea into a working Product Builder application with a landing page, authentication, database, and core features."
