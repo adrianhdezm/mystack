@@ -13,7 +13,7 @@ helps define the audience, value proposition, workflow, pages, and data model,
 then guides Codex through building landing pages, auth, protected routes,
 dashboards, and polished product screens.
 
-### Installation
+### Codex installation
 
 Add this repository as a Codex marketplace, then install the plugin:
 
@@ -24,6 +24,15 @@ codex plugin add product-builder@my-stack
 
 After installing or updating the plugin, start a new Codex thread so the latest
 skills are loaded.
+
+### Claude Code installation
+
+Add this repository as a Claude Code marketplace, then install the plugin:
+
+```text
+/plugin marketplace add https://github.com/adrianhdezm/mystack
+/plugin install product-builder@my-stack
+```
 
 Current skills:
 

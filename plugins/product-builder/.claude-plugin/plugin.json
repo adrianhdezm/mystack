@@ -1,0 +1,22 @@
+{
+  "name": "product-builder",
+  "version": "0.1.12",
+  "description": "Turn product ideas into working products with landing pages, authentication, protected routes, and dashboard pages.",
+  "author": {
+    "name": "Adrian Hernandez-Mendez"
+  },
+  "repository": "https://github.com/adrianhdezm/mystack",
+  "keywords": [
+    "web",
+    "frontend",
+    "backend",
+    "ui",
+    "database",
+    "storage",
+    "cloudflare",
+    "react",
+    "tailwind",
+    "shadcn"
+  ],
+  "skills": "./skills/"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "my-stack",
+  "owner": {
+    "name": "Adrian Hernandez-Mendez"
+  },
+  "description": "Personal development plugins and skills.",
+  "plugins": [
+    {
+      "name": "product-builder",
+      "source": "./plugins/product-builder",
+      "description": "Turn product ideas into working product foundations.",
+      "version": "0.1.12",
+      "author": {
+        "name": "Adrian Hernandez-Mendez"
+      },
+      "skills": "./skills/"
+    }
+  ]
+}
