@@ -40,7 +40,12 @@ AUTH_COOKIE_PREFIX: App
 3. Replace or extend the Drizzle schema with the required auth tables using [02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md).
 4. Wire Better Auth into React Router context and the Worker using [03-server-integration.md](references/03-server-integration.md).
 5. Load `react-router-patterns`, then add `api/auth/*`, `login`, `logout`, and `signup` routes using [04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md).
-6. Update `README.md` and `AGENTS.md` with auth setup, required environment variables, local development notes, and migration commands.
+6. Update project documentation:
+   - **`docs/architecture.md`** — Add `Better Auth (email + password)` to the Stack section. If `docs/architecture.md` does not exist, create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the addition.
+   - **`docs/data-model.md`** — Add the auth entities (`users`, `sessions`, `accounts`, `verifications`) with their columns, types, and relationships to match what Better Auth creates in `app/db/schema.ts`. Create the file using [data-model-template.md](../../shared/templates/data-model-template.md) if it does not exist.
+   - **`docs/conventions/routes.md`** — If it exists, add auth-related route patterns: protected route loader authentication check, login/signup form action with Better Auth API, logout action, and safe redirect after auth. If it does not exist, create it using [convention-template.md](../../shared/templates/convention-template.md) with these patterns.
+   - **`README.md`** — Add auth setup, required environment variables (`AUTH_SECRET`), `pnpm wrangler secret put AUTH_SECRET` for remote deploys, and migration commands.
+   - **`AGENTS.md`** — Add auth-specific agent instructions (environment variables, migration commands). Ensure the Project Documentation section exists and references `docs/`.
 7. Run formatting, typecheck, lint, build, and available migration commands.
 8. Commit the generated and updated files using the repository's Conventional Commits format.
 
@@ -50,7 +55,10 @@ AUTH_COOKIE_PREFIX: App
 - [ ] `.env` contains `AUTH_SECRET=<secret generated with openssl rand -base64 32>`.
 - [ ] `.env.example` documents `AUTH_SECRET=`.
 - [ ] `README.md` documents that remote Cloudflare deployments require users to run `pnpm wrangler secret put AUTH_SECRET` from an authenticated Wrangler session.
-- [ ] `AGENTS.md` documents auth setup, environment variables, and migration commands.
+- [ ] `docs/architecture.md` includes Better Auth in the Stack section.
+- [ ] `docs/data-model.md` includes auth entities (users, sessions, accounts, verifications) matching `app/db/schema.ts`.
+- [ ] `docs/conventions/routes.md` includes auth-related route patterns (protected routes, login/signup actions, logout, safe redirect).
+- [ ] `AGENTS.md` documents auth setup, environment variables, and migration commands, and references `docs/`.
 - [ ] `app/db/schema.ts` exports `users`, `sessions`, `accounts`, `verifications`, their relations, and `schema`.
 - [ ] A new Drizzle migration exists under `db/migrations`.
 - [ ] Local and remote D1 migrations were applied, or failures are explained.

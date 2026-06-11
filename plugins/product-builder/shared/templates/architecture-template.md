@@ -8,42 +8,36 @@ One-line description of the product and its primary user.
 
 - Cloudflare Workers, TypeScript
 - React Router v7 (framework mode, SSR)
-- Drizzle ORM, Cloudflare D1
 - Tailwind CSS, shadcn/ui
-- Better Auth (if enabled)
-- Cloudflare R2 (if enabled)
+
+<!-- Foundation skills append to this list: Drizzle ORM / D1, Better Auth, Cloudflare R2. -->
 
 ## Structure
 
 ```text
 app/
 ├── components/        # Shared UI components
-├── db/
-│   ├── schema.ts      # Drizzle table definitions
-│   ├── dao.ts         # Shared DAO interface
-│   └── daos/          # One DAO per table
-├── services/          # Business logic, transactions
 ├── routes/            # React Router route modules
 └── lib/               # Utilities and helpers
-db/
-└── migrations/        # Drizzle migration files
 docs/
 ├── architecture.md    # This file
-├── data-model.md      # Entities, columns, relations
 ├── conventions/       # Project conventions (patterns + anti-patterns)
 └── features/          # Feature specs
 ```
+
+<!-- Foundation skills extend this tree with db/, services/, db/migrations/, etc. -->
 
 ## Data Model
 
 See [data-model.md](data-model.md) for the canonical entity, column, and relationship reference.
 
+<!-- Remove this section if no database is configured. -->
+
 ## Conventions
 
-- **[Data Access](conventions/data-access.md)** — DAO interface, service layer, transactions
-- **[UI Components](conventions/ui-components.md)** — shadcn/ui usage, component composition
-- **[Form Validation](conventions/form-validation.md)** — Conform + Zod patterns
-- **[Routes](conventions/routes.md)** — loader/action structure, protected routes, navigation
+Project-specific patterns and anti-patterns. Each file covers one area and grows as implementation reveals patterns worth reusing or mistakes worth preventing.
+
+<!-- List only conventions that exist. Foundation and implementation skills add entries here as they create convention files. -->
 
 ## Implementation Log
 

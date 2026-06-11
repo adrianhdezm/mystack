@@ -24,7 +24,7 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 For each section in the spec, verify the code matches:
 
 - **Database**: Confirm tables, columns, indexes, and relationships exist in `app/db/schema.ts` and migrations under `db/migrations/`. Verify `docs/data-model.md` matches `app/db/schema.ts`.
-- **DAOs**: Confirm DAOs exist in `app/db/daos/` and implement the DAO interface per [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md).
+- **DAOs**: Confirm DAOs exist in `app/db/daos/` and implement the DAO interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md).
 - **Services**: Confirm services exist in `app/services/` with correct transaction boundaries and DAO composition.
 - **Routes**: Confirm route files exist, paths are registered in `app/routes.ts`, and loaders/actions match the spec.
 - **Components**: Confirm shadcn/ui components are installed and custom components are created as specified.

@@ -27,7 +27,7 @@ If the description is vague or missing key decisions, ask up to three clarifying
 - Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
 - Read all existing `docs/features/*.spec.md` files to know what is already planned.
 - Scan the codebase for what is already built: schema (`app/db/schema.ts`), DAOs (`app/db/daos/`), services (`app/services/`), routes (`app/routes/`), and components (`app/components/`).
-- Read [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md) for DAO, service, and transaction conventions.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, service, and transaction conventions.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns. Specs should align with established conventions.
 - Identify what the feature requires that is NOT yet covered by existing specs or code.

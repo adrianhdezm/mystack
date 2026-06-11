@@ -34,6 +34,8 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
    - `standard`: run `adding-database`, then `adding-authentication`; skip `adding-file-storage`.
    - `advanced`: run `adding-database`, then `adding-authentication`, then `adding-file-storage`.
 
+   Each foundation skill updates `docs/architecture.md`, `docs/data-model.md`, `docs/conventions/`, and `AGENTS.md` with its additions. After all foundation skills complete, `docs/architecture.md` should reflect the full stack, structure, and active conventions. Verify this before moving to Phase 2.
+
 ### Phase 2 — Feature Planning
 
 6. Based on the interview and product idea, propose a list of features that together deliver the first usable version. Present each feature as a short title and one-line description. Order them by dependency — foundational features first.
@@ -61,9 +63,12 @@ If the user requests a change during review, update the proposal and ask for app
 - [ ] Complexity and matrix-derived capabilities are stated before foundation work.
 - [ ] Repository preparation and bootstrapping completed before add-on skills.
 - [ ] Database was added before file storage or authentication when required.
+- [ ] After foundation phase, `docs/architecture.md` reflects the full stack, structure, and active conventions.
+- [ ] After foundation phase, `docs/data-model.md` reflects all entities from foundation skills.
+- [ ] After foundation phase, `AGENTS.md` includes a Project Documentation section referencing `docs/`.
 - [ ] Feature list was proposed and approved by the user before planning.
 - [ ] `plan-feature` was run for each approved feature.
 - [ ] `implement-feature` and `verify-feature` were run for each feature spec.
-- [ ] `docs/architecture.md` was created and maintained throughout.
+- [ ] `docs/architecture.md` was maintained throughout.
 - [ ] Formatting, typecheck, lint, and build pass after all features.
 - [ ] Final summary includes features implemented, commit hash, and open questions.

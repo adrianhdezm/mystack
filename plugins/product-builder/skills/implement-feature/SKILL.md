@@ -18,7 +18,7 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 - Read `docs/data-model.md` if it exists — this is the canonical reference for entities, relationships, and constraints.
 - Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
 - Scan the codebase for existing code related to the spec: schema, DAOs, services, routes, components.
-- Read [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md) for DAO, service, and transaction conventions.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, service, and transaction conventions.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns established during prior implementations.
 
@@ -31,15 +31,15 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 
 ### 3) Update Architecture
 
-Create or update `docs/architecture.md`. Use the template in [architecture-template.md](assets/architecture-template.md) when creating it for the first time. This is the canonical reference for the project's conventions and implementation history.
+Update `docs/architecture.md`. Foundation skills (`bootstrapping-code`, `adding-database`, `adding-authentication`, `adding-file-storage`) create this file and populate the Stack, Structure, and Conventions sections. If it does not exist (standalone use without foundation skills), create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the Stack and Structure to match the current project.
 
 #### Data Model
 
-Create or update `docs/data-model.md`. Use the template in [data-model-template.md](assets/data-model-template.md) when creating it for the first time. After implementing schema changes, update it to reflect the current state of `app/db/schema.ts` — entities, columns, types, relationships, and constraints. This file always represents what is built, not what is planned.
+Update `docs/data-model.md`. Foundation skills create this file with entities from the initial schema. If it does not exist, create it using [data-model-template.md](../../shared/templates/data-model-template.md). After implementing schema changes, update it to reflect the current state of `app/db/schema.ts` — entities, columns, types, relationships, and constraints. This file always represents what is built, not what is planned.
 
 #### Implementation Log
 
-Add a section header for the current spec (`## NN — Title`) in `docs/architecture.md` and log entries under it. Update as decisions happen.
+Add a section header for the current spec (`### NN — Title`) under the Implementation Log in `docs/architecture.md` and log entries under it. Update as decisions happen.
 
 ```markdown
 ## Implementation Log
@@ -65,7 +65,7 @@ Add a section header for the current spec (`## NN — Title`) in `docs/architect
 
 #### Conventions
 
-When implementation reveals a pattern worth reusing or a mistake worth preventing, add or update the relevant file in `docs/conventions/`. Use the template in [convention-template.md](assets/convention-template.md) when creating a new convention file. Each file covers one area (data access, UI components, form validation, routes) and contains both Patterns and Anti-patterns sections. These grow organically — only add entries that would save a future implementer from a real mistake or inconsistency.
+When implementation reveals a pattern worth reusing or a mistake worth preventing, add or update the relevant file in `docs/conventions/`. Foundation skills may have already seeded `docs/conventions/routes.md` and `docs/conventions/data-access.md` — read existing convention files before adding entries. Use the template in [convention-template.md](../../shared/templates/convention-template.md) when creating a new convention file. Each file covers one area (data access, UI components, form validation, routes) and contains both Patterns and Anti-patterns sections. These grow organically — only add entries that would save a future implementer from a real mistake or inconsistency.
 
 If you create a new convention file, add a linked entry in the Conventions section of `docs/architecture.md`.
 
