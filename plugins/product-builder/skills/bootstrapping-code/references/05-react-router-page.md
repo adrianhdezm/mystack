@@ -205,7 +205,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 }
 ```
 
-10. Create a `public` folder with a `favicon.ico` file.
+10. Create a `public` folder with a `favicon.ico` file. Use an empty file as a
+    placeholder since agents cannot generate binary content. The user can replace
+    it with a real favicon later.
 
 11. Update the previously created `workers/app.ts` to use the React Router request handler.
 
