@@ -65,7 +65,7 @@ ID from `pnpm wrangler d1 create`, and the user's D1 API token.
 | --- | --- |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID from `pnpm wrangler whoami` |
 | `CLOUDFLARE_DATABASE_ID` | D1 database ID from `pnpm wrangler d1 create` |
-| `CLOUDFLARE_D1_TOKEN` | API token with D1 read/write access |
+| `CLOUDFLARE_D1_TOKEN` | API token with D1 read/write access. Create one at Cloudflare dashboard > My Profile > API Tokens > Create Token, using a custom token with Account / D1 / Edit permission. |
 
 6. Add migration settings to the generated D1 binding in `wrangler.jsonc`.
 
