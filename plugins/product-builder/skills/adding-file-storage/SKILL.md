@@ -58,7 +58,7 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 - [ ] Deleting a file removes both the D1 metadata row and the R2 object.
 - [ ] `app/context.ts` exposes `files: FilesService`.
 - [ ] `workers/app.ts` constructs `new FilesService(db, env.APP_FILES)`.
-- [ ] `05-data-access-architecture.md` was followed for file metadata service boundaries and any DAO or data access workflow changes.
+- [ ] `data-access-architecture.md` was followed for file metadata service boundaries and any DAO or data access workflow changes.
 - [ ] `react-router-patterns` was loaded and followed for any React Router context, Worker request-handling, route, upload, or resource endpoint changes.
 - [ ] Generated `Env` types include `APP_FILES`.
 - [ ] `docs/architecture.md` includes Cloudflare R2 in the Stack section.

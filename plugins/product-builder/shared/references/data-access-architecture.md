@@ -1,4 +1,4 @@
-# 05 - Data Access Architecture
+# Data Access Architecture
 
 ## Purpose
 

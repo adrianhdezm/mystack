@@ -88,7 +88,7 @@ export class FilesService {
 
 ## Implementation Notes
 
-- `FilesService` owns both R2 and D1 operations for files. It does not use a separate DAO because every persistence call is paired with a corresponding R2 call. This is an intentional exception to the one-DAO-per-table rule in `05-data-access-architecture.md`.
+- `FilesService` owns both R2 and D1 operations for files. It does not use a separate DAO because every persistence call is paired with a corresponding R2 call. This is an intentional exception to the one-DAO-per-table rule in `data-access-architecture.md`.
 - Keep object keys unique. A timestamp prefix is acceptable for the default implementation; use a stronger key only when the project already has a random ID helper.
 - Use `application/octet-stream` for missing content types.
 - If later adding downloads, fetch the metadata row first and use `bucket.get` with the stored key.

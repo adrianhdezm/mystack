@@ -60,11 +60,11 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.
 - [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
-- [ ] `05-data-access-architecture.md` was followed for any tables, DAOs, services, transactions, or data access workflows.
+- [ ] `data-access-architecture.md` was followed for any tables, DAOs, services, transactions, or data access workflows.
 - [ ] `react-router-patterns` was loaded and followed for any React Router context or Worker request-handling changes.
 - [ ] `docs/architecture.md` includes Drizzle ORM / D1 in stack, db/ directories in structure, data model link, and data-access convention link.
 - [ ] `docs/data-model.md` was created and reflects `app/db/schema.ts`.
-- [ ] `docs/conventions/data-access.md` was created with seed patterns from `05-data-access-architecture.md`.
+- [ ] `docs/conventions/data-access.md` was created with seed patterns from `data-access-architecture.md`.
 - [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.
 - [ ] `AGENTS.md` documents database-specific instructions and references `docs/data-model.md` in the Project Documentation section.
 - [ ] `pnpm db:generate`, `pnpm db:migrate`, and `pnpm db:local:migrate` work or failures are explained.

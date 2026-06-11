@@ -90,7 +90,7 @@ Omit empty subsections in the Implementation Log.
 - [ ] `docs/architecture.md` was read or created.
 - [ ] `docs/data-model.md` was read or created.
 - [ ] `docs/data-model.md` reflects the current state of `app/db/schema.ts` after implementation.
-- [ ] `05-data-access-architecture.md` conventions were followed for DAOs and services.
+- [ ] `data-access-architecture.md` conventions were followed for DAOs and services.
 - [ ] `react-router-patterns` conventions were followed for routes, loaders, and actions.
 - [ ] Project conventions in `docs/conventions/` were followed and anti-patterns avoided.
 - [ ] All spec sections (database, routes, components, services) were implemented.
