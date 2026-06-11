@@ -149,6 +149,21 @@ Keep busy indicators accessible and avoid relying on color alone.
 <section aria-busy={navigation.state !== "idle"}>{children}</section>
 ```
 
+## HydrateFallback
+
+Export a `HydrateFallback` component from a route module to show a placeholder
+while the client bundle hydrates. This only renders on the initial page load
+when the route uses `clientLoader` without a server `loader`:
+
+```tsx
+export function HydrateFallback() {
+  return <p>Loading...</p>;
+}
+```
+
+Do not use `HydrateFallback` when the route has a server `loader` — the server
+already returns rendered HTML, so there is nothing to fall back to.
+
 ## Checklist
 
 - [ ] Whole-page pending state uses `useNavigation`.
