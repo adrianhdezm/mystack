@@ -170,6 +170,25 @@ Handle uploads in route actions. Validate file presence, content type, size, and
 ownership before writing to storage. Keep R2, database, and secret-bearing logic
 server-side.
 
+```tsx
+export async function action({ context, request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const file = formData.get("file");
+
+  if (!(file instanceof File) || file.size === 0) {
+    return data({ error: "Please select a file" }, { status: 400 });
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    return data({ error: "File must be under 10 MB" }, { status: 400 });
+  }
+
+  const { files } = context.get(appContext);
+  const record = await files.upload(file);
+  return redirect(`/files/${record.id}`);
+}
+```
+
 Return structured 400 responses for user-correctable upload failures. Redirect
 after successful page-level uploads.
 
