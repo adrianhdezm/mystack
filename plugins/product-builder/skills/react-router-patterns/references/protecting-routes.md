@@ -98,6 +98,7 @@ export async function loader({ context }: Route.LoaderArgs) {
 Actions should also read the authenticated user from context before mutating:
 
 ```tsx
+import { parseWithZod } from "@conform-to/zod/v4";
 import { data, redirect } from "react-router";
 import { appContext, userContext } from "~/context";
 import type { Route } from "./+types/projects-detail";
@@ -111,7 +112,14 @@ export async function action({ context, params, request }: Route.ActionArgs) {
     throw data("Project not found", { status: 404 });
   }
 
-  await updateProject(db, project.id, await request.formData());
+  const formData = await request.formData();
+  const submission = parseWithZod(formData, { schema: updateProjectSchema });
+
+  if (submission.status !== "success") {
+    return data(submission.reply(), { status: 400 });
+  }
+
+  await updateProject(db, project.id, submission.value);
   return redirect(`/projects/${project.id}`);
 }
 ```
