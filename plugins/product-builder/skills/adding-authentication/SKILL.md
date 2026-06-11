@@ -67,6 +67,7 @@ AUTH_COOKIE_PREFIX: App
 - [ ] `.env` contains `AUTH_SECRET=<secret generated with openssl rand -base64 32>`.
 - [ ] `.env.example` documents `AUTH_SECRET=`.
 - [ ] `README.md` documents that remote Cloudflare deployments require users to run `pnpm wrangler secret put AUTH_SECRET` from an authenticated Wrangler session.
+- [ ] `AGENTS.md` documents auth setup, environment variables, and migration commands.
 - [ ] `app/db/schema.ts` exports `users`, `sessions`, `accounts`, `verifications`, their relations, and `schema`.
 - [ ] A new Drizzle migration exists under `db/migrations`.
 - [ ] Local and remote D1 migrations were applied, or failures are explained.
