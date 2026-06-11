@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verifying Features"
+  short_description: "Verify a feature implementation against its spec and report deviations."
+  default_prompt: "Verify the latest feature implementation against its spec in docs/features/ and report any deviations, missing items, or inconsistencies."
