@@ -23,11 +23,13 @@ If the description is vague or missing key decisions, ask up to three clarifying
 
 ### 1) Read Context
 
-- Read `docs/architecture.md` if it exists — this is the canonical data model reference. Use the Data Model section to understand existing entities, relationships, and constraints before proposing changes.
+- Read `docs/data-model.md` if it exists — this is the canonical reference for entities, relationships, and constraints. Use it to understand the current data model before proposing changes.
+- Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
 - Read all existing `docs/features/*.spec.md` files to know what is already planned.
 - Scan the codebase for what is already built: schema (`app/db/schema.ts`), DAOs (`app/db/daos/`), services (`app/services/`), routes (`app/routes/`), and components (`app/components/`).
 - Read [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md) for DAO, service, and transaction conventions.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
+- Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns. Specs should align with established conventions.
 - Identify what the feature requires that is NOT yet covered by existing specs or code.
 
 ### 2) Slice the Feature
@@ -53,9 +55,10 @@ Name files as `NN-short-name.spec.md` continuing the existing numbering sequence
 - [ ] Clarifying questions were asked when the feature description was ambiguous.
 - [ ] Existing specs and code were scanned before planning.
 - [ ] Each spec is a vertical slice the user can interact with in the browser.
-- [ ] Database changes describe additions and modifications relative to the current data model in `docs/architecture.md`.
+- [ ] Database changes describe additions and modifications relative to the current data model in `docs/data-model.md`.
 - [ ] Pages and routes include path, loader/action responsibilities, and protected status.
 - [ ] shadcn/ui components are listed with intended usage.
 - [ ] Acceptance criteria are verifiable "When X, then Y" statements written from the user's perspective.
 - [ ] Specs are ordered with no forward dependencies.
+- [ ] Specs align with project conventions in `docs/conventions/`.
 - [ ] User approved the spec list before files were written.

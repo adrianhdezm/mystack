@@ -29,38 +29,21 @@ db/
 └── migrations/        # Drizzle migration files
 docs/
 ├── architecture.md    # This file
+├── data-model.md      # Entities, columns, relations
+├── conventions/       # Project conventions (patterns + anti-patterns)
 └── features/          # Feature specs
 ```
 
 ## Data Model
 
-### Entity Name
-
-- `id` (text, PK) — UUID
-- `name` (text, not null) — display name
-- `createdAt` / `updatedAt` (integer, not null) — timestamps
-
-**Relations**: belongs to OtherEntity; has many Items.
+See [data-model.md](data-model.md) for the canonical entity, column, and relationship reference.
 
 ## Conventions
 
-### Data Access
-
-### UI Components
-
-### Form Validation
-
-### Routes
-
-## Anti-patterns
-
-### Data Access
-
-### UI Components
-
-### Form Validation
-
-### Routes
+- **[Data Access](conventions/data-access.md)** — DAO interface, service layer, transactions
+- **[UI Components](conventions/ui-components.md)** — shadcn/ui usage, component composition
+- **[Form Validation](conventions/form-validation.md)** — Conform + Zod patterns
+- **[Routes](conventions/routes.md)** — loader/action structure, protected routes, navigation
 
 ## Implementation Log
 

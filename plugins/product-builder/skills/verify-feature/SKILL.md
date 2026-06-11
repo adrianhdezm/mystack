@@ -14,20 +14,22 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 ### 1) Read Context
 
 - Read the target spec file.
-- Read `docs/architecture.md` — use the Data Model section as the expected entity/relationship map, and the Implementation Log for known deviations and open questions.
+- Read `docs/data-model.md` — use it as the expected entity/relationship map.
+- Read `docs/architecture.md` — use the Implementation Log for known deviations and open questions.
+- Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns to verify against.
 - Read dependency specs listed in the Dependencies section.
 
 ### 2) Check Implementation
 
 For each section in the spec, verify the code matches:
 
-- **Database**: Confirm tables, columns, indexes, and relationships exist in `app/db/schema.ts` and migrations under `db/migrations/`. Verify the Data Model section in `docs/architecture.md` matches `app/db/schema.ts`.
+- **Database**: Confirm tables, columns, indexes, and relationships exist in `app/db/schema.ts` and migrations under `db/migrations/`. Verify `docs/data-model.md` matches `app/db/schema.ts`.
 - **DAOs**: Confirm DAOs exist in `app/db/daos/` and implement the DAO interface per [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md).
 - **Services**: Confirm services exist in `app/services/` with correct transaction boundaries and DAO composition.
 - **Routes**: Confirm route files exist, paths are registered in `app/routes.ts`, and loaders/actions match the spec.
 - **Components**: Confirm shadcn/ui components are installed and custom components are created as specified.
 - **Auth**: If routes are marked as protected, confirm authentication checks are in place.
-- **Conventions**: Check that the implementation follows project conventions and avoids anti-patterns listed in `docs/architecture.md`.
+- **Conventions**: Check that the implementation follows project conventions (patterns and anti-patterns) in `docs/conventions/`.
 
 ### 3) Walk Acceptance Criteria
 
@@ -71,7 +73,7 @@ One-line: overall status (pass / pass with notes / fail).
 ## Inconsistencies
 
 - Mismatches between spec, code, and architecture notes.
-- Data Model in `docs/architecture.md` out of sync with `app/db/schema.ts`.
+- `docs/data-model.md` out of sync with `app/db/schema.ts`.
 
 ## Recommendations
 
@@ -83,9 +85,10 @@ Present the report to the user. Do not modify code — this skill is read-only. 
 ## Validation Checklist
 
 - [ ] Target spec was read completely.
+- [ ] `docs/data-model.md` was checked against `app/db/schema.ts` for consistency.
 - [ ] `docs/architecture.md` was consulted for known deviations.
-- [ ] Data Model in `docs/architecture.md` was checked against `app/db/schema.ts` for consistency.
 - [ ] Every spec section (database, routes, components, services) was checked against the codebase.
+- [ ] Implementation was checked against project conventions and anti-patterns in `docs/conventions/`.
 - [ ] Every acceptance criterion was individually evaluated.
 - [ ] `pnpm typecheck`, `pnpm lint`, and `pnpm build` were run.
 - [ ] Report was presented with clear status for each criterion.

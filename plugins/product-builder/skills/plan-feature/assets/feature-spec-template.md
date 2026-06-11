@@ -6,7 +6,7 @@ One sentence: what this spec achieves for the user.
 
 ## Database Changes
 
-Changes relative to the current Data Model in `docs/architecture.md`:
+Changes relative to the current data model in `docs/data-model.md`:
 
 - New tables with key columns, types, and constraints.
 - Columns added or altered on existing tables.
