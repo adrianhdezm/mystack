@@ -57,12 +57,17 @@ export class FilesService {
     });
 
     try {
-      await this.db.insert(files).values({
-        key,
-        filename: file.name,
-        contentType: file.type || "application/octet-stream",
-        size: file.size,
-      });
+      const [record] = await this.db
+        .insert(files)
+        .values({
+          key,
+          filename: file.name,
+          contentType: file.type || "application/octet-stream",
+          size: file.size,
+        })
+        .returning();
+
+      return record;
     } catch (error) {
       await this.bucket.delete(key);
       throw error;
