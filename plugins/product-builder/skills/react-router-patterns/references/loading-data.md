@@ -87,9 +87,11 @@ Use `redirect(...)` for navigation control flow before render:
 
 ```tsx
 import { redirect } from "react-router";
+import { appContext } from "~/context";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const session = await requireSession(request);
+export async function loader({ context, request }: Route.LoaderArgs) {
+  const { auth } = context.get(appContext);
+  const session = await auth.api.getSession({ headers: request.headers });
   if (!session) {
     throw redirect("/login");
   }

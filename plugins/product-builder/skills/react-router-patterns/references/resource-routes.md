@@ -40,6 +40,7 @@ Use loaders for read-only resource responses:
 
 ```tsx
 import { data } from "react-router";
+import { appContext } from "~/context";
 
 export async function loader({ context, params, request }: Route.LoaderArgs) {
   const { db } = context.get(appContext);
@@ -64,10 +65,14 @@ Use actions for mutations:
 
 ```tsx
 import { data } from "react-router";
+import { appContext } from "~/context";
 
 export async function action({ context, params, request }: Route.ActionArgs) {
-  const { db } = context.get(appContext);
-  const session = await requireSession(context, request);
+  const { db, auth } = context.get(appContext);
+  const session = await auth.api.getSession({ headers: request.headers });
+  if (!session) {
+    throw data("Unauthorized", { status: 401 });
+  }
 
   const project = await getProjectForUser(
     db,
