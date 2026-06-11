@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planning Features"
+  short_description: "Plan a feature end-to-end and save a numbered spec."
+  default_prompt: "Plan a Product Builder feature — database changes, pages, components, and acceptance criteria — and save the spec to docs/features/."
