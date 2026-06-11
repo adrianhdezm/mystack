@@ -115,7 +115,7 @@ create(attrs);
 get(id);
 getAll(opts);
 update(id, attrs);
-delete id;
+delete(id);
 deleteMany(ids);
 ```
 
