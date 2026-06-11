@@ -1,19 +1,17 @@
 # Form Validation
 
-Use this guide when creating or reviewing React Router route modules that render
-forms, submit mutations, upload files, or validate user input.
+Use this guide when creating or reviewing React Router route modules that render forms, submit mutations, upload files, or validate user input.
 
 ## Choose The Right Form Pattern
 
-| Use case                                               | Pattern                | Route behavior                                  |
-| ------------------------------------------------------ | ---------------------- | ----------------------------------------------- |
-| Search and filters                                     | `<Form method="get">`  | Loader reads `request.url` search params        |
-| Page-level create, edit, delete, login, signup, logout | `<Form method="post">` | Action validates, mutates, then redirects       |
-| Inline toggles, row actions, autosave, ratings         | `useFetcher`           | Action validates and mutates without navigation |
-| Multiple independent mutations on one page             | `useFetcher`           | Each fetcher tracks its own pending state       |
+| Use case | Pattern | Route behavior |
+| --- | --- | --- |
+| Search and filters | `<Form method="get">` | Loader reads `request.url` search params |
+| Page-level create, edit, delete, login, signup, logout | `<Form method="post">` | Action validates, mutates, then redirects |
+| Inline toggles, row actions, autosave, ratings | `useFetcher` | Action validates and mutates without navigation |
+| Multiple independent mutations on one page | `useFetcher` | Each fetcher tracks its own pending state |
 
-Default to server route actions for mutations. Keep database writes, auth calls,
-storage operations, and secret-bearing logic out of client components.
+Default to server route actions for mutations. Keep database writes, auth calls, storage operations, and secret-bearing logic out of client components.
 
 ## Route Action Pattern
 
@@ -25,8 +23,7 @@ Every mutating route action should follow the same sequence:
 4. Validate the form data before mutating anything.
 5. Check ownership or role permissions for resource-specific mutations.
 6. Perform the mutation.
-7. Redirect after success when the submission represents a completed page-level
-   action.
+7. Redirect after success when the submission represents a completed page-level action.
 
 Use structured validation errors for user-correctable input:
 
@@ -57,9 +54,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 
 ## Component Pattern
 
-Use React Router `<Form>` for route-backed submissions. If Conform is used, pass
-the previous action result into `useForm` and render field-level errors from the
-returned field metadata.
+Use React Router `<Form>` for route-backed submissions. If Conform is used, pass the previous action result into `useForm` and render field-level errors from the returned field metadata.
 
 ```tsx
 import { useForm } from "@conform-to/react";
@@ -88,8 +83,7 @@ export default function ProjectNew({ actionData }: Route.ComponentProps) {
 
 ## Search And Filter Forms
 
-Search and filter forms should submit with GET. Do not intercept submit events
-just to call `setSearchParams`.
+Search and filter forms should submit with GET. Do not intercept submit events just to call `setSearchParams`.
 
 ```tsx
 import { Form } from "react-router";
@@ -112,10 +106,7 @@ export default function SearchPage() {
 
 ## Inline Mutations
 
-Use `useFetcher` when a mutation should update part of the page without
-navigating. This is the right pattern for checkboxes, favorite buttons, row
-actions, autosave, and independent actions inside a list. This example also
-appears in `pending-ui.md` — keep both in sync.
+Use `useFetcher` when a mutation should update part of the page without navigating. This is the right pattern for checkboxes, favorite buttons, row actions, autosave, and independent actions inside a list. This example also appears in `pending-ui.md` — keep both in sync.
 
 ```tsx
 import { useFetcher } from "react-router";
@@ -142,8 +133,7 @@ function FavoriteButton({
 }
 ```
 
-Fetcher actions still need the same server-side validation and permission checks
-as normal route actions.
+Fetcher actions still need the same server-side validation and permission checks as normal route actions.
 
 ## Multiple Actions Per Route
 
@@ -162,14 +152,11 @@ switch (intent) {
 }
 ```
 
-Prefer separate resource routes when independent mutations have different
-permissions, redirect behavior, or reuse needs.
+Prefer separate resource routes when independent mutations have different permissions, redirect behavior, or reuse needs.
 
 ## Uploads
 
-Handle uploads in route actions. Validate file presence, content type, size, and
-ownership before writing to storage. Keep R2, database, and secret-bearing logic
-server-side.
+Handle uploads in route actions. Validate file presence, content type, size, and ownership before writing to storage. Keep R2, database, and secret-bearing logic server-side.
 
 ```tsx
 export async function action({ context, request }: Route.ActionArgs) {
@@ -190,21 +177,18 @@ export async function action({ context, request }: Route.ActionArgs) {
 }
 ```
 
-Return structured 400 responses for user-correctable upload failures. Redirect
-after successful page-level uploads.
+Return structured 400 responses for user-correctable upload failures. Redirect after successful page-level uploads.
 
 ## Validation Rules
 
 Treat all submitted form data as untrusted:
 
 - Validate required strings, numbers, booleans, dates, enum values, and IDs.
-- Coerce form values intentionally in the schema instead of scattered action
-  code.
+- Coerce form values intentionally in the schema instead of scattered action code.
 - Return `data(..., { status: 400 })` for validation failures the user can fix.
 - Throw `data(..., { status: 404 })` or `Response` for not-found resources.
 - Throw `redirect(...)` for auth and navigation control flow.
-- Do not silently replace invalid values with defaults unless the UI makes that
-  behavior explicit.
+- Do not silently replace invalid values with defaults unless the UI makes that behavior explicit.
 
 ## Redirect Rules
 
@@ -216,21 +200,16 @@ Use redirects to complete page-level mutations:
 - Login/signup: redirect to a safe `redirectTo` target or dashboard.
 - Logout: redirect to login or public home.
 
-Redirecting after successful POST avoids duplicate submissions on refresh and
-keeps the browser URL aligned with the current page state.
+Redirecting after successful POST avoids duplicate submissions on refresh and keeps the browser URL aligned with the current page state.
 
 ## Anti-Patterns
 
 - Do not mutate data in loaders.
-- Do not use browser `fetch` for application mutations that should be route
-  actions.
-- Do not use raw `<form>` when React Router `<Form>` gives the intended
-  behavior.
+- Do not use browser `fetch` for application mutations that should be route actions.
+- Do not use raw `<form>` when React Router `<Form>` gives the intended behavior.
 - Do not use manual `setSearchParams` submission handling for search forms.
-- Do not use page-navigating `<Form method="post">` for tiny inline toggles when
-  `useFetcher` fits better.
-- Do not import database clients, auth secrets, or storage clients into client
-  components.
+- Do not use page-navigating `<Form method="post">` for tiny inline toggles when `useFetcher` fits better.
+- Do not import database clients, auth secrets, or storage clients into client components.
 
 ## Review Checklist
 

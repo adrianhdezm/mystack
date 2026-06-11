@@ -14,8 +14,7 @@ LOCAL_REPOSITORY_PATH: <absolute path>
 REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
 ```
 
-If those values are missing, stop before bootstrapping and prepare the
-repository first. Do not choose a fallback directory yourself.
+If those values are missing, stop before bootstrapping and prepare the repository first. Do not choose a fallback directory yourself.
 
 Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
@@ -23,16 +22,13 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
 - Use `pnpm` for package initialization, package version checks, and package installation.
 - Do not trust remembered package versions. Check latest versions with `pnpm view <package> version` before installing, then install with `@latest`.
-- Load `react-router-patterns` before adding or changing React
-  Router code. Any generated React Router code must follow those patterns.
+- Load `react-router-patterns` before adding or changing React Router code. Any generated React Router code must follow those patterns.
 - Stop before bootstrapping if `preparing-repositories` has not completed successfully.
-- Stop before bootstrapping if the repository or local destination was missing
-  from the user's request and `preparing-repositories` has not resolved it.
+- Stop before bootstrapping if the repository or local destination was missing from the user's request and `preparing-repositories` has not resolved it.
 - Stop before bootstrapping if `LOCAL_REPOSITORY_PATH` already contains files other than repository metadata.
 - After bootstrap starts, treat files created by the bootstrap as project source and reuse or update them in later steps.
 - Never delete or overwrite user files to force a bootstrap.
-- Never create a local-only Product Builder app in `work/`, `./work`, a
-  temporary directory, the current workspace, or any agent-chosen folder.
+- Never create a local-only Product Builder app in `work/`, `./work`, a temporary directory, the current workspace, or any agent-chosen folder.
 - Keep Cloudflare spelled correctly in generated files, package names, and user-facing output.
 
 ## Workflow
@@ -44,8 +40,7 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 5. Add TypeScript using [02-typescript.md](references/02-typescript.md).
 6. Add Vite, linting, and formatting using [03-vite-linting-formatting.md](references/03-vite-linting-formatting.md).
 7. Add Cloudflare using [04-cloudflare.md](references/04-cloudflare.md).
-8. Load `react-router-patterns`, then add the React Router page
-   using [05-react-router-page.md](references/05-react-router-page.md).
+8. Load `react-router-patterns`, then add the React Router page using [05-react-router-page.md](references/05-react-router-page.md).
 9. Add Tailwind and shadcn/ui using [06-tailwind-and-shadcn-ui.md](references/06-tailwind-and-shadcn-ui.md).
 10. Run final verification using [07-final-verification.md](references/07-final-verification.md).
 11. Update the project `README.md` with a very basic overview of the bootstrapped application, including the stack, local development command, verification commands, and Cloudflare deployment target.
@@ -55,8 +50,7 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
 ## Stop message
 
-When stopping because repository preparation has not provided the required
-inputs, say this directly:
+When stopping because repository preparation has not provided the required inputs, say this directly:
 
 ```text
 I need a prepared GitHub repository and explicit local destination before I can bootstrap the Product Builder project.
@@ -76,8 +70,7 @@ Include the files found when available.
 - [ ] `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS` are available.
 - [ ] Local repository has no pre-existing files beyond repository metadata.
 - [ ] `pnpm view` was used for latest package checks.
-- [ ] `react-router-patterns` was loaded before React Router
-      code was generated, and the generated code follows those patterns.
+- [ ] `react-router-patterns` was loaded before React Router code was generated, and the generated code follows those patterns.
 - [ ] Cloudflare types are generated with `wrangler types`.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass after fixing generated-file issues.
 - [ ] Final file structure and `git status --short` were reviewed.

@@ -1,8 +1,6 @@
 # Adding Routes
 
-Use this guide when creating or reviewing React Router route maps, page routes,
-layout routes, nested routes, dynamic routes, index routes, catch-all routes, or
-route modules.
+Use this guide when creating or reviewing React Router route maps, page routes, layout routes, nested routes, dynamic routes, index routes, catch-all routes, or route modules.
 
 ## Route Planning
 
@@ -25,8 +23,7 @@ Prefer resource-oriented paths:
 /api/auth/*
 ```
 
-Avoid ambiguous paths such as `/view`, `/details`, `/item`, or `/submit` unless
-they are nested under a clear resource path.
+Avoid ambiguous paths such as `/view`, `/details`, `/item`, or `/submit` unless they are nested under a clear resource path.
 
 ## Route Configuration
 
@@ -51,13 +48,10 @@ export default [
 When adding routes:
 
 - Merge entries into the existing route array; preserve unrelated routes.
-- Keep route files named for their path or role, such as
-  `projects-detail.tsx`, `projects-new.tsx`, or `dashboard.tsx`.
-- Use dynamic params with meaningful names like `:projectId`, `:teamId`, or
-  `:fileId`.
+- Keep route files named for their path or role, such as `projects-detail.tsx`, `projects-new.tsx`, or `dashboard.tsx`.
+- Use dynamic params with meaningful names like `:projectId`, `:teamId`, or `:fileId`.
 - Keep Better Auth endpoints at `api/auth/*`.
-- Do not create ad-hoc client-side routers or route tables outside
-  `app/routes.ts`.
+- Do not create ad-hoc client-side routers or route tables outside `app/routes.ts`.
 
 ## Route Helpers
 
@@ -65,17 +59,14 @@ Use React Router route helpers from `@react-router/dev/routes`:
 
 - `index("routes/home.tsx")` for an index route.
 - `route("projects", "routes/projects.tsx")` for a named path.
-- `layout("routes/app-layout.tsx", [...])` for shared layout UI with an
-  `Outlet`.
+- `layout("routes/app-layout.tsx", [...])` for shared layout UI with an `Outlet`.
 - `prefix("projects", [...])` to group paths without adding layout UI.
 
-Prefer layout routes when a group of pages shares navigation, shell UI, data, or
-error boundaries.
+Prefer layout routes when a group of pages shares navigation, shell UI, data, or error boundaries.
 
 ## Nested Routes And Layouts
 
-Use nested routes for sections such as dashboards, account pages, projects, or
-admin areas.
+Use nested routes for sections such as dashboards, account pages, projects, or admin areas.
 
 ```ts
 import {
@@ -109,8 +100,7 @@ export default function DashboardLayout() {
 }
 ```
 
-Avoid flattening every route into independent pages when those pages share the
-same shell, auth behavior, or error handling.
+Avoid flattening every route into independent pages when those pages share the same shell, auth behavior, or error handling.
 
 ## Dynamic, Optional, And Splat Segments
 
@@ -121,11 +111,9 @@ route("projects/:projectId", "routes/projects-detail.tsx");
 route("teams/:teamId/members/:memberId", "routes/team-member.tsx");
 ```
 
-Validate params in loaders and actions before using them. Do not assume route
-params are valid database IDs.
+Validate params in loaders and actions before using them. Do not assume route params are valid database IDs.
 
-Use optional segments only when both URL shapes genuinely map to the same
-screen. Prefer explicit routes when the behavior differs.
+Use optional segments only when both URL shapes genuinely map to the same screen. Prefer explicit routes when the behavior differs.
 
 Use splats for catch-all behavior:
 
@@ -145,8 +133,7 @@ Each route module should export only the React Router functions it needs:
 - `action` for form submissions and mutations.
 - `default` for the page component.
 - `ErrorBoundary` when the route needs specific error UI.
-- `headers`, `links`, `handle`, or `shouldRevalidate` only when the route
-  actually needs them.
+- `headers`, `links`, `handle`, or `shouldRevalidate` only when the route actually needs them.
 
 Use generated route types:
 
@@ -172,8 +159,7 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
 }
 ```
 
-Do not type loaders, actions, params, or component props manually when the
-generated `Route` type is available.
+Do not type loaders, actions, params, or component props manually when the generated `Route` type is available.
 
 ## Route Exports
 
@@ -190,8 +176,7 @@ Use these exports intentionally:
 - `links`: route-specific stylesheets or preloads.
 - `meta`: page metadata.
 - `handle`: static route metadata for app conventions.
-- `shouldRevalidate`: opt out of default revalidation only with a concrete
-  reason.
+- `shouldRevalidate`: opt out of default revalidation only with a concrete reason.
 
 Do not export placeholder functions.
 

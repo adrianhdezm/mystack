@@ -26,8 +26,7 @@ cp .env.example .env
 
 4. Create the Cloudflare D1 database when it does not already exist.
 
-Prefer the user's requested database name. If none is supplied, derive a
-lowercase snake-case name from the project and suffix `_db`.
+Prefer the user's requested database name. If none is supplied, derive a lowercase snake-case name from the project and suffix `_db`.
 
 ```sh
 pnpm wrangler d1 create <database_name> --binding=APP_DB --update-config
@@ -39,8 +38,7 @@ Example:
 pnpm wrangler d1 create example_product_db --binding=APP_DB --update-config
 ```
 
-The command updates `wrangler.jsonc` and prints the database configuration.
-Use the printed `database_id` for `CLOUDFLARE_DATABASE_ID` in `.env`.
+The command updates `wrangler.jsonc` and prints the database configuration. Use the printed `database_id` for `CLOUDFLARE_DATABASE_ID` in `.env`.
 
 Example output:
 
@@ -58,8 +56,7 @@ Example output:
 
 5. Configure `.env`.
 
-Populate `.env` with the account ID from `pnpm wrangler whoami`, the database
-ID from `pnpm wrangler d1 create`, and the user's D1 API token.
+Populate `.env` with the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the user's D1 API token.
 
 | Variable | Description |
 | --- | --- |
@@ -69,8 +66,7 @@ ID from `pnpm wrangler d1 create`, and the user's D1 API token.
 
 6. Add migration settings to the generated D1 binding in `wrangler.jsonc`.
 
-Do not replace the generated binding, database name, or database ID. Only add
-`migrations_table` and `migrations_dir`.
+Do not replace the generated binding, database name, or database ID. Only add `migrations_table` and `migrations_dir`.
 
 ```jsonc
 {
@@ -80,9 +76,9 @@ Do not replace the generated binding, database name, or database ID. Only add
       "database_name": "<database_name>",
       "database_id": "<database_id>",
       "migrations_table": "__migrations__",
-      "migrations_dir": "db/migrations"
-    }
-  ]
+      "migrations_dir": "db/migrations",
+    },
+  ],
 }
 ```
 
@@ -90,7 +86,5 @@ Do not replace the generated binding, database name, or database ID. Only add
 
 - A D1 database exists in Cloudflare.
 - `.env.example` documents required Cloudflare credentials.
-- `.env` contains the account ID from `pnpm wrangler whoami`, the database ID
-  from `pnpm wrangler d1 create`, and the user's D1 token.
-- `wrangler.jsonc` binds D1 as `APP_DB` and points migrations to
-  `db/migrations`.
+- `.env` contains the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the user's D1 token.
+- `wrangler.jsonc` binds D1 as `APP_DB` and points migrations to `db/migrations`.

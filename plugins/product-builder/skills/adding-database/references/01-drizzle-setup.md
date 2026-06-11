@@ -66,5 +66,4 @@ export default {
 
 - `drizzle-orm`, `drizzle-zod`, and `drizzle-kit` are installed.
 - `package.json` has D1 migration and generation scripts.
-- `drizzle.config.ts` uses `.env` credentials and writes migrations to
-  `db/migrations`.
+- `drizzle.config.ts` uses `.env` credentials and writes migrations to `db/migrations`.

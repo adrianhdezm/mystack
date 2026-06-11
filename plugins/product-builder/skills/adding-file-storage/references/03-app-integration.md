@@ -1,15 +1,12 @@
 # 03 - App Integration
 
-Before changing React Router context or Worker request handling, load
-`react-router-patterns` and follow its app-level file and
-context patterns.
+Before changing React Router context or Worker request handling, load `react-router-patterns` and follow its app-level file and context patterns.
 
 ## Steps
 
 1. Update `app/context.ts`.
 
-Preserve existing context fields and add the `FilesService` import and `files`
-field.
+Preserve existing context fields and add the `FilesService` import and `files` field.
 
 ```ts
 import { createContext } from "react-router";
@@ -29,8 +26,7 @@ export const appContext = createContext<{
 
 2. Update `workers/app.ts`.
 
-Preserve the existing `createRequestHandler`, `RouterContextProvider`, and
-Drizzle setup. Import `FilesService` and inject an instance into router context.
+Preserve the existing `createRequestHandler`, `RouterContextProvider`, and Drizzle setup. Import `FilesService` and inject an instance into router context.
 
 ```ts
 import { createRequestHandler, RouterContextProvider } from "react-router";

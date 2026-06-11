@@ -36,10 +36,7 @@ pnpm add -D @cloudflare/vite-plugin@latest wrangler@latest
 }
 ```
 
-Use this fixed `compatibility_date`. Do not replace it with today's date or a
-dynamic value. The date pins the Workers runtime behavior to a known-good
-baseline so builds stay reproducible. Upgrade the date intentionally when the
-project is ready to adopt newer compatibility flags.
+Use this fixed `compatibility_date`. Do not replace it with today's date or a dynamic value. The date pins the Workers runtime behavior to a known-good baseline so builds stay reproducible. Upgrade the date intentionally when the project is ready to adopt newer compatibility flags.
 
 4. Create `workers/app.ts` with this content:
 

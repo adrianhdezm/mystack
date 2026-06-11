@@ -1,8 +1,6 @@
 # Navigation
 
-Use this guide when adding or reviewing links, nav bars, active navigation,
-redirects, search-param navigation, relative navigation, programmatic
-navigation, or scroll restoration.
+Use this guide when adding or reviewing links, nav bars, active navigation, redirects, search-param navigation, relative navigation, programmatic navigation, or scroll restoration.
 
 ## Choose The Right Navigation Pattern
 
@@ -15,9 +13,7 @@ navigation, or scroll restoration.
 | Client-only imperative transition               | `useNavigate()`       |
 | Nested route navigation                         | Relative `to` values  |
 
-Prefer declarative navigation with `Link`, `NavLink`, and route redirects.
-Reach for `useNavigate` only when navigation is a client-side effect of an
-interaction that cannot be modeled as a link or form.
+Prefer declarative navigation with `Link`, `NavLink`, and route redirects. Reach for `useNavigate` only when navigation is a client-side effect of an interaction that cannot be modeled as a link or form.
 
 ## Links
 
@@ -29,8 +25,7 @@ import { Link } from "react-router";
 <Link to="/projects/new">New project</Link>;
 ```
 
-Use meaningful URLs that match the route map. Do not use buttons with click
-handlers for ordinary page navigation.
+Use meaningful URLs that match the route map. Do not use buttons with click handlers for ordinary page navigation.
 
 ## Active Navigation
 
@@ -74,8 +69,7 @@ Common redirect cases:
 
 ## Search Forms
 
-Use `<Form method="get">` for search, filters, sorting, pagination controls, and
-other URL-owned state.
+Use `<Form method="get">` for search, filters, sorting, pagination controls, and other URL-owned state.
 
 ```tsx
 import { Form } from "react-router";
@@ -90,9 +84,7 @@ Do not intercept submit events only to call `setSearchParams`.
 
 ## Programmatic Navigation
 
-Use `useNavigate` for client-only flows such as closing a modal route, returning
-after a browser-only interaction, or navigating after an effect that is not a
-route action.
+Use `useNavigate` for client-only flows such as closing a modal route, returning after a browser-only interaction, or navigating after an effect that is not a route action.
 
 ```tsx
 import { useNavigate } from "react-router";
@@ -103,8 +95,7 @@ function CloseButton() {
 }
 ```
 
-Avoid using `useNavigate` after a successful server mutation. Return
-`redirect(...)` from the action instead.
+Avoid using `useNavigate` after a successful server mutation. Return `redirect(...)` from the action instead.
 
 ## Relative Navigation
 
@@ -115,14 +106,11 @@ Use relative paths in nested routes when the relationship is local and clear:
 <Link to="..">Back</Link>
 ```
 
-Prefer absolute paths for global navigation, app shells, and links that should
-not depend on nesting.
+Prefer absolute paths for global navigation, app shells, and links that should not depend on nesting.
 
 ## Type-Safe URLs
 
-When the project has generated route helpers available, prefer them for paths
-with params. Otherwise centralize URL construction in small helpers for repeated
-resource paths.
+When the project has generated route helpers available, prefer them for paths with params. Otherwise centralize URL construction in small helpers for repeated resource paths.
 
 ```ts
 function projectPath(projectId: string) {
@@ -130,13 +118,11 @@ function projectPath(projectId: string) {
 }
 ```
 
-Do not scatter fragile string concatenation for the same route across many
-components.
+Do not scatter fragile string concatenation for the same route across many components.
 
 ## Scroll Restoration
 
-Use React Router scroll restoration at the root when the app needs browser-like
-scroll behavior across route transitions.
+Use React Router scroll restoration at the root when the app needs browser-like scroll behavior across route transitions.
 
 Avoid manual scroll management unless there is a specific UI reason.
 

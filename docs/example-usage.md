@@ -1,10 +1,6 @@
 # Example Usage
 
-Use Product Builder with natural-language prompts. The plugin derives the
-GitHub repository and local folder from your prompt when possible, and must ask
-for any missing or ambiguous repository or local destination before creating
-files. It should never create a fallback app in `work/` or another
-agent-chosen folder.
+Use Product Builder with natural-language prompts. The plugin derives the GitHub repository and local folder from your prompt when possible, and must ask for any missing or ambiguous repository or local destination before creating files. It should never create a fallback app in `work/` or another agent-chosen folder.
 
 ## Missing repository or local folder
 
@@ -12,8 +8,7 @@ agent-chosen folder.
 Use Product Builder to create a meal-planning app for busy parents that turns weekly preferences into grocery lists and quick dinner plans.
 ```
 
-Expected behavior: ask for the GitHub repository and local parent folder before
-preparing or bootstrapping the project.
+Expected behavior: ask for the GitHub repository and local parent folder before preparing or bootstrapping the project.
 
 ## Existing empty repository with no local clone
 

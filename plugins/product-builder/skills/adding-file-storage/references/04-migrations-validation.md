@@ -20,8 +20,7 @@ pnpm db:migrate
 pnpm db:local:migrate
 ```
 
-4. Re-run Cloudflare type generation to ensure `Env` types are current after all
-   binding and migration changes.
+4. Re-run Cloudflare type generation to ensure `Env` types are current after all binding and migration changes.
 
 ```sh
 pnpm cf-typegen
@@ -44,14 +43,10 @@ pnpm build
 
 ## Failure Handling
 
-- If the project has no Drizzle/D1 setup, stop and run the `adding-database`
-  skill first.
-- If `pnpm db:migrate` fails because `.env` is missing credentials, confirm
-  `.env.example` is correct and tell the user which variables are missing.
-- If `pnpm wrangler r2 bucket create` fails because the bucket already exists,
-  keep the existing bucket and manually add or verify the `APP_FILES` binding.
-- If Cloudflare type generation fails because Wrangler is not authenticated,
-  report the exact command that failed and leave source changes in place.
+- If the project has no Drizzle/D1 setup, stop and run the `adding-database` skill first.
+- If `pnpm db:migrate` fails because `.env` is missing credentials, confirm `.env.example` is correct and tell the user which variables are missing.
+- If `pnpm wrangler r2 bucket create` fails because the bucket already exists, keep the existing bucket and manually add or verify the `APP_FILES` binding.
+- If Cloudflare type generation fails because Wrangler is not authenticated, report the exact command that failed and leave source changes in place.
 
 ## Expected Results
 

@@ -1,8 +1,6 @@
 # Loading Data
 
-Use this guide when adding or reviewing route loaders, client loaders, route
-params, URL search params, redirects before render, streaming, or server data
-access.
+Use this guide when adding or reviewing route loaders, client loaders, route params, URL search params, redirects before render, streaming, or server data access.
 
 ## Server Loader Pattern
 
@@ -43,13 +41,11 @@ export async function loader({ context, params, request }: Route.LoaderArgs) {
 }
 ```
 
-Do not fetch Product Builder application data from the browser when the data can
-be loaded through a route loader.
+Do not fetch Product Builder application data from the browser when the data can be loaded through a route loader.
 
 ## Reading Search Params
 
-Use URL search params for filters, search, sort, pagination, and view state that
-belongs in the URL.
+Use URL search params for filters, search, sort, pagination, and view state that belongs in the URL.
 
 ```tsx
 export async function loader({ request }: Route.LoaderArgs) {
@@ -65,11 +61,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 ```
 
-Validate and coerce search params intentionally. Do not silently accept invalid
-numbers, booleans, enum values, or dates when they affect a query.
+Validate and coerce search params intentionally. Do not silently accept invalid numbers, booleans, enum values, or dates when they affect a query.
 
-Use `<Form method="get">` for search and filters so the loader receives the
-submitted params.
+Use `<Form method="get">` for search and filters so the loader receives the submitted params.
 
 ## Route Params
 
@@ -78,8 +72,7 @@ Treat params as untrusted strings:
 - Check required params before querying.
 - Validate IDs with the same rules used by the database or service layer.
 - Return or throw a clear 400 for malformed params.
-- Throw 404 when the param is well-formed but the resource does not exist or is
-  not visible to the user.
+- Throw 404 when the param is well-formed but the resource does not exist or is not visible to the user.
 
 ## Redirects And Responses
 
@@ -110,14 +103,11 @@ if (!project) {
 }
 ```
 
-Prefer route `ErrorBoundary` UI for expected 404/403 states that need a custom
-message.
+Prefer route `ErrorBoundary` UI for expected 404/403 states that need a custom message.
 
 ## Client Loaders
 
-Use `clientLoader` only for client-only needs such as browser APIs, local
-storage, client cache hydration, or data that intentionally must not participate
-in the server render.
+Use `clientLoader` only for client-only needs such as browser APIs, local storage, client cache hydration, or data that intentionally must not participate in the server render.
 
 ```tsx
 export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
@@ -131,25 +121,19 @@ Do not move database reads or secret-bearing calls into `clientLoader`.
 
 ## Parallel Loading
 
-React Router loads matched route loaders in parallel. Put shared data in the
-layout route only when children need the same data or the layout owns the
-decision, such as authentication for a protected shell.
+React Router loads matched route loaders in parallel. Put shared data in the layout route only when children need the same data or the layout owns the decision, such as authentication for a protected shell.
 
 Avoid duplicating the same expensive query across parent and child loaders.
 
 ## Streaming
 
-Use streaming only when part of the page can render meaningfully before slower
-data is available.
+Use streaming only when part of the page can render meaningfully before slower data is available.
 
-Keep the critical path synchronous enough to render the route shell, permissions
-state, and not-found decisions. Do not stream data that is required to decide
-whether the user may see the page.
+Keep the critical path synchronous enough to render the route shell, permissions state, and not-found decisions. Do not stream data that is required to decide whether the user may see the page.
 
 ## Server Boundaries
 
-- Keep database clients, storage clients, auth secrets, and service tokens
-  server-side.
+- Keep database clients, storage clients, auth secrets, and service tokens server-side.
 - Use `.server` modules for server-only helpers when needed.
 - Pass only serializable loader data to route components.
 - Keep browser-only APIs out of server loaders.
@@ -163,5 +147,4 @@ whether the user may see the page.
 - [ ] Not-found and forbidden states use expected responses.
 - [ ] Loader returns serializable data.
 - [ ] Client loaders are used only for client-only concerns.
-- [ ] No database, storage, auth secret, or server-only service is imported into
-      client components.
+- [ ] No database, storage, auth secret, or server-only service is imported into client components.

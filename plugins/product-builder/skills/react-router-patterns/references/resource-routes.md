@@ -1,12 +1,10 @@
 # Resource Routes And API Endpoints
 
-Use this guide when adding or reviewing non-page responses, resource routes,
-upload/download endpoints, webhooks, auth endpoints, or JSON-style endpoints.
+Use this guide when adding or reviewing non-page responses, resource routes, upload/download endpoints, webhooks, auth endpoints, or JSON-style endpoints.
 
 ## When To Use A Resource Route
 
-Use a resource route when the URL should return data or perform a mutation
-without rendering a page component.
+Use a resource route when the URL should return data or perform a mutation without rendering a page component.
 
 Good uses:
 
@@ -15,11 +13,9 @@ Good uses:
 - Webhook receivers.
 - Export endpoints such as CSV or JSON downloads.
 - Fetcher-only row actions reused across pages.
-- Small JSON endpoints for app-owned data when a page loader is not the right
-  owner.
+- Small JSON endpoints for app-owned data when a page loader is not the right owner.
 
-Do not use resource routes to bypass route loaders/actions for normal page data
-or form submissions.
+Do not use resource routes to bypass route loaders/actions for normal page data or form submissions.
 
 ## Route Registration
 
@@ -31,8 +27,7 @@ route("projects/:projectId/archive", "routes/projects-archive.tsx");
 route("files/:fileId/download", "routes/files-download.tsx");
 ```
 
-Prefer resource-oriented paths. Avoid vague endpoints like `/api/submit`,
-`/api/data`, or `/action`.
+Prefer resource-oriented paths. Avoid vague endpoints like `/api/submit`, `/api/data`, or `/action`.
 
 ## Loader Resource Responses
 
@@ -88,8 +83,7 @@ export async function action({ context, params, request }: Route.ActionArgs) {
 }
 ```
 
-Fetcher forms can submit to resource actions when the mutation should not
-navigate.
+Fetcher forms can submit to resource actions when the mutation should not navigate.
 
 ## Auth And Permissions
 
@@ -103,20 +97,15 @@ Resource routes must apply the same auth and authorization rules as page routes:
 
 ## Webhooks
 
-Webhook routes should validate signatures before parsing or trusting payloads.
-Return minimal responses and avoid leaking internal errors to the sender.
+Webhook routes should validate signatures before parsing or trusting payloads. Return minimal responses and avoid leaking internal errors to the sender.
 
-Keep webhook secrets server-side and read them from environment bindings or
-server context.
+Keep webhook secrets server-side and read them from environment bindings or server context.
 
 ## Response Data
 
-Return only the data the caller needs. Avoid returning full database rows,
-secret fields, internal IDs that are not part of the app contract, or
-authorization metadata.
+Return only the data the caller needs. Avoid returning full database rows, secret fields, internal IDs that are not part of the app contract, or authorization metadata.
 
-Set content type and cache headers intentionally for file, JSON, and export
-responses.
+Set content type and cache headers intentionally for file, JSON, and export responses.
 
 ## Checklist
 

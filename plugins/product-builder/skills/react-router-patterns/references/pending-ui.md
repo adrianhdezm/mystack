@@ -1,8 +1,6 @@
 # Pending And Optimistic UI
 
-Use this guide when adding or reviewing route loading states, form submission
-states, optimistic UI, disabled controls, skeletons, pending navigation, or
-fetcher state.
+Use this guide when adding or reviewing route loading states, form submission states, optimistic UI, disabled controls, skeletons, pending navigation, or fetcher state.
 
 ## Choose The Right Pending Source
 
@@ -19,8 +17,7 @@ Keep pending UI close to the route or component that owns the interaction.
 
 ## useNavigation
 
-Use `useNavigation` for global route transitions and page-level form
-submissions:
+Use `useNavigation` for global route transitions and page-level form submissions:
 
 ```tsx
 import { useNavigation } from "react-router";
@@ -60,8 +57,7 @@ Use `NavLink` for navigation items that need active or pending styles:
 
 ## useFetcher For Local State
 
-Use `useFetcher` for pending state that belongs to a specific button, row,
-toggle, autosave field, or card action.
+Use `useFetcher` for pending state that belongs to a specific button, row, toggle, autosave field, or card action.
 
 ```tsx
 const fetcher = useFetcher();
@@ -76,8 +72,7 @@ Fetcher states mirror navigation states: `idle`, `submitting`, and `loading`.
 
 ## Optimistic UI With fetcher.formData
 
-Use `fetcher.formData` to render the submitted value before the action returns.
-This example also appears in `form-validation.md` — keep both in sync.
+Use `fetcher.formData` to render the submitted value before the action returns. This example also appears in `form-validation.md` — keep both in sync.
 
 ```tsx
 function FavoriteButton({
@@ -102,14 +97,11 @@ function FavoriteButton({
 }
 ```
 
-Only use optimistic UI when the expected success path is clear and failures can
-be shown or recovered cleanly.
+Only use optimistic UI when the expected success path is clear and failures can be shown or recovered cleanly.
 
 ## Page-Level Optimistic UI
 
-For full-page POSTs, `useNavigation().formData` can show pending submitted
-values. Prefer this for simple “creating...” or “saving...” states, not complex
-local cache behavior.
+For full-page POSTs, `useNavigation().formData` can show pending submitted values. Prefer this for simple “creating...” or “saving...” states, not complex local cache behavior.
 
 ```tsx
 const navigation = useNavigation();
@@ -118,12 +110,9 @@ const pendingTitle = navigation.formData?.get("title");
 
 ## Skeletons And Empty States
 
-Use skeletons for route transitions where the page structure is stable and data
-is still loading. Use empty states when the loader completed successfully but
-returned no records.
+Use skeletons for route transitions where the page structure is stable and data is still loading. Use empty states when the loader completed successfully but returned no records.
 
-Do not show a skeleton for validation errors, forbidden states, or not-found
-states. Those are completed route states, not loading states.
+Do not show a skeleton for validation errors, forbidden states, or not-found states. Those are completed route states, not loading states.
 
 ## Disabling During Submission
 
@@ -138,13 +127,11 @@ const isSubmitting = navigation.state === "submitting";
 </button>;
 ```
 
-Do not disable unrelated controls on the whole page when only one fetcher action
-is pending.
+Do not disable unrelated controls on the whole page when only one fetcher action is pending.
 
 ## CSS Busy Indicators
 
-Use `aria-busy`, `aria-disabled`, and visible text changes where appropriate.
-Keep busy indicators accessible and avoid relying on color alone.
+Use `aria-busy`, `aria-disabled`, and visible text changes where appropriate. Keep busy indicators accessible and avoid relying on color alone.
 
 ```tsx
 <section aria-busy={navigation.state !== "idle"}>{children}</section>
@@ -152,9 +139,7 @@ Keep busy indicators accessible and avoid relying on color alone.
 
 ## HydrateFallback
 
-Export a `HydrateFallback` component from a route module to show a placeholder
-while the client bundle hydrates. This only renders on the initial page load
-when the route uses `clientLoader` without a server `loader`:
+Export a `HydrateFallback` component from a route module to show a placeholder while the client bundle hydrates. This only renders on the initial page load when the route uses `clientLoader` without a server `loader`:
 
 ```tsx
 export function HydrateFallback() {
@@ -162,8 +147,7 @@ export function HydrateFallback() {
 }
 ```
 
-Do not use `HydrateFallback` when the route has a server `loader` — the server
-already returns rendered HTML, so there is nothing to fall back to.
+Do not use `HydrateFallback` when the route has a server `loader` — the server already returns rendered HTML, so there is nothing to fall back to.
 
 ## Checklist
 

@@ -10,8 +10,7 @@ pnpm wrangler whoami
 
 2. Create the Cloudflare R2 bucket when it does not already exist.
 
-Prefer the user's requested bucket name. If none is supplied, derive a
-lowercase hyphen-case name from the project and suffix `-files`.
+Prefer the user's requested bucket name. If none is supplied, derive a lowercase hyphen-case name from the project and suffix `-files`.
 
 ```sh
 pnpm wrangler r2 bucket create <bucket-name> --binding=APP_FILES --update-config
@@ -25,17 +24,16 @@ pnpm wrangler r2 bucket create example-product-files --binding=APP_FILES --updat
 
 3. Verify `wrangler.jsonc` includes the generated R2 binding.
 
-Do not replace existing bindings. Preserve the generated bucket name and only
-normalize formatting if the repository already formats `wrangler.jsonc`.
+Do not replace existing bindings. Preserve the generated bucket name and only normalize formatting if the repository already formats `wrangler.jsonc`.
 
 ```jsonc
 {
   "r2_buckets": [
     {
       "binding": "APP_FILES",
-      "bucket_name": "example-product-files"
-    }
-  ]
+      "bucket_name": "example-product-files",
+    },
+  ],
 }
 ```
 

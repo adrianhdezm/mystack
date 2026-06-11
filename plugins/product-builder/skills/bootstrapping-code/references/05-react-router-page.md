@@ -1,8 +1,6 @@
 # 05 - React Router Page
 
-Before adding or changing these files, load `react-router-patterns`
-and follow its app-level file, route config, route module, loader, error
-boundary, and context patterns.
+Before adding or changing these files, load `react-router-patterns` and follow its app-level file, route config, route module, loader, error boundary, and context patterns.
 
 ## Steps
 
@@ -205,15 +203,11 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 }
 ```
 
-10. Create a `public` folder with a `favicon.ico` file. Use an empty file as a
-    placeholder since agents cannot generate binary content. The user can replace
-    it with a real favicon later.
+10. Create a `public` folder with a `favicon.ico` file. Use an empty file as a placeholder since agents cannot generate binary content. The user can replace it with a real favicon later.
 
 11. Update the previously created `workers/app.ts` to use the React Router request handler.
 
-This project always enables React Router's `v8_middleware` future flag, so pass
-request-scoped server dependencies with `RouterContextProvider`. Do not use
-`AppLoadContext` or a plain object context in this setup.
+This project always enables React Router's `v8_middleware` future flag, so pass request-scoped server dependencies with `RouterContextProvider`. Do not use `AppLoadContext` or a plain object context in this setup.
 
 ```ts
 import { createRequestHandler, RouterContextProvider } from "react-router";

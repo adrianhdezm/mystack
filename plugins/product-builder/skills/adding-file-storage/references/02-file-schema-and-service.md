@@ -4,8 +4,7 @@
 
 1. Update `app/db/schema.ts`.
 
-Preserve existing tables and exports. Add the `files` table, then ensure the
-exported `schema` object includes every table.
+Preserve existing tables and exports. Add the `files` table, then ensure the exported `schema` object includes every table.
 
 ```ts
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
@@ -30,8 +29,7 @@ If `schema` already exists, add `files` to it instead of replacing it.
 
 2. Create `app/services/file.service.ts`.
 
-Use the repository's existing import style. Keep the service server-only; do not
-import it from client components.
+Use the repository's existing import style. Keep the service server-only; do not import it from client components.
 
 ```ts
 import { desc, eq } from "drizzle-orm";
@@ -90,16 +88,10 @@ export class FilesService {
 
 ## Implementation Notes
 
-- `FilesService` owns both R2 and D1 operations for files. It does not use a
-  separate DAO because every persistence call is paired with a corresponding R2
-  call. This is an intentional exception to the one-DAO-per-table rule in
-  `05-data-access-architecture.md`.
-- Keep object keys unique. A timestamp prefix is acceptable for the default
-  implementation; use a stronger key only when the project already has a
-  random ID helper.
+- `FilesService` owns both R2 and D1 operations for files. It does not use a separate DAO because every persistence call is paired with a corresponding R2 call. This is an intentional exception to the one-DAO-per-table rule in `05-data-access-architecture.md`.
+- Keep object keys unique. A timestamp prefix is acceptable for the default implementation; use a stronger key only when the project already has a random ID helper.
 - Use `application/octet-stream` for missing content types.
-- If later adding downloads, fetch the metadata row first and use `bucket.get`
-  with the stored key.
+- If later adding downloads, fetch the metadata row first and use `bucket.get` with the stored key.
 
 ## Expected Results
 

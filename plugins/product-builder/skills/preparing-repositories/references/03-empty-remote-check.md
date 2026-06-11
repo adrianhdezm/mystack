@@ -1,8 +1,6 @@
 # Empty Remote Check
 
-Before cloning, determine whether a default branch exists. If
-`defaultBranchRef` was already fetched in `02-missing-local-target.md`, reuse
-that value instead of querying again:
+Before cloning, determine whether a default branch exists. If `defaultBranchRef` was already fetched in `02-missing-local-target.md`, reuse that value instead of querying again:
 
 ```sh
 gh repo view "$REPOSITORY" --json defaultBranchRef

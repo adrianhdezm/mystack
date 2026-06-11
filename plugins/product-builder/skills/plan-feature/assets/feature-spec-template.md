@@ -38,8 +38,7 @@ For each route, note loader and action responsibilities.
 
 ## Dependencies
 
-List spec numbers this depends on (e.g., "Requires 00, 01"). Write "None" if
-standalone.
+List spec numbers this depends on (e.g., "Requires 00, 01"). Write "None" if standalone.
 
 ## Notes
 

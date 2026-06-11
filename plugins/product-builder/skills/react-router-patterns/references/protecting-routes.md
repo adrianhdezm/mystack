@@ -1,23 +1,16 @@
 # Protecting Routes
 
-Use this guide when adding or reviewing authenticated pages, protected route
-groups, protected actions, login redirects, logout behavior, ownership checks,
-role checks, cookie sessions, or auth middleware.
+Use this guide when adding or reviewing authenticated pages, protected route groups, protected actions, login redirects, logout behavior, ownership checks, role checks, cookie sessions, or auth middleware.
 
 ## Product Builder Auth Preference
 
-When Better Auth has been installed by `adding-authentication`, reuse the
-project's Better Auth helpers, session helpers, and safe redirect helpers. Do
-not introduce a parallel cookie session implementation unless the project
-explicitly does not use Better Auth.
+When Better Auth has been installed by `adding-authentication`, reuse the project's Better Auth helpers, session helpers, and safe redirect helpers. Do not introduce a parallel cookie session implementation unless the project explicitly does not use Better Auth.
 
 ## How Middleware Connects To Routes
 
 Connect auth middleware by exporting `middleware` from a route module.
 
-Middleware runs when that route is part of the matched route branch. If the
-middleware is exported from a layout route, it also applies to matched child
-routes.
+Middleware runs when that route is part of the matched route branch. If the middleware is exported from a layout route, it also applies to matched child routes.
 
 Use this to create protected route groups:
 
@@ -61,25 +54,19 @@ export default function ProtectedLayout() {
 }
 ```
 
-Now `/dashboard`, `/projects`, and `/projects/:projectId` are protected because
-they are children of `protected-layout.tsx`. `/login` is public because it is
-outside that layout branch.
+Now `/dashboard`, `/projects`, and `/projects/:projectId` are protected because they are children of `protected-layout.tsx`. `/login` is public because it is outside that layout branch.
 
 ## Default Pattern: Auth Middleware
 
-Prefer auth middleware for protected route groups. Middleware should
-authenticate the request once, redirect anonymous users, and place the
-authenticated user or session in React Router context.
+Prefer auth middleware for protected route groups. Middleware should authenticate the request once, redirect anonymous users, and place the authenticated user or session in React Router context.
 
-Do not repeat basic session checks in every protected loader or action when the
-route is already inside an auth middleware branch.
+Do not repeat basic session checks in every protected loader or action when the route is already inside an auth middleware branch.
 
 Include only safe local paths in `redirectTo`. Do not allow external redirects.
 
 ## Reading Auth Context In Loaders And Actions
 
-Loaders and actions inside a protected branch should read the authenticated user
-from context:
+Loaders and actions inside a protected branch should read the authenticated user from context:
 
 ```tsx
 import { appContext, userContext } from "~/context";
@@ -124,15 +111,13 @@ export async function action({ context, params, request }: Route.ActionArgs) {
 }
 ```
 
-Do not trust hidden form fields for user IDs, owner IDs, role names, or tenant
-IDs. Derive authorization from the authenticated session and server-side data.
+Do not trust hidden form fields for user IDs, owner IDs, role names, or tenant IDs. Derive authorization from the authenticated session and server-side data.
 
 ## Route-Specific Authorization
 
 Middleware answers: who is the user?
 
-Routes and server services still answer: may this user access or mutate this
-specific resource?
+Routes and server services still answer: may this user access or mutate this specific resource?
 
 Check permissions close to the data access or mutation:
 
@@ -142,12 +127,9 @@ Check permissions close to the data access or mutation:
 - Private files: check ownership before generating download URLs.
 - Delete actions: check permission before deleting and before redirecting.
 
-Use 404 when revealing the resource exists would leak private information. Use
-403 when the user may know the resource exists but lacks permission.
+Use 404 when revealing the resource exists would leak private information. Use 403 when the user may know the resource exists but lacks permission.
 
-Do not use middleware to hide route-specific ownership checks. Resource
-authorization belongs in the route or service that loads or mutates the
-resource.
+Do not use middleware to hide route-specific ownership checks. Resource authorization belongs in the route or service that loads or mutates the resource.
 
 ## Login And Logout
 
@@ -179,15 +161,13 @@ function safeRedirectTo(
 }
 ```
 
-Logout actions should clear or invalidate the session through the existing auth
-integration and redirect to login or public home.
+Logout actions should clear or invalidate the session through the existing auth integration and redirect to login or public home.
 
 Use POST for logout when it mutates session state.
 
 ## Cookie Sessions
 
-Use React Router cookie/session storage only in projects that are not using
-Better Auth or where a small route-local session is explicitly needed.
+Use React Router cookie/session storage only in projects that are not using Better Auth or where a small route-local session is explicitly needed.
 
 Session cookies should be:
 
@@ -197,13 +177,11 @@ Session cookies should be:
 - signed with a secret from environment bindings
 - rotated carefully when secrets change
 
-Flash session data is useful for one-time messages after redirects, but do not
-store sensitive data in flash messages.
+Flash session data is useful for one-time messages after redirects, but do not store sensitive data in flash messages.
 
 ## Fallback: Loader-Level Protection
 
-Use loader-level auth only when middleware is not installed yet, the route is a
-one-off protected page, or the protection rule is intentionally route-local.
+Use loader-level auth only when middleware is not installed yet, the route is a one-off protected page, or the protection rule is intentionally route-local.
 
 ```tsx
 import { redirect } from "react-router";
@@ -223,8 +201,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 }
 ```
 
-Do not use loader-level protection repeatedly across a protected section when a
-layout route with auth middleware would express the route boundary more clearly.
+Do not use loader-level protection repeatedly across a protected section when a layout route with auth middleware would express the route boundary more clearly.
 
 ## Checklist
 

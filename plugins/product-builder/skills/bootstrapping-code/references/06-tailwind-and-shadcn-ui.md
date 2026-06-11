@@ -314,15 +314,11 @@ pnpm dlx shadcn@latest add label
 pnpm dlx shadcn@latest add card
 ```
 
-Use only `pnpm dlx shadcn@latest` for shadcn/ui component installation. Do not
-install components with `pnpm shadcn`, `npx shadcn`, or a locally installed
-`shadcn` binary.
+Use only `pnpm dlx shadcn@latest` for shadcn/ui component installation. Do not install components with `pnpm shadcn`, `npx shadcn`, or a locally installed `shadcn` binary.
 
-`app/components/ui/button.tsx` must import Button primitives from
-`@base-ui/react/button`.
+`app/components/ui/button.tsx` must import Button primitives from `@base-ui/react/button`.
 
-`app/components/ui/input.tsx` must import Input primitives from
-`@base-ui/react/input`.
+`app/components/ui/input.tsx` must import Input primitives from `@base-ui/react/input`.
 
 12. Update `app/routes/home.tsx` to use the Button component.
 

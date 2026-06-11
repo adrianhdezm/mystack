@@ -19,10 +19,19 @@ pnpm add -D @trivago/prettier-plugin-sort-imports@latest prettier-plugin-tailwin
   "singleQuote": true,
   "printWidth": 140,
   "trailingComma": "none",
-  "importOrder": ["^~/routes/(.*)$", "^~/components/(.*)$", "^~/(.*)$", "^@/(.*)$", "^[./]"],
+  "importOrder": [
+    "^~/routes/(.*)$",
+    "^~/components/(.*)$",
+    "^~/(.*)$",
+    "^@/(.*)$",
+    "^[./]"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
-  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"]
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ]
 }
 ```
 
@@ -74,70 +83,84 @@ pnpm add -D @eslint/js@latest eslint@latest eslint-config-prettier@latest eslint
 7. Create `eslint.config.js` with this content:
 
 ```js
-import js from '@eslint/js';
-import pluginjsxA11y from 'eslint-plugin-jsx-a11y';
-import pluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import pluginReact from 'eslint-plugin-react';
-import pluginReactHooks from 'eslint-plugin-react-hooks';
-import { defineConfig } from 'eslint/config';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import js from "@eslint/js";
+import pluginjsxA11y from "eslint-plugin-jsx-a11y";
+import pluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import { defineConfig } from "eslint/config";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
     ignores: [
-      '**/.cache/**',
-      '**/node_modules/**',
-      '**/build/**',
-      '**/public/**',
-      '**/*.json',
-      '**/coverage/**',
-      '**/*.tsbuildinfo',
-      '**/.react-router/**',
-      '**/.wrangler/**',
-      '**/worker-configuration.d.ts',
-      'eslint.config.js'
-    ]
+      "**/.cache/**",
+      "**/node_modules/**",
+      "**/build/**",
+      "**/public/**",
+      "**/*.json",
+      "**/coverage/**",
+      "**/*.tsbuildinfo",
+      "**/.react-router/**",
+      "**/.wrangler/**",
+      "**/worker-configuration.d.ts",
+      "eslint.config.js",
+    ],
   },
-  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'], plugins: { js }, extends: ['js/recommended'] },
-  { files: ['**/*.js'], languageOptions: { sourceType: 'script' } },
   {
-    files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    plugins: { js },
+    extends: ["js/recommended"],
+  },
+  { files: ["**/*.js"], languageOptions: { sourceType: "script" } },
+  {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     settings: {
       react: {
-        version: 'detect'
-      }
+        version: "detect",
+      },
     },
-    languageOptions: { globals: { ...globals.browser, ...globals.node, React: true } }
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node, React: true },
+    },
   },
   tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       parserOptions: {
         projectService: {
-          defaultProject: 'tsconfig.json'
+          defaultProject: "tsconfig.json",
         },
         tsconfigRootDir: import.meta.dirname,
-        sourceType: 'module'
-      }
-    }
+        sourceType: "module",
+      },
+    },
   },
   pluginReact.configs.flat.recommended,
-  pluginReact.configs.flat['jsx-runtime'],
+  pluginReact.configs.flat["jsx-runtime"],
   pluginReactHooks.configs.flat.recommended,
   pluginjsxA11y.flatConfigs.recommended,
   pluginPrettierRecommended,
   {
     rules: {
-      curly: 'error',
-      'no-unused-vars': 'off',
-      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', ignoreRestSiblings: true }
-      ]
-    }
-  }
+      curly: "error",
+      "no-unused-vars": "off",
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
 ]);
 ```
 

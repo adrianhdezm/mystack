@@ -43,18 +43,13 @@ pnpm build
 
 ## Failure Handling
 
-- If `pnpm db:migrate` fails because `.env` is missing credentials, stop after
-  confirming `.env.example` is correct and tell the user which variables are
-  missing.
-- If `pnpm db:local:migrate` fails because migrations have not been generated,
-  run `pnpm db:generate` first.
-- If Cloudflare type generation fails because Wrangler is not authenticated,
-  report the exact command that failed and leave source changes in place.
+- If `pnpm db:migrate` fails because `.env` is missing credentials, stop after confirming `.env.example` is correct and tell the user which variables are missing.
+- If `pnpm db:local:migrate` fails because migrations have not been generated, run `pnpm db:generate` first.
+- If Cloudflare type generation fails because Wrangler is not authenticated, report the exact command that failed and leave source changes in place.
 
 ## Expected Results
 
 - SQL migration files exist under `db/migrations`.
-- Remote migrations apply with `pnpm db:migrate` when Cloudflare credentials are
-  present.
+- Remote migrations apply with `pnpm db:migrate` when Cloudflare credentials are present.
 - Local migrations apply with `pnpm db:local:migrate`.
 - Generated `Env` types include `APP_DB`.

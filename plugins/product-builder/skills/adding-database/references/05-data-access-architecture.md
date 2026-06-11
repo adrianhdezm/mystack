@@ -2,12 +2,9 @@
 
 ## Purpose
 
-Use this reference when adding or changing application tables, DAOs, services,
-transactions, data validation schemas, or data access workflows in a Product
-Builder project.
+Use this reference when adding or changing application tables, DAOs, services, transactions, data validation schemas, or data access workflows in a Product Builder project.
 
-The data access architecture is designed for React Router v7 applications using
-Cloudflare D1, Drizzle ORM, and `drizzle-zod`.
+The data access architecture is designed for React Router v7 applications using Cloudflare D1, Drizzle ORM, and `drizzle-zod`.
 
 The goals are:
 
@@ -35,22 +32,17 @@ app/
 └── routes/
 ```
 
-Keep Drizzle table definitions and the exported Drizzle `schema` object in
-`app/db/schema.ts`. Keep DAO-specific `drizzle-zod` validation schemas in the
-DAO file that owns the entity.
+Keep Drizzle table definitions and the exported Drizzle `schema` object in `app/db/schema.ts`. Keep DAO-specific `drizzle-zod` validation schemas in the DAO file that owns the entity.
 
 ## DAO Layer
 
-DAOs provide table-scoped persistence operations. Each DAO maps to exactly one
-database table and is responsible only for CRUD operations and filtered list
-access.
+DAOs provide table-scoped persistence operations. Each DAO maps to exactly one database table and is responsible only for CRUD operations and filtered list access.
 
 DAOs are intentionally simple and must not contain business logic.
 
 ### DAO Location
 
-Every table that needs application-level persistence access must have exactly
-one DAO in:
+Every table that needs application-level persistence access must have exactly one DAO in:
 
 ```txt
 app/db/daos/
@@ -72,8 +64,7 @@ Each DAO accepts a typed Drizzle database instance.
 constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
 ```
 
-This allows DAOs to be instantiated with either the request database client or a
-transaction client.
+This allows DAOs to be instantiated with either the request database client or a transaction client.
 
 ### Shared DAO Interface
 
@@ -115,7 +106,7 @@ create(attrs);
 get(id);
 getAll(opts);
 update(id, attrs);
-delete(id);
+delete id;
 deleteMany(ids);
 ```
 
@@ -150,8 +141,7 @@ await userDao.getAll({
 });
 ```
 
-Represent all filtering through typed filter objects. Do not add custom public
-query methods for filtered reads.
+Represent all filtering through typed filter objects. Do not add custom public query methods for filtered reads.
 
 ### Type Ownership
 
@@ -173,13 +163,11 @@ UpdateUser
 UserFilters
 ```
 
-Other modules must import these types from the DAO instead of redefining
-equivalent shapes.
+Other modules must import these types from the DAO instead of redefining equivalent shapes.
 
 ### Validation Schemas
 
-Define DAO-specific `drizzle-zod` schemas in the same file as the DAO. Do not
-create separate validation schema files for DAO-owned entity shapes.
+Define DAO-specific `drizzle-zod` schemas in the same file as the DAO. Do not create separate validation schema files for DAO-owned entity shapes.
 
 ```ts
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -226,13 +214,11 @@ DAOs must not:
 - Contain workflow-specific SQL.
 - Contain application-specific logic.
 
-A DAO should be understandable without knowing the business workflow that uses
-it.
+A DAO should be understandable without knowing the business workflow that uses it.
 
 ## Service Layer
 
-Services coordinate business workflows. Use services for operations that span
-multiple tables, require transactions, or represent domain behavior.
+Services coordinate business workflows. Use services for operations that span multiple tables, require transactions, or represent domain behavior.
 
 Services compose DAOs.
 
@@ -265,8 +251,7 @@ Provision workspace
 
 ### Transaction Convention
 
-Services own transaction boundaries. If a workflow performs multiple related
-writes, execute it inside a transaction.
+Services own transaction boundaries. If a workflow performs multiple related writes, execute it inside a transaction.
 
 ```ts
 export async function createUserWithProfile(
@@ -306,8 +291,7 @@ When in doubt, prefer a transaction for multi-write workflows.
 
 ## Cross-Table Reads
 
-Cross-table reads do not belong in DAOs. Create dedicated query functions or
-service functions instead.
+Cross-table reads do not belong in DAOs. Create dedicated query functions or service functions instead.
 
 ```ts
 export async function getProjectDetails(

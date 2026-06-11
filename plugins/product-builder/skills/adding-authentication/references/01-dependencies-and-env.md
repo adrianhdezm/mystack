@@ -14,23 +14,19 @@ If D1 or Drizzle is absent, stop and run the `adding-database` skill first.
 
 ## Install packages
 
-Check current package versions when the project's existing skills require latest
-package resolution. Install the auth and form dependencies:
+Check current package versions when the project's existing skills require latest package resolution. Install the auth and form dependencies:
 
 ```sh
 pnpm add better-auth zod@4 @conform-to/react @conform-to/zod
 ```
 
-If the project does not already include the UI components used by the auth
-forms, add them through the existing shadcn/ui workflow:
+If the project does not already include the UI components used by the auth forms, add them through the existing shadcn/ui workflow:
 
 ```sh
 pnpm dlx shadcn@latest add button card input label
 ```
 
-Use the project's existing icon package when available. If no icon package is
-present, render plain text validation messages instead of adding a new icon
-dependency only for auth forms.
+Use the project's existing icon package when available. If no icon package is present, render plain text validation messages instead of adding a new icon dependency only for auth forms.
 
 ## Generate AUTH_SECRET
 
@@ -52,8 +48,7 @@ Update `.env.example` with a placeholder, not the real value:
 AUTH_SECRET=
 ```
 
-For remote Cloudflare deployments, do not set the secret from the agent
-workflow. Document this requirement in the target project's `README.md`:
+For remote Cloudflare deployments, do not set the secret from the agent workflow. Document this requirement in the target project's `README.md`:
 
 ```sh
 pnpm wrangler secret put AUTH_SECRET
@@ -64,13 +59,11 @@ Use wording like:
 ````md
 ### Remote Cloudflare deployment
 
-Before deploying to Cloudflare, set `AUTH_SECRET` in the remote Worker
-environment from an authenticated Wrangler session:
+Before deploying to Cloudflare, set `AUTH_SECRET` in the remote Worker environment from an authenticated Wrangler session:
 
 ```sh
 pnpm wrangler secret put AUTH_SECRET
 ```
 ````
 
-Explain that the application requires this remote secret before Cloudflare
-deployments can run successfully.
+Explain that the application requires this remote secret before Cloudflare deployments can run successfully.
