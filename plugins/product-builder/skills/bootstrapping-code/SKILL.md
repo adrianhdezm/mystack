@@ -31,6 +31,13 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 - Never create a local-only Product Builder app in `work/`, `./work`, a temporary directory, the current workspace, or any agent-chosen folder.
 - Keep Cloudflare spelled correctly in generated files, package names, and user-facing output.
 
+## Gotchas
+
+- `pnpm wrangler types` must be re-run after any change to `wrangler.jsonc` bindings. Skipping this causes TypeScript errors in `workers/app.ts` because the generated `Env` interface is stale.
+- shadcn/ui `init` modifies `tailwind.config.ts` and `app/styles/globals.css`. If these files were already customized, the init may overwrite changes. Check the diff after running it.
+- React Router in framework mode requires `app/root.tsx` to export a default component and a `Layout`. Missing either causes a blank page with no error in the browser console.
+- Vite config must use `cloudflareDevProxy()` before `reactRouter()` in the plugins array. Wrong order causes the dev server to serve raw source instead of compiled output.
+
 ## Workflow
 
 1. Confirm `preparing-repositories` returned `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.

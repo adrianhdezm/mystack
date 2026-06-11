@@ -32,6 +32,13 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 - Preserve existing React Router request handling and inject file storage services through router context.
 - Roll back uploaded R2 objects if inserting file metadata fails.
 
+## Gotchas
+
+- R2 buckets created with `wrangler r2 bucket create` are region-specific. The bucket name must be globally unique across all Cloudflare accounts — a "bucket already exists" error usually means the name is taken, not that the bucket was already created in this account.
+- R2 bindings in `wrangler.jsonc` use `r2_buckets` (plural), not `r2_bucket`. Using the singular form silently ignores the binding.
+- Uploading to R2 succeeds even if the D1 metadata insert later fails. Always delete the R2 object in the catch path to avoid orphaned files with no metadata.
+- `env.APP_FILES.put()` accepts a `ReadableStream`, `ArrayBuffer`, or `string` — not a `File` or `Blob` directly. Extract the body from the uploaded file before calling `put()`.
+
 ## Workflow
 
 1. Verify the target project is a Product Builder-style Cloudflare Workers, Vite, React Router, TypeScript, pnpm, D1, and Drizzle project.

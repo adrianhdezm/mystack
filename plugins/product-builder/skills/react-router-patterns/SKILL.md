@@ -21,6 +21,13 @@ Load the reference that matches the work being done. Each reference is self-cont
 - The Worker passes context with `RouterContextProvider`; do not use `AppLoadContext`, plain object context, or `context.cloudflare`.
 - Product Builder projects using Better Auth should prefer the Better Auth integration installed by `adding-authentication`.
 
+## Gotchas
+
+- Importing a `.server` module from a client component compiles without error in dev but crashes the production build. If a loader or service import leaks into a component, the build fails with a cryptic "server-only module" error.
+- `context.get(appContext)` only works inside loaders, actions, and middleware. Calling it at module scope or inside a React component throws because there is no active request context.
+- React Router's `redirect()` in an action returns a `Response`, not a thrown redirect. Return it (`return redirect("/path")`), do not throw it.
+- Route type generation (`./+types/<route-file>`) depends on the route being registered in `app/routes.ts`. Adding a route file without updating `app/routes.ts` causes "module not found" errors on the type import.
+
 ## When Adding New Routes
 
 Use this when creating pages, layout routes, nested routes, index routes, dynamic routes, splats, or new route modules.

@@ -32,6 +32,13 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - Preserve existing `wrangler.jsonc` settings and merge D1 configuration into it.
 - Preserve existing React Router request handling and inject the database through router context.
 
+## Gotchas
+
+- D1 is SQLite. There is no `ALTER COLUMN` — changing a column type or adding a `NOT NULL` column without a default requires creating a new table, copying data, and dropping the old one. Drizzle Kit handles this automatically during migration generation, but the resulting migration may drop and recreate tables.
+- `pnpm wrangler d1 create` returns the database ID in its output. Capture it immediately — there is no list command that shows the ID later without `wrangler d1 list`, which requires an authenticated session.
+- `drizzle-kit generate` reads `drizzle.config.ts`, which needs `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in `.env`. If `.env` is missing or incomplete, the command fails with an unhelpful credentials error.
+- Local D1 (`pnpm wrangler d1 migrations apply --local`) and remote D1 (`pnpm db:migrate`) use different migration tracking. Always run both after generating a new migration.
+
 ## Workflow
 
 1. Verify the target project is a Product Builder-style Cloudflare Workers, Vite, React Router, TypeScript, and pnpm project.

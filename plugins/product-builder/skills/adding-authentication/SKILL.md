@@ -33,6 +33,13 @@ AUTH_COOKIE_PREFIX: App
 - Add login, signup/register, and logout routes using React Router actions and loaders.
 - Preserve existing route, Worker, context, shadcn/ui, and Tailwind patterns.
 
+## Gotchas
+
+- Better Auth session cookies use a prefix (`App` by default). If the cookie prefix in the auth config does not match what the client sends, every session check silently returns null — the user appears logged out with no error.
+- Better Auth expects its tables to exist before the server starts. If migrations have not been applied, the auth handler throws a D1 "no such table" error on the first request.
+- `AUTH_SECRET` must be the same between dev and deployed environments. Generating a new secret invalidates all existing sessions.
+- The `api/auth/*` route must be a splat route (`route("api/auth/*", "routes/auth.tsx")`). Using a non-splat path causes Better Auth sub-endpoints like `/api/auth/sign-in/email` to 404.
+
 ## Workflow
 
 1. Verify the target project is a Product Builder Cloudflare Workers, React Router, TypeScript, pnpm, D1, and Drizzle project.
