@@ -47,12 +47,13 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 4. Load `react-router-patterns`, then add the database schema and wire Drizzle into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
 5. If adding application tables, DAOs, services, transactions, or data access workflows, follow [data-access-architecture.md](../../shared/references/data-access-architecture.md).
 6. Generate and apply migrations using [04-migrations-validation.md](references/04-migrations-validation.md).
-7. Update project documentation:
-   - **`docs/architecture.md`** — Add `Drizzle ORM, Cloudflare D1` to the Stack section. Extend the Structure tree with `app/db/` (schema.ts, dao.ts, daos/), `app/services/`, and `db/migrations/`. Add a Data Model link: `See [data-model.md](data-model.md)`. Add a convention entry: `**[Data Access](conventions/data-access.md)** — DAO interface, service layer, transactions`. If `docs/architecture.md` does not exist, create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the additions above.
-   - **`docs/data-model.md`** — Create using [data-model-template.md](../../shared/templates/data-model-template.md). If application tables were added, document their entities, columns, types, and relationships to match `app/db/schema.ts`.
-   - **`docs/conventions/data-access.md`** — Create using [convention-template.md](../../shared/templates/convention-template.md). Seed with key patterns from [data-access-architecture.md](../../shared/references/data-access-architecture.md): DAO interface contract, one DAO per table, type ownership (`<Entity>Record`, `Create<Entity>`, `Update<Entity>`, `<Entity>Filters`), `getAll()` for filtered access, service transaction boundaries, and the dependency graph (Routes → Services → DAOs → Database). Include anti-patterns: no custom public query methods on DAOs, no DAO-to-DAO imports, no business logic in DAOs.
-   - **`README.md`** — Add D1 setup, required environment variables, and migration commands.
-   - **`AGENTS.md`** — Add database-specific agent instructions. Add `docs/data-model.md` to the Project Documentation section (canonical entity and relationship reference). If no Project Documentation section exists, create one following the format from `bootstrapping-code` step 13.
+7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
+   - **Stack addition**: `Drizzle ORM, Cloudflare D1`.
+   - **Structure additions**: `app/db/` (schema.ts, dao.ts, daos/), `app/services/`, `db/migrations/`.
+   - **Data model link**: `See [data-model.md](data-model.md)` in architecture.
+   - **New convention**: `docs/conventions/data-access.md` — seed with key patterns from [data-access-architecture.md](../../shared/references/data-access-architecture.md): DAO interface contract, one DAO per table, type ownership (`<Entity>Record`, `Create<Entity>`, `Update<Entity>`, `<Entity>Filters`), `getAll()` for filtered access, service transaction boundaries, dependency graph (Routes → Services → DAOs → Database). Anti-patterns: no custom public query methods on DAOs, no DAO-to-DAO imports, no business logic in DAOs.
+   - **README additions**: D1 setup, required environment variables, migration commands.
+   - **AGENTS.md additions**: database instructions, `docs/data-model.md` reference in Project Documentation section.
 8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment.
 9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 

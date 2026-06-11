@@ -47,11 +47,11 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 4. Review [data-access-architecture.md](../../shared/references/data-access-architecture.md) for the file metadata service and any data access changes.
 5. Load `react-router-patterns`, then wire the service into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
 6. Generate/apply migrations and validate types using [04-migrations-validation.md](references/04-migrations-validation.md).
-7. Update project documentation:
-   - **`docs/architecture.md`** — Add `Cloudflare R2 (file storage)` to the Stack section. If `docs/architecture.md` does not exist, create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the addition.
-   - **`docs/data-model.md`** — Add the `files` entity with its columns, types, and relationships to match `app/db/schema.ts`. Create the file using [data-model-template.md](../../shared/templates/data-model-template.md) if it does not exist.
-   - **`README.md`** — Add R2 bucket setup, file metadata table, and upload/delete behavior.
-   - **`AGENTS.md`** — Add file storage agent instructions. Ensure the Project Documentation section exists and references `docs/`.
+7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
+   - **Stack addition**: `Cloudflare R2 (file storage)`.
+   - **Data model addition**: `files` entity with columns, types, and relationships matching `app/db/schema.ts`.
+   - **README additions**: R2 bucket setup, file metadata table, upload/delete behavior.
+   - **AGENTS.md additions**: file storage instructions.
 8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment.
 9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 

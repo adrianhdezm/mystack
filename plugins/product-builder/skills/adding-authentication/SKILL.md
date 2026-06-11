@@ -47,12 +47,12 @@ AUTH_COOKIE_PREFIX: App
 3. Replace or extend the Drizzle schema with the required auth tables using [02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md).
 4. Wire Better Auth into React Router context and the Worker using [03-server-integration.md](references/03-server-integration.md).
 5. Load `react-router-patterns`, then add `api/auth/*`, `login`, `logout`, and `signup` routes using [04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md).
-6. Update project documentation:
-   - **`docs/architecture.md`** — Add `Better Auth (email + password)` to the Stack section. If `docs/architecture.md` does not exist, create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the addition.
-   - **`docs/data-model.md`** — Add the auth entities (`users`, `sessions`, `accounts`, `verifications`) with their columns, types, and relationships to match what Better Auth creates in `app/db/schema.ts`. Create the file using [data-model-template.md](../../shared/templates/data-model-template.md) if it does not exist.
-   - **`docs/conventions/routes.md`** — If it exists, add auth-related route patterns: protected route loader authentication check, login/signup form action with Better Auth API, logout action, and safe redirect after auth. If it does not exist, create it using [convention-template.md](../../shared/templates/convention-template.md) with these patterns.
-   - **`README.md`** — Add auth setup, required environment variables (`AUTH_SECRET`), `pnpm wrangler secret put AUTH_SECRET` for remote deploys, and migration commands.
-   - **`AGENTS.md`** — Add auth-specific agent instructions (environment variables, migration commands). Ensure the Project Documentation section exists and references `docs/`.
+6. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
+   - **Stack addition**: `Better Auth (email + password)`.
+   - **Data model addition**: auth entities (`users`, `sessions`, `accounts`, `verifications`) matching `app/db/schema.ts`.
+   - **Convention update**: `docs/conventions/routes.md` — add auth-related route patterns: protected route loader check, login/signup form action with Better Auth API, logout action, safe redirect after auth.
+   - **README additions**: auth setup, `AUTH_SECRET`, `pnpm wrangler secret put AUTH_SECRET` for remote deploys, migration commands.
+   - **AGENTS.md additions**: auth instructions (environment variables, migration commands).
 7. Run formatting, typecheck, lint, build, and available migration commands.
 8. Commit the generated and updated files using the repository's Conventional Commits format.
 
