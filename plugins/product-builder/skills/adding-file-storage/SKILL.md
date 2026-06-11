@@ -25,7 +25,7 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 - Use `pnpm` for Wrangler, package, and project scripts.
 - Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, actions, upload forms, or resource routes. Any React Router code must follow those patterns.
 - Require an existing D1 and Drizzle setup for file metadata; if missing, run the `adding-database` skill first.
-- Follow [data-access-architecture.md](../../shared/references/data-access-architecture.md) for file metadata service boundaries, transaction ownership, and any DAO or data access workflow changes.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for file metadata service boundaries, transaction ownership, and any DAO or data access workflow changes.
 - Store file bytes in Cloudflare R2 and file metadata in the D1 `files` table.
 - Do not store raw file contents, Cloudflare account IDs, or API tokens in D1.
 - Preserve existing `wrangler.jsonc` settings and merge R2 configuration into it.
@@ -44,7 +44,7 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 1. Verify the target project is a Product Builder-style Cloudflare Workers, Vite, React Router, TypeScript, pnpm, D1, and Drizzle project.
 2. Create or register the Cloudflare R2 bucket using [01-cloudflare-r2.md](references/01-cloudflare-r2.md).
 3. Add the file metadata schema and service using [02-file-schema-and-service.md](references/02-file-schema-and-service.md).
-4. Review [data-access-architecture.md](../../shared/references/data-access-architecture.md) for the file metadata service and any data access changes.
+4. Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for the file metadata service and any data access changes.
 5. Load `react-router-patterns`, then wire the service into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
 6. Generate/apply migrations and validate types using [04-migrations-validation.md](references/04-migrations-validation.md).
 7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:

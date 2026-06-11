@@ -28,7 +28,7 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - Do not hardcode Cloudflare account IDs, database IDs, or API tokens in source.
 - Keep generated migrations under `db/migrations`.
 - Keep the application schema in `app/db/schema.ts`.
-- Follow [data-access-architecture.md](../../shared/references/data-access-architecture.md) when adding tables, DAOs, services, transactions, or data access workflows.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) when adding tables, DAOs, services, transactions, or data access workflows.
 - Preserve existing `wrangler.jsonc` settings and merge D1 configuration into it.
 - Preserve existing React Router request handling and inject the database through router context.
 
