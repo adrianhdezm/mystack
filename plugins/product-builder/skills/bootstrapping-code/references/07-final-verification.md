@@ -65,6 +65,10 @@ Compare the output against this expected structure:
 ./app/components
 ./app/components/ui
 ./app/components/ui/button.tsx
+./app/components/ui/card.tsx
+./app/components/ui/input.tsx
+./app/components/ui/label.tsx
+./app/context.ts
 ./app/entry.server.tsx
 ./app/lib
 ./app/lib/utils.ts
