@@ -20,7 +20,8 @@ pnpm db:migrate
 pnpm db:local:migrate
 ```
 
-4. Regenerate Cloudflare types after adding the R2 binding.
+4. Re-run Cloudflare type generation to ensure `Env` types are current after all
+   binding and migration changes.
 
 ```sh
 pnpm cf-typegen
