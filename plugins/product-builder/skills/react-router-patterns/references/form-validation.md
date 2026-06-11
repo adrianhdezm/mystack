@@ -114,7 +114,8 @@ export default function SearchPage() {
 
 Use `useFetcher` when a mutation should update part of the page without
 navigating. This is the right pattern for checkboxes, favorite buttons, row
-actions, autosave, and independent actions inside a list.
+actions, autosave, and independent actions inside a list. This example also
+appears in `pending-ui.md` — keep both in sync.
 
 ```tsx
 import { useFetcher } from "react-router";

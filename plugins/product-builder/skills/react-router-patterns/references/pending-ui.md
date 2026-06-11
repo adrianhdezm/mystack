@@ -76,7 +76,8 @@ Fetcher states mirror navigation states: `idle`, `submitting`, and `loading`.
 
 ## Optimistic UI With fetcher.formData
 
-Use `fetcher.formData` to render the submitted value before the action returns:
+Use `fetcher.formData` to render the submitted value before the action returns.
+This example also appears in `form-validation.md` — keep both in sync.
 
 ```tsx
 function FavoriteButton({
