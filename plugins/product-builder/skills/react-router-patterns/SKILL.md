@@ -5,11 +5,7 @@ description: Defines Product Builder React Router v7 route design and implementa
 
 # React Router Patterns
 
-## Purpose
-
-Use this skill to keep Product Builder applications consistent with the generated React Router v7, Cloudflare Workers, TypeScript, Tailwind, and shadcn/ui stack.
-
-Load the reference that matches the work being done. Each reference is self-contained for that task, so avoid loading unrelated React Router references unless the route touches multiple concerns.
+Load the reference that matches the work being done. Each reference is self-contained, so avoid loading unrelated references unless the route touches multiple concerns.
 
 ## Stack Assumptions
 

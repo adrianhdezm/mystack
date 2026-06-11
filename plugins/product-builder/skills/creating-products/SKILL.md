@@ -5,9 +5,7 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 # Creating Products
 
-## Purpose
-
-Use this as the Product Builder entry point. It interviews the user, classifies project complexity, prepares the project foundation with the required Product Builder skills, then plans and implements features using the feature lifecycle skills.
+This is the Product Builder entry point. It interviews the user, classifies project complexity, prepares the foundation, then plans and implements features.
 
 ## Required inputs
 
