@@ -80,6 +80,40 @@ One-line: overall status (pass / pass with notes / fail).
 - Suggested fixes or follow-up work.
 ```
 
+**Example** (abbreviated):
+
+```markdown
+# Verification: 02 — Color Upload
+
+## Summary
+
+Pass with notes — all acceptance criteria met, one minor inconsistency in data-model.md.
+
+## Acceptance Criteria
+
+| #   | Criterion                                        | Status | Notes                     |
+| --- | ------------------------------------------------ | ------ | ------------------------- |
+| 1   | When user uploads a .ase file, colors are parsed | Met    |                           |
+| 2   | When parsing fails, user sees an error toast      | Met    | Uses sonner toast         |
+| 3   | When colors are saved, they appear on dashboard  | Met    | Sorted by createdAt desc  |
+
+## Deviations from Spec
+
+- **Toast library** — spec said "error message below form", implementation uses sonner toast. Acceptable — better UX.
+
+## Missing Items
+
+- None.
+
+## Inconsistencies
+
+- `docs/data-model.md` lists `hex` column as `varchar(7)` but schema uses `text`. Update docs.
+
+## Recommendations
+
+- Update `docs/data-model.md` to match schema.
+```
+
 Present the report to the user. Do not modify code — this skill is read-only. If there are failing criteria or missing items, suggest running `implement-feature` again with the spec to address them.
 
 ## Validation Checklist

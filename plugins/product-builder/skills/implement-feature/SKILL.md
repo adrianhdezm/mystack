@@ -44,23 +44,23 @@ Add a section header for the current spec (`### NN — Title`) under the Impleme
 ```markdown
 ## Implementation Log
 
-### NN — Title
+### 02 — Color Upload
 
 #### Design Decisions
 
-- **Short title** — explanation of the choice made
+- **Sonner for toasts** — used sonner instead of a custom toast because the project already depends on it via shadcn/ui.
 
 #### Deviations
 
-- **Short title** — where implementation departs from the spec, and why
+- **Error display** — spec said inline error below the form; used a toast instead for consistency with the existing delete confirmation pattern.
 
 #### Tradeoffs
 
-- **Short title** — alternatives considered and why one was picked
+- **File validation on client vs server** — validated file extension on the client for fast feedback, but full .ase parsing stays server-side. Client-only validation would miss corrupted files.
 
 #### Open Questions
 
-- **Short title** — anything the user should confirm or revise
+- **Max file size** — spec does not specify. Currently allowing up to 5 MB. Confirm or adjust.
 ```
 
 #### Conventions
