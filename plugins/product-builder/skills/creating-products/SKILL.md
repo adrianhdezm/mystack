@@ -31,15 +31,12 @@ must ask only for missing blocking values. Do not create fallback folders.
 1. Interview the user using [interview-and-decisions.md](references/interview-and-decisions.md).
    Ask only for information that cannot be inferred and materially changes the
    foundation or product design.
-2. Classify the project as `simple`, `standard`, or `advanced`.
-3. Select foundation capabilities from the classification matrix:
-   - `simple`: no database, no authentication, no file storage.
-   - `standard`: database and authentication, no file storage.
-   - `advanced`: database, authentication, and file storage.
-4. Prepare the repository by running `preparing-repositories`.
-5. Bootstrap the app by running `bootstrapping-code` with the returned
+2. Classify the project and select foundation capabilities using the
+   classification matrix in [interview-and-decisions.md](references/interview-and-decisions.md).
+3. Prepare the repository by running `preparing-repositories`.
+4. Bootstrap the app by running `bootstrapping-code` with the returned
    `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.
-6. Add foundation capabilities in dependency order based on project
+5. Add foundation capabilities in dependency order based on project
    classification:
    - `simple`: skip `adding-database`, `adding-authentication`, and
      `adding-file-storage`.
@@ -47,24 +44,24 @@ must ask only for missing blocking values. Do not create fallback folders.
      `adding-file-storage`.
    - `advanced`: run `adding-database`, then `adding-authentication`, then
      `adding-file-storage`.
-7. Load `react-router-patterns` before planning or adding any
+6. Load `react-router-patterns` before planning or adding any
    React Router code. Use it to plan the route map, route files,
    loader/action responsibilities, redirects, and protected route behavior.
    Load
    [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md)
    before planning or adding domain-specific tables, DAOs, services,
    transactions, or data access workflows.
-8. Produce a design proposal using [design-approval.md](references/design-approval.md).
+7. Produce a design proposal using [design-approval.md](references/design-approval.md).
    Include the data model, migrations, routes/pages, permissions, storage
    behavior, and implementation sequence.
-9. Stop and ask for approval before implementing domain-specific schema,
+8. Stop and ask for approval before implementing domain-specific schema,
    migrations, pages, views, actions, loaders, or services.
-10. After approval, implement the approved design in the target project. Any
-    React Router code must follow `react-router-patterns` and
-    the generated Product Builder stack.
-11. Verify with formatting, typecheck, lint, build, relevant migrations, and any
+9. After approval, implement the approved design in the target project. Any
+   React Router code must follow `react-router-patterns` and
+   the generated Product Builder stack.
+10. Verify with formatting, typecheck, lint, build, relevant migrations, and any
     feature-specific checks. Fix issues before finishing when possible.
-12. Commit the approved implementation using the project Conventional Commits
+11. Commit the approved implementation using the project Conventional Commits
     format and summarize the foundation skills used, user-approved design, commit
     hash, verification results, and any failed commands.
 
