@@ -41,8 +41,8 @@ import { files, type schema } from "~/db/schema";
 
 export class FilesService {
   constructor(
-    private db: DrizzleD1Database<typeof schema>,
-    private bucket: R2Bucket,
+    private readonly db: DrizzleD1Database<typeof schema>,
+    private readonly bucket: R2Bucket,
   ) {}
 
   async list() {
