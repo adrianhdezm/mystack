@@ -107,7 +107,7 @@ component when routes need the same visual treatment.
 
 ## Checklist
 
-- [ ] Expected 400/403/404/409 states use route responses.
+- [ ] Expected 400/401/403/404/409 states use route responses.
 - [ ] Form validation returns action data instead of throwing boundaries.
 - [ ] Private missing resources use 404 when existence should not leak.
 - [ ] Error boundaries are placed at the right recovery scope.
