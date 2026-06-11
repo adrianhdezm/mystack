@@ -91,11 +91,11 @@ Pass with notes — all acceptance criteria met, one minor inconsistency in data
 
 ## Acceptance Criteria
 
-| #   | Criterion                                        | Status | Notes                     |
-| --- | ------------------------------------------------ | ------ | ------------------------- |
-| 1   | When user uploads a .ase file, colors are parsed | Met    |                           |
-| 2   | When parsing fails, user sees an error toast      | Met    | Uses sonner toast         |
-| 3   | When colors are saved, they appear on dashboard  | Met    | Sorted by createdAt desc  |
+| # | Criterion | Status | Notes |
+| --- | --- | --- | --- |
+| 1 | When user uploads a .ase file, colors are parsed | Met |  |
+| 2 | When parsing fails, user sees an error toast | Met | Uses sonner toast |
+| 3 | When colors are saved, they appear on dashboard | Met | Sorted by createdAt desc |
 
 ## Deviations from Spec
 
