@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementing Features"
+  short_description: "Implement a feature spec end-to-end from schema to UI."
+  default_prompt: "Implement the next Product Builder feature spec from docs/features/ — write schema, migrations, DAOs, services, routes, and components."
