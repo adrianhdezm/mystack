@@ -232,8 +232,7 @@ const schema = z
     name: z.string().min(1, 'Name is required'),
     email: z.email('Please enter a valid email address'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
-    redirectTo: z.string().optional()
+    confirmPassword: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -258,16 +257,15 @@ export async function action({ context, request }: Route.ActionArgs) {
     return data(submission.reply(), { status: 400 });
   }
 
-  const { name, email, password, redirectTo } = submission.value;
+  const { name, email, password } = submission.value;
 
   try {
-    const { headers } = await auth.api.signUpEmail({
-      returnHeaders: true,
+    await auth.api.signUpEmail({
       body: { name, email, password },
       headers: request.headers
     });
 
-    return redirect(safeRedirectTo(redirectTo), { headers });
+    return redirect('/login');
   } catch (error) {
     if (error instanceof APIError) {
       return data(
