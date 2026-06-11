@@ -54,7 +54,7 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
    - **New convention**: `docs/conventions/data-access.md` — seed with key patterns from [data-access-architecture.md](../../shared/references/data-access-architecture.md): DAO interface contract, one DAO per table, type ownership (`<Entity>Record`, `Create<Entity>`, `Update<Entity>`, `<Entity>Filters`), `getAll()` for filtered access, service transaction boundaries, dependency graph (Routes → Services → DAOs → Database). Anti-patterns: no custom public query methods on DAOs, no DAO-to-DAO imports, no business logic in DAOs.
    - **README additions**: D1 setup, required environment variables, migration commands.
    - **AGENTS.md additions**: database instructions, `docs/data-model.md` reference in Project Documentation section.
-8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment.
+8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
 9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
 ## Validation checklist

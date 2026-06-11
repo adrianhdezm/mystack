@@ -46,7 +46,7 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
 
 ### Phase 4 — Final Verification
 
-10. Run formatting, typecheck, lint, and build across the full project.
+10. Run formatting, typecheck, lint, and build across the full project. If any command fails, fix the issue and re-run until it passes.
 11. Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, and any open questions from `docs/architecture.md`.
 
 ## Approval gate

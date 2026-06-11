@@ -53,7 +53,7 @@ AUTH_COOKIE_PREFIX: App
    - **Convention update**: `docs/conventions/routes.md` — add auth-related route patterns: protected route loader check, login/signup form action with Better Auth API, logout action, safe redirect after auth.
    - **README additions**: auth setup, `AUTH_SECRET`, `pnpm wrangler secret put AUTH_SECRET` for remote deploys, migration commands.
    - **AGENTS.md additions**: auth instructions (environment variables, migration commands).
-7. Run formatting, typecheck, lint, build, and available migration commands.
+7. Run formatting, typecheck, lint, build, and available migration commands. If any command fails, fix the issue and re-run until it passes before committing.
 8. Commit the generated and updated files using the repository's Conventional Commits format.
 
 ## Validation checklist

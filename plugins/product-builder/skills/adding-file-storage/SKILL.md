@@ -52,7 +52,7 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
    - **Data model addition**: `files` entity with columns, types, and relationships matching `app/db/schema.ts`.
    - **README additions**: R2 bucket setup, file metadata table, upload/delete behavior.
    - **AGENTS.md additions**: file storage instructions.
-8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment.
+8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
 9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
 ## Validation checklist
