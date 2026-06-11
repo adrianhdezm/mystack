@@ -1,5 +1,16 @@
 # Resource Routes And API Endpoints
 
+## Contents
+
+- When To Use A Resource Route
+- Route Registration
+- Loader Resource Responses
+- Action Resource Responses
+- Auth And Permissions
+- Webhooks
+- Response Data
+- Checklist
+
 Use this guide when adding or reviewing non-page responses, resource routes, upload/download endpoints, webhooks, auth endpoints, or JSON-style endpoints.
 
 ## When To Use A Resource Route

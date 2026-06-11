@@ -1,5 +1,10 @@
 # Auth Schema and Migrations
 
+## Contents
+
+- Schema (Better Auth tables, relations, Drizzle adapter aliases)
+- Generate and apply migrations
+
 ## Schema
 
 Update `app/db/schema.ts` to include the Better Auth tables below. Preserve unrelated existing project tables unless the user explicitly asks to replace them.

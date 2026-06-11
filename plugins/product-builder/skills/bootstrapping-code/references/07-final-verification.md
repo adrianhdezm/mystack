@@ -1,5 +1,10 @@
 # 07 - Final Verification
 
+## Contents
+
+- Steps (dependency install, formatting, typecheck, lint, build, file review)
+- Expected Results
+
 ## Steps
 
 1. Install dependencies and run postinstall scripts.

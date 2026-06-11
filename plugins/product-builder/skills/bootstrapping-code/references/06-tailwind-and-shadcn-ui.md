@@ -1,5 +1,10 @@
 # 06 - Tailwind and shadcn/ui
 
+## Contents
+
+- Steps (installation and configuration sequence)
+- Expected Results
+
 ## Steps
 
 1. Check the latest Tailwind package versions.

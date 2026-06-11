@@ -1,5 +1,11 @@
 # 02 - File Schema And Service
 
+## Contents
+
+- Steps (schema, service, rollback on failure)
+- Implementation Notes
+- Expected Results
+
 ## Steps
 
 1. Update `app/db/schema.ts`.

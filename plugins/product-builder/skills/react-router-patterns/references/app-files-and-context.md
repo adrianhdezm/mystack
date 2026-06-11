@@ -1,5 +1,18 @@
 # App-Level Files And Context
 
+## Contents
+
+- App-Level Edit Rule
+- app/routes.ts
+- app/root.tsx
+- react-router.config.ts
+- Entry Files
+- Server Context
+- Middleware
+- .server And .client Modules
+- Stylesheets And Fonts
+- Checklist
+
 Use this guide when editing `app/root.tsx`, `app/routes.ts`, `react-router.config.ts`, `app/entry.server.tsx`, `app/entry.client.tsx`, middleware, `appContext`, `.server` modules, `.client` modules, global styles, or SSR/prerender behavior.
 
 ## App-Level Edit Rule

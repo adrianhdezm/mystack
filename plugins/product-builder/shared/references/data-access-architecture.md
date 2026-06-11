@@ -1,5 +1,16 @@
 # Data Access Architecture
 
+## Contents
+
+- Purpose
+- Directory Structure
+- DAO Layer (interface, typing, CRUD, filters, relations, validation)
+- Service Layer (transaction boundaries, composition, auth-scoped access)
+- Cross-Table Reads
+- Specialized SQL
+- Dependency Rules
+- Enforcement Rules
+
 ## Purpose
 
 Use this reference when adding or changing application tables, DAOs, services, transactions, data validation schemas, or data access workflows in a Product Builder project.

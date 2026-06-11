@@ -1,5 +1,15 @@
 # Errors And Boundaries
 
+## Contents
+
+- Error Boundary Pattern
+- Expected Errors
+- Validation Errors
+- Not-Found Routes
+- Unexpected Errors
+- Error Boundaries And Layouts
+- Checklist
+
 Use this guide when adding or reviewing route `ErrorBoundary` exports, expected 404/403 responses, validation failure responses, not-found pages, unexpected error reporting, or route-level error UI.
 
 ## Error Boundary Pattern

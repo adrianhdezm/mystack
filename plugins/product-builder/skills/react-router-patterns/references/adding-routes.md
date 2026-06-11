@@ -1,5 +1,16 @@
 # Adding Routes
 
+## Contents
+
+- Route Planning
+- Route Configuration
+- Route Helpers
+- Nested Routes And Layouts
+- Dynamic, Optional, And Splat Segments
+- Route Module Shape
+- Route Exports
+- Checklist
+
 Use this guide when creating or reviewing React Router route maps, page routes, layout routes, nested routes, dynamic routes, index routes, catch-all routes, or route modules.
 
 ## Route Planning

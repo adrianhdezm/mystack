@@ -1,5 +1,17 @@
 # Loading Data
 
+## Contents
+
+- Server Loader Pattern
+- Reading Search Params
+- Route Params
+- Redirects And Responses
+- Client Loaders
+- Parallel Loading
+- Streaming
+- Server Boundaries
+- Checklist
+
 Use this guide when adding or reviewing route loaders, client loaders, route params, URL search params, redirects before render, streaming, or server data access.
 
 ## Server Loader Pattern

@@ -1,5 +1,19 @@
 # Pending And Optimistic UI
 
+## Contents
+
+- Choose The Right Pending Source
+- useNavigation
+- NavLink Pending State
+- useFetcher For Local State
+- Optimistic UI With fetcher.formData
+- Page-Level Optimistic UI
+- Skeletons And Empty States
+- Disabling During Submission
+- CSS Busy Indicators
+- HydrateFallback
+- Checklist
+
 Use this guide when adding or reviewing route loading states, form submission states, optimistic UI, disabled controls, skeletons, pending navigation, or fetcher state.
 
 ## Choose The Right Pending Source

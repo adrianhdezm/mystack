@@ -1,5 +1,17 @@
 # Protecting Routes
 
+## Contents
+
+- Product Builder Auth Preference
+- How Middleware Connects To Routes
+- Default Pattern: Auth Middleware
+- Reading Auth Context In Loaders And Actions
+- Route-Specific Authorization
+- Login And Logout
+- Cookie Sessions
+- Fallback: Loader-Level Protection
+- Checklist
+
 Use this guide when adding or reviewing authenticated pages, protected route groups, protected actions, login redirects, logout behavior, ownership checks, role checks, cookie sessions, or auth middleware.
 
 ## Product Builder Auth Preference

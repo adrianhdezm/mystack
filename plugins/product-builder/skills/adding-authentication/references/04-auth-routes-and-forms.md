@@ -1,5 +1,14 @@
 # Auth Routes and Forms
 
+## Contents
+
+- Route config
+- Auth API route
+- Logout route
+- Safe redirects
+- Login route
+- Signup route
+
 Before adding or changing these routes, load `react-router-patterns` and follow its route config, route module, loader, action, redirect, form validation, pending UI, resource route, and protected route patterns.
 
 ## Route config

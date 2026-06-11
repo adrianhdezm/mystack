@@ -1,5 +1,10 @@
 # 02 - TypeScript
 
+## Contents
+
+- Steps (package installation, tsconfig, source files)
+- Expected Results
+
 ## Steps
 
 1. Check the latest package versions.

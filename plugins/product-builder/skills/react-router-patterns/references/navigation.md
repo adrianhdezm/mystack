@@ -1,5 +1,18 @@
 # Navigation
 
+## Contents
+
+- Choose The Right Navigation Pattern
+- Links
+- Active Navigation
+- Redirects
+- Search Forms
+- Programmatic Navigation
+- Relative Navigation
+- Type-Safe URLs
+- Scroll Restoration
+- Checklist
+
 Use this guide when adding or reviewing links, nav bars, active navigation, redirects, search-param navigation, relative navigation, programmatic navigation, or scroll restoration.
 
 ## Choose The Right Navigation Pattern
