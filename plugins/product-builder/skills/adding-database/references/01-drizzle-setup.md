@@ -7,12 +7,14 @@
 ```sh
 pnpm view drizzle-orm version
 pnpm view drizzle-kit version
+pnpm view drizzle-zod version
 ```
 
 2. Install Drizzle packages.
 
 ```sh
 pnpm add drizzle-orm@latest
+pnpm add drizzle-zod@latest
 pnpm add -D drizzle-kit@latest
 ```
 
@@ -63,7 +65,7 @@ export default {
 
 ## Expected Results
 
-- `drizzle-orm` and `drizzle-kit` are installed.
+- `drizzle-orm`, `drizzle-zod`, and `drizzle-kit` are installed.
 - `package.json` has D1 migration and generation scripts.
 - `drizzle.config.ts` uses `.env` credentials and writes migrations to
   `db/migrations`.

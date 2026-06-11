@@ -50,6 +50,10 @@ must ask only for missing blocking values. Do not create fallback folders.
 7. Load `react-router-patterns` before planning or adding any
    React Router code. Use it to plan the route map, route files,
    loader/action responsibilities, redirects, and protected route behavior.
+   Load
+   [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md)
+   before planning or adding domain-specific tables, DAOs, services,
+   transactions, or data access workflows.
 8. Produce a design proposal using [design-approval.md](references/design-approval.md).
    Include the data model, migrations, routes/pages, permissions, storage
    behavior, and implementation sequence.
@@ -84,6 +88,9 @@ approval again before implementing.
 - [ ] `react-router-patterns` was loaded and followed for the
       route map, route modules, loaders, actions, redirects, and protected route
       behavior.
+- [ ] `05-data-access-architecture.md` was loaded and followed for any
+      domain-specific tables, DAOs, services, transactions, or data access
+      workflows.
 - [ ] Domain-specific data model, migrations, and pages were approved before
       implementation.
 - [ ] Formatting, typecheck, lint, build, and relevant migration commands were

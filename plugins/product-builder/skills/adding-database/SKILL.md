@@ -28,9 +28,12 @@ different D1 binding.
   context, Worker request handling, route modules, loaders, or actions. Any
   React Router code must follow those patterns.
 - Use Drizzle ORM with the SQLite dialect and Cloudflare D1 driver.
+- Use `drizzle-zod` for DAO-owned validation schemas when DAOs are added.
 - Do not hardcode Cloudflare account IDs, database IDs, or API tokens in source.
 - Keep generated migrations under `db/migrations`.
 - Keep the application schema in `app/db/schema.ts`.
+- Follow [05-data-access-architecture.md](references/05-data-access-architecture.md)
+  when adding tables, DAOs, services, transactions, or data access workflows.
 - Preserve existing `wrangler.jsonc` settings and merge D1 configuration into it.
 - Preserve existing React Router request handling and inject the database through
   router context.
@@ -46,18 +49,21 @@ different D1 binding.
 4. Load `react-router-patterns`, then add the database schema
    and wire Drizzle into app context and the Worker using
    [03-app-integration.md](references/03-app-integration.md).
-5. Generate and apply migrations using
+5. If adding application tables, DAOs, services, transactions, or data access
+   workflows, follow
+   [05-data-access-architecture.md](references/05-data-access-architecture.md).
+6. Generate and apply migrations using
    [04-migrations-validation.md](references/04-migrations-validation.md).
-6. Update project documentation in `README.md` and `AGENTS.md` with the D1
+7. Update project documentation in `README.md` and `AGENTS.md` with the D1
    setup, required environment variables, and migration commands.
-7. Run formatting, typecheck, lint, build, and the migration commands available
+8. Run formatting, typecheck, lint, build, and the migration commands available
    for the current environment.
-8. Commit the generated and updated files in the repository using the
+9. Commit the generated and updated files in the repository using the
    repository's Conventional Commits format.
 
 ## Validation checklist
 
-- [ ] `drizzle-orm` is installed and `drizzle-kit` is installed as a dev dependency.
+- [ ] `drizzle-orm`, `drizzle-zod`, and `drizzle-kit` are installed.
 - [ ] `package.json` includes `db:generate`, `db:migrate`, and `db:local:migrate`.
 - [ ] `drizzle.config.ts` reads Cloudflare credentials from `.env`.
 - [ ] `.env.example` documents `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN`.
@@ -66,6 +72,8 @@ different D1 binding.
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.
 - [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
+- [ ] `05-data-access-architecture.md` was followed for any tables, DAOs,
+      services, transactions, or data access workflows.
 - [ ] `react-router-patterns` was loaded and followed for any
       React Router context or Worker request-handling changes.
 - [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.

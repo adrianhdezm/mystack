@@ -30,6 +30,10 @@ unless the existing project already uses different binding names.
   forms, or resource routes. Any React Router code must follow those patterns.
 - Require an existing D1 and Drizzle setup for file metadata; if missing, run
   the `adding-database` skill first.
+- Follow
+  [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md)
+  for file metadata service boundaries, transaction ownership, and any DAO or
+  data access workflow changes.
 - Store file bytes in Cloudflare R2 and file metadata in the D1 `files` table.
 - Do not store raw file contents, Cloudflare account IDs, or API tokens in D1.
 - Preserve existing `wrangler.jsonc` settings and merge R2 configuration into it.
@@ -45,15 +49,18 @@ unless the existing project already uses different binding names.
    [01-cloudflare-r2.md](references/01-cloudflare-r2.md).
 3. Add the file metadata schema and service using
    [02-file-schema-and-service.md](references/02-file-schema-and-service.md).
-4. Load `react-router-patterns`, then wire the service into app
+4. Review
+   [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md)
+   for the file metadata service and any data access changes.
+5. Load `react-router-patterns`, then wire the service into app
    context and the Worker using [03-app-integration.md](references/03-app-integration.md).
-5. Generate/apply migrations and validate types using
+6. Generate/apply migrations and validate types using
    [04-migrations-validation.md](references/04-migrations-validation.md).
-6. Update project documentation in `README.md` and `AGENTS.md` with the R2
+7. Update project documentation in `README.md` and `AGENTS.md` with the R2
    bucket, file metadata table, and upload/delete behavior.
-7. Run formatting, typecheck, lint, build, and the migration commands available
+8. Run formatting, typecheck, lint, build, and the migration commands available
    for the current environment.
-8. Commit the generated and updated files in the repository using the
+9. Commit the generated and updated files in the repository using the
    repository's Conventional Commits format.
 
 ## Validation checklist
@@ -66,6 +73,8 @@ unless the existing project already uses different binding names.
 - [ ] Deleting a file removes both the D1 metadata row and the R2 object.
 - [ ] `app/context.ts` exposes `files: FilesService`.
 - [ ] `workers/app.ts` constructs `new FilesService(db, env.APP_FILES)`.
+- [ ] `05-data-access-architecture.md` was followed for file metadata service
+      boundaries and any DAO or data access workflow changes.
 - [ ] `react-router-patterns` was loaded and followed for any
       React Router context, Worker request-handling, route, upload, or resource
       endpoint changes.
