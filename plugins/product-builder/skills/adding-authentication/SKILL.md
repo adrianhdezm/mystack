@@ -24,6 +24,9 @@ AUTH_COOKIE_PREFIX: App
 ## Hard rules
 
 - Use `pnpm` for package installation and project commands.
+- Load `react-router-patterns` before adding or changing React
+  Router routes, loaders, actions, redirects, forms, protected routes, or
+  app-level route files. Any React Router code must follow those patterns.
 - Install `better-auth`, `zod`, `@conform-to/react`, and `@conform-to/zod`.
 - Generate `AUTH_SECRET` with `openssl rand -base64 32` and write it to
   `.env` as `AUTH_SECRET=<generated-value>`.
@@ -49,7 +52,8 @@ AUTH_COOKIE_PREFIX: App
    [02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md).
 4. Wire Better Auth into React Router context and the Worker using
    [03-server-integration.md](references/03-server-integration.md).
-5. Add `api/auth/*`, `login`, `logout`, and `signup` routes using
+5. Load `react-router-patterns`, then add `api/auth/*`,
+   `login`, `logout`, and `signup` routes using
    [04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md).
 6. Update `README.md` and `AGENTS.md` with auth setup, required environment
    variables, local development notes, and migration commands.
@@ -69,6 +73,8 @@ AUTH_COOKIE_PREFIX: App
 - [ ] `app/context.ts` exposes `auth: ReturnType<typeof betterAuth>`.
 - [ ] `workers/app.ts` constructs Better Auth with `drizzleAdapter`.
 - [ ] `app/routes.ts` includes `api/auth/*`, `login`, `logout`, and `signup`.
+- [ ] `react-router-patterns` was loaded and followed for auth
+      routes, loaders, actions, redirects, and forms.
 - [ ] Route loaders and actions access auth with `context.get(appContext)`.
 - [ ] `app/routes/auth.tsx` delegates loader and action to `auth.handler(request)`.
 - [ ] Login and signup use Conform, Zod, Better Auth API errors, and safe redirects.

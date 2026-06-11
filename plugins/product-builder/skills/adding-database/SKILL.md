@@ -24,6 +24,9 @@ different D1 binding.
 ## Hard rules
 
 - Use `pnpm` for package installation and scripts.
+- Load `react-router-patterns` before changing React Router
+  context, Worker request handling, route modules, loaders, or actions. Any
+  React Router code must follow those patterns.
 - Use Drizzle ORM with the SQLite dialect and Cloudflare D1 driver.
 - Do not hardcode Cloudflare account IDs, database IDs, or API tokens in source.
 - Keep generated migrations under `db/migrations`.
@@ -40,7 +43,8 @@ different D1 binding.
    [01-drizzle-setup.md](references/01-drizzle-setup.md).
 3. Create or register the Cloudflare D1 database and environment variables using
    [02-cloudflare-d1.md](references/02-cloudflare-d1.md).
-4. Add the database schema and wire Drizzle into app context and the Worker using
+4. Load `react-router-patterns`, then add the database schema
+   and wire Drizzle into app context and the Worker using
    [03-app-integration.md](references/03-app-integration.md).
 5. Generate and apply migrations using
    [04-migrations-validation.md](references/04-migrations-validation.md).
@@ -62,6 +66,8 @@ different D1 binding.
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.
 - [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
+- [ ] `react-router-patterns` was loaded and followed for any
+      React Router context or Worker request-handling changes.
 - [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.
 - [ ] `AGENTS.md` documents database-specific project instructions agents must follow.
 - [ ] `pnpm db:generate`, `pnpm db:migrate`, and `pnpm db:local:migrate` work or failures are explained.

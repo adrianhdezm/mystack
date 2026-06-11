@@ -47,17 +47,20 @@ must ask only for missing blocking values. Do not create fallback folders.
      `adding-file-storage`.
    - `advanced`: run `adding-database`, then `adding-authentication`, then
      `adding-file-storage`.
-7. Produce a design proposal using [design-approval.md](references/design-approval.md).
+7. Load `react-router-patterns` before planning or adding any
+   React Router code. Use it to plan the route map, route files,
+   loader/action responsibilities, redirects, and protected route behavior.
+8. Produce a design proposal using [design-approval.md](references/design-approval.md).
    Include the data model, migrations, routes/pages, permissions, storage
    behavior, and implementation sequence.
-8. Stop and ask for approval before implementing domain-specific schema,
+9. Stop and ask for approval before implementing domain-specific schema,
    migrations, pages, views, actions, loaders, or services.
-9. After approval, implement the approved design in the target project. Keep
-   changes aligned with the generated Product Builder stack and existing
-   patterns.
-10. Verify with formatting, typecheck, lint, build, relevant migrations, and any
+10. After approval, implement the approved design in the target project. Any
+    React Router code must follow `react-router-patterns` and
+    the generated Product Builder stack.
+11. Verify with formatting, typecheck, lint, build, relevant migrations, and any
     feature-specific checks. Fix issues before finishing when possible.
-11. Commit the approved implementation using the project Conventional Commits
+12. Commit the approved implementation using the project Conventional Commits
     format and summarize the foundation skills used, user-approved design, commit
     hash, verification results, and any failed commands.
 
@@ -78,6 +81,9 @@ approval again before implementing.
       work.
 - [ ] Repository preparation and bootstrapping completed before add-on skills.
 - [ ] Database was added before file storage or authentication when required.
+- [ ] `react-router-patterns` was loaded and followed for the
+      route map, route modules, loaders, actions, redirects, and protected route
+      behavior.
 - [ ] Domain-specific data model, migrations, and pages were approved before
       implementation.
 - [ ] Formatting, typecheck, lint, build, and relevant migration commands were

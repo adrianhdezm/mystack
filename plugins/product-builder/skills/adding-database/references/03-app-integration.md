@@ -1,5 +1,9 @@
 # 03 - App Integration
 
+Before changing React Router context or Worker request handling, load
+`react-router-patterns` and follow its app-level file and
+context patterns.
+
 ## Steps
 
 1. Create `app/db/schema.ts`.

@@ -1,5 +1,10 @@
 # Auth Routes and Forms
 
+Before adding or changing these routes, load
+`react-router-patterns` and follow its route config, route
+module, loader, action, redirect, form validation, pending UI, resource route,
+and protected route patterns.
+
 ## Route config
 
 Add auth routes to `app/routes.ts` while preserving existing app routes:

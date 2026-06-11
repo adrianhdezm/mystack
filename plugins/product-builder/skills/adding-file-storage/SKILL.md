@@ -25,6 +25,9 @@ unless the existing project already uses different binding names.
 ## Hard rules
 
 - Use `pnpm` for Wrangler, package, and project scripts.
+- Load `react-router-patterns` before changing React Router
+  context, Worker request handling, route modules, loaders, actions, upload
+  forms, or resource routes. Any React Router code must follow those patterns.
 - Require an existing D1 and Drizzle setup for file metadata; if missing, run
   the `adding-database` skill first.
 - Store file bytes in Cloudflare R2 and file metadata in the D1 `files` table.
@@ -42,8 +45,8 @@ unless the existing project already uses different binding names.
    [01-cloudflare-r2.md](references/01-cloudflare-r2.md).
 3. Add the file metadata schema and service using
    [02-file-schema-and-service.md](references/02-file-schema-and-service.md).
-4. Wire the service into app context and the Worker using
-   [03-app-integration.md](references/03-app-integration.md).
+4. Load `react-router-patterns`, then wire the service into app
+   context and the Worker using [03-app-integration.md](references/03-app-integration.md).
 5. Generate/apply migrations and validate types using
    [04-migrations-validation.md](references/04-migrations-validation.md).
 6. Update project documentation in `README.md` and `AGENTS.md` with the R2
@@ -63,6 +66,9 @@ unless the existing project already uses different binding names.
 - [ ] Deleting a file removes both the D1 metadata row and the R2 object.
 - [ ] `app/context.ts` exposes `files: FilesService`.
 - [ ] `workers/app.ts` constructs `new FilesService(db, env.APP_FILES)`.
+- [ ] `react-router-patterns` was loaded and followed for any
+      React Router context, Worker request-handling, route, upload, or resource
+      endpoint changes.
 - [ ] Generated `Env` types include `APP_FILES`.
 - [ ] `README.md` and `AGENTS.md` document file storage setup and behavior.
 - [ ] Migrations and project verification commands work or failures are explained.

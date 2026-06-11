@@ -1,5 +1,9 @@
 # 05 - React Router Page
 
+Before adding or changing these files, load `react-router-patterns`
+and follow its app-level file, route config, route module, loader, error
+boundary, and context patterns.
+
 ## Steps
 
 1. Check the latest React and React Router package versions.

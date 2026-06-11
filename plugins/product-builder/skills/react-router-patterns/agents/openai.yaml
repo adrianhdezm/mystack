@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Router Patterns"
+  short_description: "Apply Product Builder route, loader, action, and page patterns."
+  default_prompt: "Plan and implement Product Builder React Router routes using the approved stack patterns."

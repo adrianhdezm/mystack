@@ -23,6 +23,8 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
 - Use `pnpm` for package initialization, package version checks, and package installation.
 - Do not trust remembered package versions. Check latest versions with `pnpm view <package> version` before installing, then install with `@latest`.
+- Load `react-router-patterns` before adding or changing React
+  Router code. Any generated React Router code must follow those patterns.
 - Stop before bootstrapping if `preparing-repositories` has not completed successfully.
 - Stop before bootstrapping if the repository or local destination was missing
   from the user's request and `preparing-repositories` has not resolved it.
@@ -42,11 +44,12 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 5. Add TypeScript using [02-typescript.md](references/02-typescript.md).
 6. Add Vite, linting, and formatting using [03-vite-linting-formatting.md](references/03-vite-linting-formatting.md).
 7. Add Cloudflare using [04-cloudflare.md](references/04-cloudflare.md).
-8. Add the React Router page using [05-react-router-page.md](references/05-react-router-page.md).
+8. Load `react-router-patterns`, then add the React Router page
+   using [05-react-router-page.md](references/05-react-router-page.md).
 9. Add Tailwind and shadcn/ui using [06-tailwind-and-shadcn-ui.md](references/06-tailwind-and-shadcn-ui.md).
 10. Run final verification using [07-final-verification.md](references/07-final-verification.md).
 11. Update the project `README.md` with a very basic overview of the bootstrapped application, including the stack, local development command, verification commands, and Cloudflare deployment target.
-12. Update the project `AGENTS.md` with basic agent instructions and the bootstrapped project structure. Keep it concise and focused on repository purpose, common commands, and where the main application, routes, UI components, Cloudflare worker, and configuration files live.
+12. Update the project `AGENTS.md` with basic agent instructions and the bootstrapped project structure. Keep it concise and focused on repository purpose, common commands, and where the main application, routes, UI components, Cloudflare worker, and configuration files live. Include these React Router guidance points: route filenames describe role, not URL syntax; use middleware only for cross-cutting request work such as auth, logging, shared context, and headers; keep mutations in actions and ownership checks in the route/action that owns the resource param.
 13. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 14. Summarize what was created, include the commit hash, and list any command that failed.
 
@@ -73,9 +76,11 @@ Include the files found when available.
 - [ ] `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS` are available.
 - [ ] Local repository has no pre-existing files beyond repository metadata.
 - [ ] `pnpm view` was used for latest package checks.
+- [ ] `react-router-patterns` was loaded before React Router
+      code was generated, and the generated code follows those patterns.
 - [ ] Cloudflare types are generated with `wrangler types`.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass after fixing generated-file issues.
 - [ ] Final file structure and `git status --short` were reviewed.
 - [ ] `README.md` gives a very basic overview of the bootstrapped app, commands, and Cloudflare target.
-- [ ] `AGENTS.md` includes basic agent instructions and the bootstrapped project structure.
+- [ ] `AGENTS.md` includes basic agent instructions, the bootstrapped project structure, and React Router guidance for route filenames, middleware scope, mutations, and ownership checks.
 - [ ] Generated and updated files were committed with a Conventional Commit message.
