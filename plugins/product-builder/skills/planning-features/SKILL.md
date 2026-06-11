@@ -1,6 +1,6 @@
 ---
-name: plan-feature
-description: Plan a Product Builder feature end-to-end — database changes, pages, views, shadcn components, and acceptance criteria — and save a numbered spec to docs/features/. Use when the user asks to plan, spec, design, or scope a feature for a Product Builder project.
+name: planning-features
+description: Plans a Product Builder feature end-to-end — database changes, pages, views, shadcn components, and acceptance criteria — and saves a numbered spec to docs/features/. Use when the user asks to plan, spec, design, or scope a feature for a Product Builder project.
 ---
 
 # Plan Feature

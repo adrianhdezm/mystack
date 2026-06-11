@@ -1,6 +1,6 @@
 ---
-name: implement-feature
-description: Implement a Product Builder feature spec from docs/features/ end-to-end, writing code and maintaining docs/data-model.md, docs/conventions/, and docs/architecture.md. Use when the user asks to implement, build, or code a planned feature from a feature spec.
+name: implementing-features
+description: Implements a Product Builder feature spec from docs/features/ end-to-end, writing code and maintaining docs/data-model.md, docs/conventions/, and docs/architecture.md. Use when the user asks to implement, build, or code a planned feature from a feature spec.
 ---
 
 # Implement Feature

@@ -1,6 +1,6 @@
 ---
-name: verify-feature
-description: Verify a Product Builder feature implementation against its spec from docs/features/, checking acceptance criteria and reporting deviations, missing items, and inconsistencies. Use when the user asks to verify, review, check, validate, or QA a feature implementation.
+name: verifying-features
+description: Verifies a Product Builder feature implementation against its spec from docs/features/, checking acceptance criteria and reporting deviations, missing items, and inconsistencies. Use when the user asks to verify, review, check, validate, or QA a feature implementation.
 ---
 
 # Verify Feature
@@ -114,7 +114,7 @@ Pass with notes — all acceptance criteria met, one minor inconsistency in data
 - Update `docs/data-model.md` to match schema.
 ```
 
-Present the report to the user. Do not modify code — this skill is read-only. If there are failing criteria or missing items, suggest running `implement-feature` again with the spec to address them.
+Present the report to the user. Do not modify code — this skill is read-only. If there are failing criteria or missing items, suggest running `implementing-features` again with the spec to address them.
 
 ## Validation Checklist
 

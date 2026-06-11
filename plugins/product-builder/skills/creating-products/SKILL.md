@@ -38,11 +38,11 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
 
 6. Based on the interview and product idea, propose a list of features that together deliver the first usable version. Present each feature as a short title and one-line description. Order them by dependency — foundational features first.
 7. Ask the user to approve, reorder, add, or remove features before proceeding.
-8. Run `plan-feature` for each approved feature, in order. Each run produces numbered spec files in `docs/features/`.
+8. Run `planning-features` for each approved feature, in order. Each run produces numbered spec files in `docs/features/`.
 
 ### Phase 3 — Feature Implementation Loop
 
-9. For each planned feature spec in `docs/features/`, in order: a. Run `implement-feature` with the spec. b. Run `verify-feature` with the same spec. c. If verification passes, commit and move to the next feature. d. If verification finds issues, run `implement-feature` again to address them, then re-verify. Repeat until the spec passes or the issue requires user input. e. Summarize the feature result before starting the next one.
+9. For each planned feature spec in `docs/features/`, in order: a. Run `implementing-features` with the spec. b. Run `verifying-features` with the same spec. c. If verification passes, commit and move to the next feature. d. If verification finds issues, run `implementing-features` again to address them, then re-verify. Repeat until the spec passes or the issue requires user input. e. Summarize the feature result before starting the next one.
 
 ### Phase 4 — Final Verification
 
@@ -51,7 +51,7 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
 
 ## Approval gate
 
-Do not treat the initial product idea as approval for specific features. The user must approve the proposed feature list before planning begins, and each feature spec must follow the `plan-feature` approval flow before implementation.
+Do not treat the initial product idea as approval for specific features. The user must approve the proposed feature list before planning begins, and each feature spec must follow the `planning-features` approval flow before implementation.
 
 If the user requests a change during review, update the proposal and ask for approval again before implementing.
 
@@ -65,8 +65,8 @@ If the user requests a change during review, update the proposal and ask for app
 - [ ] After foundation phase, `docs/data-model.md` reflects all entities from foundation skills.
 - [ ] After foundation phase, `AGENTS.md` includes a Project Documentation section referencing `docs/`.
 - [ ] Feature list was proposed and approved by the user before planning.
-- [ ] `plan-feature` was run for each approved feature.
-- [ ] `implement-feature` and `verify-feature` were run for each feature spec.
+- [ ] `planning-features` was run for each approved feature.
+- [ ] `implementing-features` and `verifying-features` were run for each feature spec.
 - [ ] `docs/architecture.md` was maintained throughout.
 - [ ] Formatting, typecheck, lint, and build pass after all features.
 - [ ] Final summary includes features implemented, commit hash, and open questions.
