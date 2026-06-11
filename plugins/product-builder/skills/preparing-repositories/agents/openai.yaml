@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preparing Repositories"
+  short_description: "Create or find a GitHub repo and prepare a local clone for Product Builder."
+  default_prompt: "Prepare a GitHub repository for my Product Builder project — create or find the remote, clone it locally, and confirm it's ready for bootstrapping."
