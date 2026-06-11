@@ -137,13 +137,19 @@ Use middleware for shared request behavior:
 
 ```ts
 import { createContext } from "react-router";
+import type { Route } from "./+types/protected-layout";
 
 export const requestIdContext = createContext<string | null>(null);
 
-export async function requestIdMiddleware({ context }, next) {
+async function requestIdMiddleware(
+  { context }: Route.MiddlewareArgs,
+  next: Route.MiddlewareFunction,
+) {
   context.set(requestIdContext, crypto.randomUUID());
   return next();
 }
+
+export const middleware: Route.MiddlewareFunction[] = [requestIdMiddleware];
 ```
 
 Keep route-specific ownership checks in loaders/actions or server services.
