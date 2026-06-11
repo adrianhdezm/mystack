@@ -113,6 +113,18 @@ export async function loader({ context }: Route.LoaderArgs) {
 The Worker should pass context with `RouterContextProvider`. Do not use
 `AppLoadContext`, plain object context, or `context.cloudflare`.
 
+When the project has authentication, define a `userContext` key in
+`app/context.ts` for the authenticated user set by middleware:
+
+```ts
+import { createContext } from "react-router";
+
+export const userContext = createContext<{ id: string; name: string; email: string } | null>(null);
+```
+
+Auth middleware sets it with `context.set(userContext, session.user)` and
+downstream loaders read it with `context.get(userContext)`.
+
 ## Middleware
 
 Use middleware for shared request behavior:
