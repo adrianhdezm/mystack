@@ -51,9 +51,10 @@ export class FilesService {
 
   async upload(file: File) {
     const key = `${Date.now()}-${file.name}`;
+    const contentType = file.type || "application/octet-stream";
 
     await this.bucket.put(key, await file.arrayBuffer(), {
-      httpMetadata: { contentType: file.type },
+      httpMetadata: { contentType },
     });
 
     try {
@@ -62,7 +63,7 @@ export class FilesService {
         .values({
           key,
           filename: file.name,
-          contentType: file.type || "application/octet-stream",
+          contentType,
           size: file.size,
         })
         .returning();
