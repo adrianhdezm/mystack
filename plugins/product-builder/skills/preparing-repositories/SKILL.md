@@ -57,9 +57,6 @@ folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo>`.
 ## Hard rules
 
 - Use the GitHub CLI (`gh`) for GitHub operations: auth checks, repository lookup, repository creation, remote inspection, and cloning.
-- Do not add React Router code in this skill. If downstream work will add or
-  change React Router code, that skill must load
-  `react-router-patterns` first and follow those patterns.
 - Stop if `gh auth status` fails.
 - Stop before creating files, scaffolding code, or bootstrapping if either
   `REPOSITORY` or `LOCAL_FOLDER` is missing or ambiguous.
