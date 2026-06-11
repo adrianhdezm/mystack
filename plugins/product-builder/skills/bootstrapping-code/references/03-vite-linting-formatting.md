@@ -36,7 +36,7 @@ pnpm add -D @trivago/prettier-plugin-sort-imports@latest prettier-plugin-tailwin
 }
 ```
 
-4. Check the latest Vite package version and confirm it is greater than version 8 before installing.
+4. Check the latest Vite package version and confirm it is at least version 8 before installing.
 
 ```sh
 pnpm view vite version
@@ -155,7 +155,7 @@ export default defineConfig([
 
 - `prettier`, `@trivago/prettier-plugin-sort-imports`, and `prettier-plugin-tailwindcss` are installed as development dependencies.
 - `.prettierrc` exists with single quotes, 140-column print width, no trailing commas, ordered imports, and Tailwind class sorting enabled.
-- `vite` greater than version 8 is installed as a development dependency.
+- `vite` at least version 8 is installed as a development dependency.
 - `vite.config.ts` exists with an empty plugin list and `resolve.tsconfigPaths` enabled.
 - `@eslint/js`, `eslint`, `eslint-config-prettier`, `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `globals`, and `typescript-eslint` are installed as development dependencies.
 - `eslint.config.js` exists with React, React Hooks, JSX accessibility, TypeScript, and Prettier recommended configuration.
