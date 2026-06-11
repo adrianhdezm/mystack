@@ -27,7 +27,9 @@ Preserve any additional context values already used by the app.
 ## Worker entrypoint
 
 Update `workers/app.ts` or the existing Worker entrypoint to create Better Auth
-per request with the current request origin as `baseURL`:
+per request with the current request origin as `baseURL`. Better Auth is
+constructed on every request because Cloudflare Workers only expose `env`
+bindings inside the `fetch` handler, not at module scope:
 
 ```ts
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
