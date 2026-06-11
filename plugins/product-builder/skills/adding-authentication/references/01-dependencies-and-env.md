@@ -18,7 +18,7 @@ Check current package versions when the project's existing skills require latest
 package resolution. Install the auth and form dependencies:
 
 ```sh
-pnpm add better-auth zod @conform-to/react @conform-to/zod
+pnpm add better-auth zod@4 @conform-to/react @conform-to/zod
 ```
 
 If the project does not already include the UI components used by the auth

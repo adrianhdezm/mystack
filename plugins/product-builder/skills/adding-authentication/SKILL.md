@@ -27,7 +27,7 @@ AUTH_COOKIE_PREFIX: App
 - Load `react-router-patterns` before adding or changing React
   Router routes, loaders, actions, redirects, forms, protected routes, or
   app-level route files. Any React Router code must follow those patterns.
-- Install `better-auth`, `zod`, `@conform-to/react`, and `@conform-to/zod`.
+- Install `better-auth`, `zod@4`, `@conform-to/react`, and `@conform-to/zod`.
 - Generate `AUTH_SECRET` with `openssl rand -base64 32` and write it to
   `.env` as `AUTH_SECRET=<generated-value>`.
 - Do not commit real `.env` secret values. Update `.env.example` with an
@@ -63,7 +63,7 @@ AUTH_COOKIE_PREFIX: App
 
 ## Validation checklist
 
-- [ ] `better-auth`, `zod`, `@conform-to/react`, and `@conform-to/zod` are installed.
+- [ ] `better-auth`, `zod@4`, `@conform-to/react`, and `@conform-to/zod` are installed.
 - [ ] `.env` contains `AUTH_SECRET=<secret generated with openssl rand -base64 32>`.
 - [ ] `.env.example` documents `AUTH_SECRET=`.
 - [ ] `README.md` documents that remote Cloudflare deployments require users to run `pnpm wrangler secret put AUTH_SECRET` from an authenticated Wrangler session.
