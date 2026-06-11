@@ -152,18 +152,19 @@ Use generated route types:
 
 ```tsx
 import { data } from "react-router";
-import { appContext } from "~/context";
+import { appContext, userContext } from "~/context";
 import type { Route } from "./+types/projects-detail";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
-  const { db } = context.get(appContext);
-  const projectId = params.projectId;
+  const { projectDao } = context.get(appContext);
+  const user = context.get(userContext);
 
-  if (!projectId) {
-    throw data("Missing project id", { status: 400 });
+  const project = await projectDao.get(params.projectId);
+  if (!project || project.userId !== user.id) {
+    throw data("Project not found", { status: 404 });
   }
 
-  return { project: await getProjectById(db, projectId) };
+  return { project };
 }
 
 export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
