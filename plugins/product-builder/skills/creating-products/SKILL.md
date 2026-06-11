@@ -9,8 +9,8 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 Use this as the Product Builder entry point. It interviews the user, classifies
 project complexity, prepares the project foundation with the required Product
-Builder skills, then proposes and implements the approved product model and
-views.
+Builder skills, then plans and implements features using the feature lifecycle
+skills.
 
 ## Required inputs
 
@@ -28,6 +28,8 @@ must ask only for missing blocking values. Do not create fallback folders.
 
 ## Workflow
 
+### Phase 1 — Interview and Foundation
+
 1. Interview the user using [interview-and-decisions.md](references/interview-and-decisions.md).
    Ask only for information that cannot be inferred and materially changes the
    foundation or product design.
@@ -44,32 +46,40 @@ must ask only for missing blocking values. Do not create fallback folders.
      `adding-file-storage`.
    - `advanced`: run `adding-database`, then `adding-authentication`, then
      `adding-file-storage`.
-6. Load `react-router-patterns` before planning or adding any
-   React Router code. Use it to plan the route map, route files,
-   loader/action responsibilities, redirects, and protected route behavior.
-   Load
-   [05-data-access-architecture.md](../adding-database/references/05-data-access-architecture.md)
-   before planning or adding domain-specific tables, DAOs, services,
-   transactions, or data access workflows.
-7. Produce a design proposal using [design-approval.md](references/design-approval.md).
-   Include the data model, migrations, routes/pages, permissions, storage
-   behavior, and implementation sequence.
-8. Stop and ask for approval before implementing domain-specific schema,
-   migrations, pages, views, actions, loaders, or services.
-9. After approval, implement the approved design in the target project. Any
-   React Router code must follow `react-router-patterns` and
-   the generated Product Builder stack.
-10. Verify with formatting, typecheck, lint, build, relevant migrations, and any
-    feature-specific checks. Fix issues before finishing when possible.
-11. Commit the approved implementation using the project Conventional Commits
-    format and summarize the foundation skills used, user-approved design, commit
-    hash, verification results, and any failed commands.
+
+### Phase 2 — Feature Planning
+
+6. Based on the interview and product idea, propose a list of features that
+   together deliver the first usable version. Present each feature as a short
+   title and one-line description. Order them by dependency — foundational
+   features first.
+7. Ask the user to approve, reorder, add, or remove features before proceeding.
+8. Run `plan-feature` for each approved feature, in order. Each run produces
+   numbered spec files in `docs/features/`.
+
+### Phase 3 — Feature Implementation Loop
+
+9. For each planned feature spec in `docs/features/`, in order:
+   a. Run `implement-feature` with the spec.
+   b. Run `verify-feature` with the same spec.
+   c. If verification passes, commit and move to the next feature.
+   d. If verification finds issues, run `implement-feature` again to address
+      them, then re-verify. Repeat until the spec passes or the issue requires
+      user input.
+   e. Summarize the feature result before starting the next one.
+
+### Phase 4 — Final Verification
+
+10. Run formatting, typecheck, lint, and build across the full project.
+11. Commit the final state and summarize: foundation skills used, features
+    implemented, commit hash, verification results, and any open questions from
+    `docs/architecture.md`.
 
 ## Approval gate
 
-Do not treat the initial product idea as approval for the detailed product
-design. The user must approve the proposed data model, migrations, and page/view
-map before domain implementation begins.
+Do not treat the initial product idea as approval for specific features. The
+user must approve the proposed feature list before planning begins, and each
+feature spec must follow the `plan-feature` approval flow before implementation.
 
 If the user requests a change during review, update the proposal and ask for
 approval again before implementing.
@@ -82,15 +92,10 @@ approval again before implementing.
       work.
 - [ ] Repository preparation and bootstrapping completed before add-on skills.
 - [ ] Database was added before file storage or authentication when required.
-- [ ] `react-router-patterns` was loaded and followed for the
-      route map, route modules, loaders, actions, redirects, and protected route
-      behavior.
-- [ ] `05-data-access-architecture.md` was loaded and followed for any
-      domain-specific tables, DAOs, services, transactions, or data access
-      workflows.
-- [ ] Domain-specific data model, migrations, and pages were approved before
-      implementation.
-- [ ] Formatting, typecheck, lint, build, and relevant migration commands were
-      run or failures were explained.
-- [ ] Final summary includes foundation skills used, commit hash, and residual
-      risks.
+- [ ] Feature list was proposed and approved by the user before planning.
+- [ ] `plan-feature` was run for each approved feature.
+- [ ] `implement-feature` and `verify-feature` were run for each feature spec.
+- [ ] `docs/architecture.md` was created and maintained throughout.
+- [ ] Formatting, typecheck, lint, and build pass after all features.
+- [ ] Final summary includes features implemented, commit hash, and open
+      questions.
