@@ -254,6 +254,26 @@ const results = await Promise.all(ids.map((id) => this.delete(id)));
 const result = await db.delete(table).where(inArray(table.id, ids)).returning();
 ```
 
+### `db.transaction()` on D1
+
+D1 does not support interactive SQL transactions. `db.transaction()` will throw at runtime. Use `db.batch()` instead — it provides atomicity (all-or-nothing) with sequential execution and rollback on failure.
+
+```ts
+// wrong — runtime error on D1
+await db.transaction(async (tx) => {
+  await tx.delete(entries).where(eq(entries.planId, planId));
+  await tx.insert(entries).values({ id, planId, recipeId });
+});
+```
+
+```ts
+// good — atomic batch via D1 Batch API
+await db.batch([
+  db.delete(entries).where(eq(entries.planId, planId)),
+  db.insert(entries).values({ id, planId, recipeId }),
+]);
+```
+
 ### DAO Restrictions
 
 DAOs must not:
@@ -271,7 +291,7 @@ A DAO should be understandable without knowing the business workflow that uses i
 
 ## Service Layer
 
-Services coordinate business workflows. Use services for operations that span multiple tables, require transactions, or represent domain behavior.
+Services coordinate business workflows. Use services for operations that span multiple tables, require atomic writes, or represent domain behavior.
 
 Services compose DAOs.
 
@@ -286,7 +306,7 @@ app/services/
 Use a service when an operation:
 
 - Touches multiple tables.
-- Requires a transaction.
+- Requires atomic writes (`db.batch()`).
 - Coordinates multiple DAOs.
 - Represents a business workflow.
 - Requires custom SQL.
@@ -302,45 +322,65 @@ Delete project and dependencies
 Provision workspace
 ```
 
-### Transaction Convention
+### Service Atomic Writes with Batch API
 
-Services own transaction boundaries. If a workflow performs multiple related writes, execute it inside a transaction.
+D1 does not support interactive SQL transactions (`db.transaction()` will fail at runtime). For atomic multi-statement writes, use Drizzle's `db.batch()` API.
+
+Each statement in the batch executes and commits sequentially. If any statement fails, the entire batch rolls back.
 
 ```ts
-export async function createUserWithProfile(
-  db: DrizzleD1Database<typeof schema>,
-  attrs: CreateUserWithProfile,
-) {
-  return db.transaction(async (tx) => {
-    const userDao = new UserDao(tx);
-    const profileDao = new ProfileDao(tx);
-
-    const user = await userDao.create(attrs.user);
-
-    const profile = await profileDao.create({
-      userId: user.id,
-      ...attrs.profile,
-    });
-
-    return { user, profile };
-  });
-}
+// Atomic delete-then-insert via Batch API
+await db.batch([
+  db.delete(entries).where(eq(entries.planId, planId)),
+  db.insert(entries).values({ id, planId, recipeId }),
+]);
 ```
 
-Use a transaction when:
+`db.batch()` accepts an array of prepared query builders: `db.select()`, `db.insert()`, `db.update()`, `db.delete()`, `db.query.<table>.findMany()`, `db.query.<table>.findFirst()`.
+
+The return type is a tuple matching each query's result type:
+
+```ts
+const [deleted, inserted] = await db.batch([
+  db.delete(entries).where(eq(entries.planId, planId)).returning(),
+  db.insert(entries).values({ id, planId, recipeId }).returning(),
+]);
+// deleted: { id: string; ... }[]
+// inserted: { id: string; ... }[]
+```
+
+Use `db.batch()` when:
 
 - Multiple tables are modified.
 - Multiple related records are created.
 - Multiple related records are deleted.
 - Data consistency must be guaranteed.
 
-A transaction is generally unnecessary for:
+`db.batch()` is unnecessary for:
 
 - Single-table CRUD operations.
 - Read-only operations.
 - Simple lookups.
 
-When in doubt, prefer a transaction for multi-write workflows.
+`db.batch()` declares all queries upfront — you cannot read a result mid-batch to decide the next query. If you need conditional logic between writes, read first, then batch the writes:
+
+```ts
+const existing = await db
+  .select()
+  .from(entries)
+  .where(eq(entries.planId, planId));
+
+if (existing.length > 0) {
+  await db.batch([
+    db.delete(entries).where(eq(entries.planId, planId)),
+    db.insert(entries).values({ id, planId, recipeId }),
+  ]);
+} else {
+  await db.insert(entries).values({ id, planId, recipeId });
+}
+```
+
+When in doubt, prefer `db.batch()` for multi-write workflows.
 
 ## Cross-Table Reads
 
@@ -418,7 +458,7 @@ A service is valid only if:
 
 1. It lives in `app/services/`.
 2. It owns business workflows.
-3. It owns transaction boundaries.
+3. It uses `db.batch()` for atomic writes (not `db.transaction()`, which fails on D1).
 4. It may compose multiple DAOs.
 5. It may execute custom Drizzle queries.
 6. It may coordinate multiple tables.
