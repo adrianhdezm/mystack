@@ -139,13 +139,13 @@ import type { Route } from "./+types/protected-layout";
 
 export const requestIdContext = createContext<string | null>(null);
 
-async function requestIdMiddleware(
-  { context }: Route.MiddlewareArgs,
-  next: Route.MiddlewareFunction,
-) {
+const requestIdMiddleware: Route.MiddlewareFunction = async ({
+  context,
+  next,
+}) => {
   context.set(requestIdContext, crypto.randomUUID());
   return next();
-}
+};
 
 export const middleware: Route.MiddlewareFunction[] = [requestIdMiddleware];
 ```

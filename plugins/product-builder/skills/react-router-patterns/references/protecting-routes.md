@@ -10,6 +10,7 @@
 - Login And Logout
 - Cookie Sessions
 - Fallback: Loader-Level Protection
+- Gotchas
 - Checklist
 
 Use this guide when adding or reviewing authenticated pages, protected route groups, protected actions, login redirects, logout behavior, ownership checks, role checks, cookie sessions, or auth middleware.
@@ -47,7 +48,7 @@ import { Outlet, redirect } from "react-router";
 import { appContext, userContext } from "~/context";
 import type { Route } from "./+types/protected-layout";
 
-async function requireUser({ context, request }: Route.MiddlewareArgs) {
+const requireUser: Route.MiddlewareFunction = async ({ context, request }) => {
   const { auth } = context.get(appContext);
   const session = await auth.api.getSession({ headers: request.headers });
 
@@ -57,7 +58,7 @@ async function requireUser({ context, request }: Route.MiddlewareArgs) {
   }
 
   context.set(userContext, session.user);
-}
+};
 
 export const middleware: Route.MiddlewareFunction[] = [requireUser];
 
@@ -73,6 +74,8 @@ Now `/dashboard`, `/projects`, and `/projects/:projectId` are protected because 
 Prefer auth middleware for protected route groups. Middleware should authenticate the request once, redirect anonymous users, and place the authenticated user or session in React Router context.
 
 Do not repeat basic session checks in every protected loader or action when the route is already inside an auth middleware branch.
+
+Do not export middleware as a single function (`Route.MiddlewareFunction`). Always export an array (`Route.MiddlewareFunction[]`). The array form lets you compose multiple middleware functions and lets guard-style middleware (like auth) skip `next()` — the framework auto-continues when the function returns without throwing.
 
 Include only safe local paths in `redirectTo`. Do not allow external redirects.
 
@@ -214,6 +217,10 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 ```
 
 Do not use loader-level protection repeatedly across a protected section when a layout route with auth middleware would express the route boundary more clearly.
+
+## Gotchas
+
+The generated route types export `Route.MiddlewareFunction` but not `Route.MiddlewareArgs`. Type middleware as `const fn: Route.MiddlewareFunction = async ({ context, request }) => { ... }` rather than annotating the parameter destructuring with a separate args type.
 
 ## Checklist
 
