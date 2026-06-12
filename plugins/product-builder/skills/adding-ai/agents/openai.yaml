@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding AI"
+  short_description: "Add Vercel AI SDK with OpenAI provider for text, structured output, and image generation."
+  default_prompt: "Add Vercel AI SDK with OpenAI provider to this Product Builder project with text generation, structured output, image generation, and React Router server context."
