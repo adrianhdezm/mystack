@@ -26,9 +26,10 @@ For each route, note loader and action responsibilities.
 - shadcn/ui components to install or use (e.g., `Card`, `Dialog`, `DataTable`).
 - Custom components to create, with purpose and location.
 
-## Services and DAOs
+## DAOs, Queries, and Services
 
 - DAOs to create (one per new table).
+- Queries to create (one per cross-table read, in `app/db/queries/`).
 - Services to create or modify, with workflow description.
 
 ## Acceptance Criteria

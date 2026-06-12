@@ -4,16 +4,15 @@
 
 - Purpose
 - Directory Structure
-- DAO Layer (interface, typing, CRUD, filters, relations, validation)
+- DAO Layer (interface, typing, CRUD, filters, validation)
+- Query Layer (relation queries, composite types, relational API)
 - Service Layer (transaction boundaries, composition, auth-scoped access)
-- Cross-Table Reads
-- Specialized SQL
 - Dependency Rules
 - Enforcement Rules
 
 ## Purpose
 
-Use this reference when adding or changing application tables, DAOs, services, transactions, data validation schemas, or data access workflows in a Product Builder project.
+Use this reference when adding or changing application tables, DAOs, queries, services, transactions, data validation schemas, or data access workflows in a Product Builder project.
 
 The data access architecture is designed for React Router v7 applications using Cloudflare D1, Drizzle ORM, and `drizzle-zod`.
 
@@ -31,10 +30,13 @@ The goals are:
 app/
 ├── db/
 │   ├── schema.ts
-│   ├── dao.ts
-│   └── daos/
-│       ├── user.dao.ts
-│       ├── organization.dao.ts
+│   ├── data-access.ts
+│   ├── daos/
+│   │   ├── user.dao.ts
+│   │   ├── organization.dao.ts
+│   │   └── ...
+│   └── queries/
+│       ├── order-line-items.query.ts
 │       └── ...
 ├── services/
 │   ├── user.service.ts
@@ -43,7 +45,26 @@ app/
 └── routes/
 ```
 
-Keep Drizzle table definitions and the exported Drizzle `schema` object in `app/db/schema.ts`. Keep DAO-specific `drizzle-zod` validation schemas in the DAO file that owns the entity.
+Keep Drizzle table definitions, the exported Drizzle `schema` object, and `relations()` declarations in `app/db/schema.ts`. Keep DAO-specific `drizzle-zod` validation schemas in the DAO file that owns the entity.
+
+## Schema Relations
+
+Tables with foreign keys must declare `relations()` in `app/db/schema.ts`. This enables Drizzle's relational query API, which the Query layer depends on.
+
+```ts
+export const ordersRelations = relations(orders, ({ many }) => ({
+  lineItems: many(lineItems),
+}));
+
+export const lineItemsRelations = relations(lineItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [lineItems.orderId],
+    references: [orders.id],
+  }),
+}));
+```
+
+Always declare both sides of the relationship (parent `many` and child `one`).
 
 ## DAO Layer
 
@@ -77,9 +98,9 @@ constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
 
 This allows DAOs to be instantiated with either the request database client or a transaction client.
 
-### Shared DAO Interface
+### Shared Data Access Interfaces
 
-Create the shared DAO interface in `app/db/dao.ts` when the first DAO is added.
+Create the shared data access interfaces in `app/db/data-access.ts` when the first DAO is added. This file contains both the `Dao` and `RelationQuery` interfaces.
 
 ```ts
 export interface GetAllOptions<F = object> {
@@ -90,7 +111,7 @@ export interface GetAllOptions<F = object> {
 
 export interface GetAllResult<T> {
   items: T[];
-  total?: number;
+  total: number;
 }
 
 export interface Dao<
@@ -105,6 +126,11 @@ export interface Dao<
   update(id: string, attrs: U): Promise<T>;
   delete(id: string): Promise<void>;
   deleteMany(ids: string[]): Promise<void>;
+}
+
+export interface RelationQuery<T, F = object> {
+  get(id: string): Promise<T | null>;
+  getAll(opts?: GetAllOptions<F>): Promise<GetAllResult<T>>;
 }
 ```
 
@@ -280,6 +306,7 @@ DAOs must not:
 
 - Import other DAOs.
 - Import services.
+- Import queries.
 - Coordinate multiple tables.
 - Implement business workflows.
 - Contain custom joins.
@@ -289,11 +316,219 @@ DAOs must not:
 
 A DAO should be understandable without knowing the business workflow that uses it.
 
+## Query Layer
+
+Queries provide read-only access to data that spans multiple related tables. Each Query uses Drizzle's relational API to return composite types with nested relations, avoiding raw joins and manual row collapsing.
+
+Queries are intentionally read-only and must not contain business logic or write operations. Writes always go through entity DAOs (directly or via `db.batch()` for atomic operations).
+
+### Query Location
+
+```txt
+app/db/queries/
+```
+
+File naming follows the `<parent>-<child>.query.ts` convention:
+
+```txt
+order + line items  -> order-line-items.query.ts
+post + author       -> post-author.query.ts
+project + members   -> project-members.query.ts
+```
+
+### Query Constructor
+
+Each Query accepts a typed Drizzle database instance, same as DAOs.
+
+```ts
+constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
+```
+
+### Query Interface
+
+Queries implement the `RelationQuery` interface from `app/db/data-access.ts`:
+
+```ts
+export interface RelationQuery<T, F = object> {
+  get(id: string): Promise<T | null>;
+  getAll(opts?: GetAllOptions<F>): Promise<GetAllResult<T>>;
+}
+```
+
+Only two methods: `get()` for a single composite record by parent ID, and `getAll()` for filtered lists with pagination.
+
+### Composite Types
+
+Each Query exports a composite record type that embeds related entity records. The naming convention is `<Parent>With<Child>`:
+
+```ts
+export interface OrderWithLineItems {
+  id: string;
+  userId: string;
+  status: string;
+  lineItems: LineItemRecord[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+Import child record types from their entity DAOs. Do not redefine them.
+
+### Typed Filters
+
+Each Query exports a filters interface for its `getAll()` method:
+
+```ts
+export interface OrderWithLineItemsFilters {
+  userId?: string;
+  status?: string;
+}
+```
+
+### Using the Relational API
+
+Queries use Drizzle's relational API (`db.query.*`) exclusively. Do not use query builder joins (`db.select().from().innerJoin()`) in Queries — that is the pattern Queries replace.
+
+The `get()` method uses `findFirst` with a `with` clause:
+
+```ts
+async get(id: string): Promise<OrderWithLineItems | null> {
+  return (
+    (await this.db.query.orders.findFirst({
+      where: eq(orders.id, id),
+      with: { lineItems: true },
+    })) ?? null
+  );
+}
+```
+
+### `db.batch()` for `getAll()`
+
+The `getAll()` method uses `db.batch()` to fetch items and count in a single round trip:
+
+```ts
+async getAll(
+  opts?: GetAllOptions<OrderWithLineItemsFilters>
+): Promise<GetAllResult<OrderWithLineItems>> {
+  const { filters, limit, offset } = opts ?? {};
+
+  const conditions = [];
+  if (filters?.userId) conditions.push(eq(orders.userId, filters.userId));
+  if (filters?.status) conditions.push(eq(orders.status, filters.status));
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [items, [{ value: total }]] = await this.db.batch([
+    this.db.query.orders.findMany({
+      where,
+      with: { lineItems: true },
+      limit: limit ?? 100,
+      offset: offset ?? 0,
+    }),
+    this.db.select({ value: count() }).from(orders).where(where),
+  ]);
+
+  return { items, total };
+}
+```
+
+`db.batch()` sends both queries in a single round trip to D1. This is the correct pattern for Queries — it is not `Promise.all` (which adds overhead without parallelism on D1), and it is not two sequential awaits (which makes two round trips).
+
+### When To Create A Query
+
+Create a Query when a service needs to read data from two or more related tables in a single query.
+
+Do not create a Query for:
+
+- Single-table reads — use the entity DAO's `getAll()`.
+- Write operations — use entity DAOs, with `db.batch()` for atomicity.
+- Business logic that touches multiple tables — that belongs in a service.
+
+### Query Restrictions
+
+Queries must not:
+
+- Import DAOs or services.
+- Contain write methods (`create`, `update`, `delete`).
+- Contain business logic.
+- Use query builder joins (`db.select().from().innerJoin()`) — use the relational API.
+- Add methods beyond `get()` and `getAll()`.
+
+### Full Query Example
+
+```ts
+// app/db/queries/order-line-items.query.ts
+
+import { and, count, eq } from "drizzle-orm";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+
+import type {
+  GetAllOptions,
+  GetAllResult,
+  RelationQuery,
+} from "~/db/data-access";
+import type { LineItemRecord } from "~/db/daos/line-item.dao";
+import { orders } from "~/db/schema";
+import type { schema } from "~/db/schema";
+
+export interface OrderWithLineItems {
+  id: string;
+  userId: string;
+  status: string;
+  lineItems: LineItemRecord[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface OrderWithLineItemsFilters {
+  userId?: string;
+  status?: string;
+}
+
+export class OrderLineItemsQuery implements RelationQuery<
+  OrderWithLineItems,
+  OrderWithLineItemsFilters
+> {
+  constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
+
+  async get(id: string): Promise<OrderWithLineItems | null> {
+    return (
+      (await this.db.query.orders.findFirst({
+        where: eq(orders.id, id),
+        with: { lineItems: true },
+      })) ?? null
+    );
+  }
+
+  async getAll(
+    opts?: GetAllOptions<OrderWithLineItemsFilters>,
+  ): Promise<GetAllResult<OrderWithLineItems>> {
+    const { filters, limit, offset } = opts ?? {};
+
+    const conditions = [];
+    if (filters?.userId) conditions.push(eq(orders.userId, filters.userId));
+    if (filters?.status) conditions.push(eq(orders.status, filters.status));
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [items, [{ value: total }]] = await this.db.batch([
+      this.db.query.orders.findMany({
+        where,
+        with: { lineItems: true },
+        limit: limit ?? 100,
+        offset: offset ?? 0,
+      }),
+      this.db.select({ value: count() }).from(orders).where(where),
+    ]);
+
+    return { items, total };
+  }
+}
+```
+
 ## Service Layer
 
 Services coordinate business workflows. Use services for operations that span multiple tables, require atomic writes, or represent domain behavior.
 
-Services compose DAOs.
+Services compose DAOs and Queries. Services do not import schema tables or build Drizzle queries directly.
 
 ### Service Location
 
@@ -305,12 +540,11 @@ app/services/
 
 Use a service when an operation:
 
-- Touches multiple tables.
+- Touches multiple tables for writes.
 - Requires atomic writes (`db.batch()`).
 - Coordinates multiple DAOs.
 - Represents a business workflow.
-- Requires custom SQL.
-- Performs joins or aggregations.
+- Performs upserts, bulk imports, or aggregations.
 
 Examples:
 
@@ -320,6 +554,31 @@ Create order + order items
 Invite organization member
 Delete project and dependencies
 Provision workspace
+```
+
+### How Services Use Queries
+
+Services delegate cross-table reads to Queries. They do not import schema tables or write raw Drizzle join queries.
+
+```ts
+// order.service.ts — before (raw Drizzle in service)
+import { orders, lineItems } from "~/db/schema";
+
+export async function getOrdersWithItems(db, userId) {
+  return db
+    .select()
+    .from(orders)
+    .innerJoin(lineItems, eq(orders.id, lineItems.orderId))
+    .where(eq(orders.userId, userId));
+}
+
+// order.service.ts — after (delegates to Query)
+import { OrderLineItemsQuery } from "~/db/queries/order-line-items.query";
+
+export async function getOrdersWithItems(db, userId) {
+  const query = new OrderLineItemsQuery(db);
+  return query.getAll({ filters: { userId } });
+}
 ```
 
 ### Service Atomic Writes with Batch API
@@ -359,7 +618,7 @@ Use `db.batch()` when:
 `db.batch()` is unnecessary for:
 
 - Single-table CRUD operations.
-- Read-only operations.
+- Read-only operations (except Query `getAll()` which batches items + count).
 - Simple lookups.
 
 `db.batch()` declares all queries upfront — you cannot read a result mid-batch to decide the next query. If you need conditional logic between writes, read first, then batch the writes:
@@ -382,34 +641,14 @@ if (existing.length > 0) {
 
 When in doubt, prefer `db.batch()` for multi-write workflows.
 
-## Cross-Table Reads
-
-Cross-table reads do not belong in DAOs. Create dedicated query functions or service functions instead.
-
-```ts
-export async function getProjectDetails(
-  db: DrizzleD1Database<typeof schema>,
-  projectId: string,
-) {
-  return db
-    .select()
-    .from(projects)
-    .leftJoin(organizations, eq(projects.organizationId, organizations.id))
-    .where(eq(projects.id, projectId));
-}
-```
-
-These functions are not DAOs and do not need to implement the DAO interface.
-
 ## Specialized SQL
 
-The DAO layer intentionally supports only standard CRUD operations.
+The DAO and Query layers intentionally support only standard operations (CRUD for DAOs, relational reads for Queries).
 
-Implement operations such as these in services or dedicated query modules:
+Implement operations such as these in services:
 
 - Upserts.
 - Bulk imports.
-- Complex joins.
 - Aggregations.
 - Analytics queries.
 - Search queries.
@@ -423,6 +662,7 @@ Allowed:
 ```txt
 Routes
   -> Services
+  -> Queries
   -> DAOs
   -> Database
 ```
@@ -431,11 +671,14 @@ Not allowed:
 
 ```txt
 DAO -> DAO
+DAO -> Query
 DAO -> Service
+Query -> DAO
+Query -> Service
 Service -> Route
 ```
 
-Services may compose multiple DAOs. DAOs must remain independent.
+Services may compose multiple DAOs and Queries. DAOs and Queries must remain independent.
 
 ## Enforcement Rules
 
@@ -454,11 +697,22 @@ A DAO is valid only if:
 11. It does not use `Promise.all` for D1 queries.
 12. It uses `inArray()` for batch operations instead of looping individual queries.
 
+A Query is valid only if:
+
+1. It lives in `app/db/queries/`.
+2. It joins two or more related tables using Drizzle's relational API (`db.query.*`).
+3. It implements `RelationQuery`.
+4. It exposes only `get()` and `getAll()` — no write methods.
+5. It exports a composite type following the `<Parent>With<Child>` naming.
+6. It uses `db.batch()` in `getAll()` for items + count in one round trip.
+7. It contains no business logic.
+8. It does not import DAOs or services.
+
 A service is valid only if:
 
 1. It lives in `app/services/`.
 2. It owns business workflows.
 3. It uses `db.batch()` for atomic writes (not `db.transaction()`, which fails on D1).
-4. It may compose multiple DAOs.
-5. It may execute custom Drizzle queries.
-6. It may coordinate multiple tables.
+4. It may compose multiple DAOs and Queries.
+5. It does not import schema tables or build Drizzle queries directly.
+6. It does not perform joins — it uses a Query instead.

@@ -17,14 +17,19 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 - Read dependency specs listed in its Dependencies section.
 - Read `docs/data-model.md` if it exists — this is the canonical reference for entities, relationships, and constraints.
 - Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
-- Scan the codebase for existing code related to the spec: schema, DAOs, services, routes, components.
-- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, service, and transaction conventions.
+- Scan the codebase for existing code related to the spec: schema, DAOs, queries, services, routes, components.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, query, service, and transaction conventions.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns established during prior implementations.
 
 ### 2) Implement
 
-- Build everything the spec describes: schema, migrations, DAOs, services, routes, loaders/actions, components — the full vertical slice.
+- Build everything the spec describes: schema, migrations, DAOs, queries, services, routes, loaders/actions, components — the full vertical slice.
+- When a feature's loader or action needs data joined across tables:
+  1. Check if a Query already exists for that join in `app/db/queries/`.
+  2. If not, create one following the `<parent>-<child>.query.ts` naming convention.
+  3. The Query implements `RelationQuery<CompositeType, Filters>` from `~/db/data-access`.
+  4. The service calls the Query — it never imports schema tables or writes raw joins.
 - Follow project conventions in `docs/conventions/` and avoid listed anti-patterns. For base patterns use Drizzle for schema, React Router loaders/actions for data, shadcn/ui for components, Conform + Zod for forms.
 - When the spec is ambiguous, make a reasonable choice and log it in `docs/architecture.md`.
 - Run `pnpm typecheck` periodically to catch errors early.
@@ -90,10 +95,10 @@ Omit empty subsections in the Implementation Log.
 - [ ] `docs/architecture.md` was read or created.
 - [ ] `docs/data-model.md` was read or created.
 - [ ] `docs/data-model.md` reflects the current state of `app/db/schema.ts` after implementation.
-- [ ] `data-access-architecture.md` conventions were followed for DAOs and services.
+- [ ] `data-access-architecture.md` conventions were followed for DAOs, queries, and services.
 - [ ] `react-router-patterns` conventions were followed for routes, loaders, and actions.
 - [ ] Project conventions in `docs/conventions/` were followed and anti-patterns avoided.
-- [ ] All spec sections (database, routes, components, services) were implemented.
+- [ ] All spec sections (database, DAOs, queries, services, routes, components) were implemented.
 - [ ] `pnpm typecheck` passes.
 - [ ] `pnpm lint` passes.
 - [ ] Each acceptance criterion was verified or logged as an open question.

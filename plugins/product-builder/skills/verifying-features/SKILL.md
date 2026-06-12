@@ -24,8 +24,9 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 For each section in the spec, verify the code matches:
 
 - **Database**: Confirm tables, columns, indexes, and relationships exist in `app/db/schema.ts` and migrations under `db/migrations/`. Verify `docs/data-model.md` matches `app/db/schema.ts`.
-- **DAOs**: Confirm DAOs exist in `app/db/daos/` and implement the DAO interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md).
-- **Services**: Confirm services exist in `app/services/` with correct transaction boundaries and DAO composition.
+- **DAOs**: Confirm DAOs exist in `app/db/daos/` and implement the `Dao` interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md).
+- **Queries**: Confirm relation queries exist in `app/db/queries/` for any cross-table reads and implement the `RelationQuery` interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md). Verify services use queries instead of raw Drizzle joins.
+- **Services**: Confirm services exist in `app/services/` with correct transaction boundaries, DAO composition, and query delegation. Verify services do not import schema tables or build raw Drizzle queries.
 - **Routes**: Confirm route files exist, paths are registered in `app/routes.ts`, and loaders/actions match the spec.
 - **Components**: Confirm shadcn/ui components are installed and custom components are created as specified.
 - **Auth**: If routes are marked as protected, confirm authentication checks are in place.
@@ -121,7 +122,7 @@ Present the report to the user. Do not modify code — this skill is read-only. 
 - [ ] Target spec was read completely.
 - [ ] `docs/data-model.md` was checked against `app/db/schema.ts` for consistency.
 - [ ] `docs/architecture.md` was consulted for known deviations.
-- [ ] Every spec section (database, routes, components, services) was checked against the codebase.
+- [ ] Every spec section (database, DAOs, queries, services, routes, components) was checked against the codebase.
 - [ ] Implementation was checked against project conventions and anti-patterns in `docs/conventions/`.
 - [ ] Every acceptance criterion was individually evaluated.
 - [ ] `pnpm typecheck`, `pnpm lint`, and `pnpm build` were run.

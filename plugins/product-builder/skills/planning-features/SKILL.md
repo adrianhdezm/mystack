@@ -26,8 +26,8 @@ If the description is vague or missing key decisions, ask up to three clarifying
 - Read `docs/data-model.md` if it exists — this is the canonical reference for entities, relationships, and constraints. Use it to understand the current data model before proposing changes.
 - Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
 - Read all existing `docs/features/*.spec.md` files to know what is already planned.
-- Scan the codebase for what is already built: schema (`app/db/schema.ts`), DAOs (`app/db/daos/`), services (`app/services/`), routes (`app/routes/`), and components (`app/components/`).
-- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, service, and transaction conventions.
+- Scan the codebase for what is already built: schema (`app/db/schema.ts`), DAOs (`app/db/daos/`), queries (`app/db/queries/`), services (`app/services/`), routes (`app/routes/`), and components (`app/components/`).
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, query, service, and transaction conventions.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns. Specs should align with established conventions.
 - Identify what the feature requires that is NOT yet covered by existing specs or code.
@@ -35,7 +35,7 @@ If the description is vague or missing key decisions, ask up to three clarifying
 ### 2) Slice the Feature
 
 - Think in terms of what the user will see and do, then derive the technical pieces needed to support it.
-- A feature spec is a **vertical slice** delivered end-to-end: schema changes, DAOs, services, routes, loaders/actions, UI components, and wiring. The reader should be able to build the spec and see a working feature in the browser.
+- A feature spec is a **vertical slice** delivered end-to-end: schema changes, DAOs, queries, services, routes, loaders/actions, UI components, and wiring. The reader should be able to build the spec and see a working feature in the browser.
 - Slice by user-facing capability. Do not create schema-only or component-only specs.
 - Order dependencies so each part builds on the previous.
 - If the feature is large, split into multiple numbered specs and note dependencies between them. Each spec should still deliver something the user can interact with.
