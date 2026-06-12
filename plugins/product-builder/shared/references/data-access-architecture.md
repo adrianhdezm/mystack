@@ -212,6 +212,48 @@ export const updateUserSchema = createInsertSchema(users)
   .partial();
 ```
 
+### Query Execution
+
+D1 is backed by SQLite. All queries execute sequentially over a single connection. There is no connection pool and no parallel query execution.
+
+Do not use `Promise.all` to run multiple D1 queries concurrently — the queries still run one at a time and the promise overhead adds complexity without benefit.
+
+```ts
+// wrong — false parallelism on a single-connection database
+const [items, [{ value: total }]] = await Promise.all([
+  db.select().from(table).where(where).limit(limit).offset(offset),
+  db.select({ value: count() }).from(table).where(where),
+]);
+```
+
+Use sequential awaits instead:
+
+```ts
+// correct — explicit about the actual execution order
+const items = await db
+  .select()
+  .from(table)
+  .where(where)
+  .limit(limit)
+  .offset(offset);
+const [{ value: total }] = await db
+  .select({ value: count() })
+  .from(table)
+  .where(where);
+```
+
+For batch operations, use a single query with `inArray()` instead of looping individual queries:
+
+```ts
+// wrong — N+1 deletes wrapped in Promise.all
+const results = await Promise.all(ids.map((id) => this.delete(id)));
+```
+
+```ts
+// correct — single DELETE statement
+const result = await db.delete(table).where(inArray(table.id, ids)).returning();
+```
+
 ### DAO Restrictions
 
 DAOs must not:
@@ -369,6 +411,8 @@ A DAO is valid only if:
 8. It contains no business logic.
 9. It contains no cross-table workflows.
 10. It contains no workflow-specific SQL.
+11. It does not use `Promise.all` for D1 queries.
+12. It uses `inArray()` for batch operations instead of looping individual queries.
 
 A service is valid only if:
 
