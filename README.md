@@ -19,14 +19,14 @@ Product Builder turns early product ideas into working product foundations. It h
 
 ```sh
 codex plugin marketplace add https://github.com/adrianhdezm/mystack
-codex plugin add product-builder@my-stack
+codex plugin add product-builder@mystack
 ```
 
 **Claude Code**
 
 ```text
 /plugin marketplace add https://github.com/adrianhdezm/mystack
-/plugin install product-builder@my-stack
+/plugin install product-builder@mystack
 ```
 
 After installing or updating the plugin, start a new thread so the latest skills are loaded.
