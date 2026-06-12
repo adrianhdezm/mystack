@@ -83,7 +83,7 @@ Foundation skills run in dependency order based on the classification:
 
 1. **[`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md)** — Adds Cloudflare D1 with Drizzle ORM, migrations, and server context.
 2. **[`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md)** — Adds Better Auth with email/password, session handling, and protected routes.
-3. **[`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md)** *(advanced only)* — Adds Cloudflare R2 with upload/delete lifecycle and file metadata.
+3. **[`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md)** _(advanced only)_ — Adds Cloudflare R2 with upload/delete lifecycle and file metadata.
 
 After foundation skills complete, `docs/architecture.md` reflects the full stack and `docs/data-model.md` includes all foundation entities (e.g., auth tables).
 
@@ -206,7 +206,7 @@ meal-planner/
 ## Key References
 
 | Reference | Purpose |
-| --------- | ------- |
+| --- | --- |
 | [interview-and-decisions.md](../plugins/product-builder/skills/creating-products/references/interview-and-decisions.md) | Interview questions, complexity classification, and foundation capability matrix |
 | [design-approval.md](../plugins/product-builder/skills/creating-products/references/design-approval.md) | Design proposal content, approval flow, and implementation constraints |
 | [architecture-template.md](../plugins/product-builder/shared/templates/architecture-template.md) | Template for `docs/architecture.md` |
@@ -216,7 +216,7 @@ meal-planner/
 ## Skills Reference
 
 | Skill | Phase | Role |
-| ----- | ----- | ---- |
+| --- | --- | --- |
 | [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) | All | Orchestrator — drives the full process |
 | [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) | 1 | Creates or finds the GitHub repo and local clone |
 | [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) | 1 | Scaffolds the base project and initial docs |
