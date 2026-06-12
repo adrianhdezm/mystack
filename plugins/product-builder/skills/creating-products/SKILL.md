@@ -47,7 +47,8 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
 ### Phase 4 — Final Verification
 
 10. Run formatting, typecheck, lint, and build across the full project. If any command fails, fix the issue and re-run until it passes.
-11. Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, and any open questions from `docs/architecture.md`.
+11. If any failure traces back to a specific feature (e.g., a type error in a route, a broken E2E step), return to Phase 3 for that feature: run `implementing-features` to fix the issue, then `verifying-features` to re-verify. Repeat until all features pass or the issue requires user input.
+12. Once all checks pass, commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, and any open questions from `docs/architecture.md`.
 
 ## Approval gate
 
@@ -69,4 +70,4 @@ If the user requests a change during review, update the proposal and ask for app
 - [ ] `implementing-features` and `verifying-features` were run for each feature spec.
 - [ ] `docs/architecture.md` was maintained throughout.
 - [ ] Formatting, typecheck, lint, and build pass after all features.
-- [ ] Final summary includes features implemented, commit hash, and open questions.
+- [ ] Final summary includes features implemented, commit hash, verification and E2E test results, and open questions.

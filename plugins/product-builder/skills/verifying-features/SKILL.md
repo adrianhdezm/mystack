@@ -48,14 +48,10 @@ For each acceptance criterion in the spec:
 
 ### 5) Report
 
-Produce a verification report with these sections:
+Produce a static verification report with these sections:
 
 ```markdown
 # Verification: NN — Title
-
-## Summary
-
-One-line: overall status (pass / pass with notes / fail).
 
 ## Acceptance Criteria
 
@@ -75,47 +71,21 @@ One-line: overall status (pass / pass with notes / fail).
 
 - Mismatches between spec, code, and architecture notes.
 - `docs/data-model.md` out of sync with `app/db/schema.ts`.
-
-## Recommendations
-
-- Suggested fixes or follow-up work.
 ```
 
-**Example** (abbreviated):
+Do not present this report yet — it feeds into the consolidated result in step 7. Do not modify code — this skill is read-only.
 
-```markdown
-# Verification: 02 — Color Upload
+### 6) E2E Testing
 
-## Summary
+Run `testing-features` to verify the features work end-to-end in the browser.
 
-Pass with notes — all acceptance criteria met, one minor inconsistency in data-model.md.
+### 7) Consolidated Result
 
-## Acceptance Criteria
+Present a consolidated result to the user combining the static verification report (step 5) and the E2E test report (step 6):
 
-| # | Criterion | Status | Notes |
-| --- | --- | --- | --- |
-| 1 | When user uploads a .ase file, colors are parsed | Met |  |
-| 2 | When parsing fails, user sees an error toast | Met | Uses sonner toast |
-| 3 | When colors are saved, they appear on dashboard | Met | Sorted by createdAt desc |
-
-## Deviations from Spec
-
-- **Toast library** — spec said "error message below form", implementation uses sonner toast. Acceptable — better UX.
-
-## Missing Items
-
-- None.
-
-## Inconsistencies
-
-- `docs/data-model.md` lists `hex` column as `varchar(7)` but schema uses `text`. Update docs.
-
-## Recommendations
-
-- Update `docs/data-model.md` to match schema.
-```
-
-Present the report to the user. Do not modify code — this skill is read-only. If there are failing criteria or missing items, suggest running `implementing-features` again with the spec to address them.
+- **Pass** — all acceptance criteria met, checks pass, and all E2E steps pass.
+- **Pass with notes** — all criteria met but there are minor deviations, inconsistencies, or non-blocking E2E observations. List recommendations.
+- **Fail** — one or more acceptance criteria not met, checks fail, or E2E steps fail. List the specific items that need to be fixed and suggest running `implementing-features` again with the spec to address them.
 
 ## Validation Checklist
 
@@ -127,4 +97,6 @@ Present the report to the user. Do not modify code — this skill is read-only. 
 - [ ] Every acceptance criterion was individually evaluated.
 - [ ] `pnpm typecheck`, `pnpm lint`, and `pnpm build` were run.
 - [ ] Report was presented with clear status for each criterion.
+- [ ] `testing-features` was run for E2E verification.
+- [ ] Consolidated verdict was presented combining static and E2E results.
 - [ ] No code was modified during verification.

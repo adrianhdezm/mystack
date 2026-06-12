@@ -1,0 +1,4 @@
+interface:
+  display_name: "Testing Features"
+  short_description: "E2E test implemented features in the browser via Chrome DevTools."
+  default_prompt: "Generate an E2E test plan from the feature specs in docs/features/, then run the happy-path tests in the browser and report results."
