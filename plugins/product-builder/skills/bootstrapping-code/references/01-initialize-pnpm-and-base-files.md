@@ -87,9 +87,16 @@ fix(api): 🐛 Correct schema validation
 ```
 ````
 
+6. Create a `CLAUDE.md` symlink pointing to `AGENTS.md`.
+
+```sh
+ln -s AGENTS.md CLAUDE.md
+```
+
 ## Expected Results
 
 - `package.json` exists and contains the project name, description, `private: true`, `type: "module"`, and `packageManager: "pnpm@<pnpm-version>"`.
 - `README.md` exists with the project name as the heading and the project description below it.
 - `.gitignore` exists with macOS, environment, dependency, TypeScript build info, React Router, and Cloudflare generated-file entries.
 - `AGENTS.md` exists and tells future agents this is a React Router v7 project deployed to Cloudflare Workers, packages are managed with pnpm, and commit messages use the project Conventional Commits format.
+- `CLAUDE.md` is a symlink to `AGENTS.md`.
