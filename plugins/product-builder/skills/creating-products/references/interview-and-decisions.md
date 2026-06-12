@@ -41,12 +41,16 @@ Use capability needs to choose the classification:
 
 When uncertain between two classifications, prefer the simpler classification and state the tradeoff. Do not add foundation capabilities independently from the classification matrix.
 
+### Independent capabilities
+
+AI is independent of the complexity classification. Add `ai=yes` when the product needs text generation, structured AI output, image generation, LLM-powered features, or OpenAI API integration. AI can be combined with any complexity level.
+
 ## Decision output
 
 Before running foundation skills, state:
 
 ```text
 PROJECT_COMPLEXITY: simple | standard | advanced
-FOUNDATION_CAPABILITIES: database=<yes/no>, authentication=<yes/no>, file_storage=<yes/no>
+FOUNDATION_CAPABILITIES: database=<yes/no>, authentication=<yes/no>, file_storage=<yes/no>, ai=<yes/no>
 RATIONALE: <short reason>
 ```

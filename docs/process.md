@@ -84,6 +84,7 @@ Foundation skills run in dependency order based on the classification:
 1. **[`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md)** — Adds Cloudflare D1 with Drizzle ORM, migrations, and server context.
 2. **[`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md)** — Adds Better Auth with email/password, session handling, and protected routes.
 3. **[`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md)** _(advanced only)_ — Adds Cloudflare R2 with upload/delete lifecycle and file metadata.
+4. **[`adding-ai`](../plugins/product-builder/skills/adding-ai/SKILL.md)** _(when ai=yes)_ — Adds Vercel AI SDK with OpenAI provider for text, structured output, and image generation.
 
 After foundation skills complete, `docs/architecture.md` reflects the full stack and `docs/data-model.md` includes all foundation entities (e.g., auth tables).
 
@@ -223,6 +224,7 @@ meal-planner/
 | [`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md) | 1 | Adds Cloudflare D1 + Drizzle ORM |
 | [`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md) | 1 | Adds Better Auth email/password |
 | [`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md) | 1 | Adds Cloudflare R2 (advanced only) |
+| [`adding-ai`](../plugins/product-builder/skills/adding-ai/SKILL.md) | 1 | Adds Vercel AI SDK + OpenAI (when ai=yes) |
 | [`planning-features`](../plugins/product-builder/skills/planning-features/SKILL.md) | 2 | Creates numbered feature specs |
 | [`implementing-features`](../plugins/product-builder/skills/implementing-features/SKILL.md) | 3 | Implements a feature from its spec |
 | [`verifying-features`](../plugins/product-builder/skills/verifying-features/SKILL.md) | 3 | Verifies implementation against spec |

@@ -32,6 +32,8 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
    - `standard`: run `adding-database`, then `adding-authentication`; skip `adding-file-storage`.
    - `advanced`: run `adding-database`, then `adding-authentication`, then `adding-file-storage`.
 
+   If `ai=yes`, run `adding-ai` after the classification-based skills above.
+
    Each foundation skill updates `docs/architecture.md`, `docs/data-model.md`, `docs/conventions/`, and `AGENTS.md` with its additions. After all foundation skills complete, `docs/architecture.md` should reflect the full stack, structure, and active conventions. Verify this before moving to Phase 2.
 
 ### Phase 2 — Feature Planning
