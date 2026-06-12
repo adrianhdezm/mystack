@@ -63,7 +63,7 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - [ ] `package.json` includes `db:generate`, `db:migrate`, and `db:local:migrate`.
 - [ ] `drizzle.config.ts` reads Cloudflare credentials from `.env`.
 - [ ] `.env.example` documents `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN`.
-- [ ] `.env` uses the account ID from `pnpm wrangler whoami` and the database ID from `pnpm wrangler d1 create`.
+- [ ] `.env` uses the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the D1 token from the macOS Keychain or the user.
 - [ ] `wrangler.jsonc` includes a D1 binding with `migrations_table` and `migrations_dir`.
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.

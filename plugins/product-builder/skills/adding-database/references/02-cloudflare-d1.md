@@ -56,13 +56,21 @@ Example output:
 
 5. Configure `.env`.
 
-Populate `.env` with the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the user's D1 API token.
+Populate `.env` with the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the D1 API token.
 
-| Variable | Description |
+Retrieve the D1 API token from the macOS Keychain:
+
+```sh
+security find-generic-password -s CLOUDFLARE_D1_TOKEN -w
+```
+
+If the command succeeds, use the returned value for `CLOUDFLARE_D1_TOKEN` in `.env`. If it fails (token not stored or not on macOS), ask the user to provide the token.
+
+| Variable | Source |
 | --- | --- |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID from `pnpm wrangler whoami` |
-| `CLOUDFLARE_DATABASE_ID` | D1 database ID from `pnpm wrangler d1 create` |
-| `CLOUDFLARE_D1_TOKEN` | API token with D1 read/write access. Create one at Cloudflare dashboard > My Profile > API Tokens > Create Token, using a custom token with Account / D1 / Edit permission. |
+| `CLOUDFLARE_ACCOUNT_ID` | `pnpm wrangler whoami` |
+| `CLOUDFLARE_DATABASE_ID` | `pnpm wrangler d1 create` |
+| `CLOUDFLARE_D1_TOKEN` | macOS Keychain (`security find-generic-password -s CLOUDFLARE_D1_TOKEN -w`), or ask the user |
 
 6. Add migration settings to the generated D1 binding in `wrangler.jsonc`.
 
@@ -86,5 +94,5 @@ Do not replace the generated binding, database name, or database ID. Only add `m
 
 - A D1 database exists in Cloudflare.
 - `.env.example` documents required Cloudflare credentials.
-- `.env` contains the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the user's D1 token.
+- `.env` contains the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the D1 token from the macOS Keychain or the user.
 - `wrangler.jsonc` binds D1 as `APP_DB` and points migrations to `db/migrations`.
