@@ -25,15 +25,22 @@ Preserve any additional context values already used by the app.
 
 ## Worker entrypoint
 
-Update `workers/app.ts` or the existing Worker entrypoint to create Better Auth per request with the current request origin as `baseURL`. Better Auth is constructed on every request because Cloudflare Workers only expose `env` bindings inside the `fetch` handler, not at module scope:
+Update `workers/app.ts` to create Better Auth per request with the current request origin as `baseURL`. Better Auth is constructed on every request because Cloudflare Workers only expose `env` bindings inside the `fetch` handler, not at module scope.
+
+Preserve the existing `createRequestHandler`, `RouterContextProvider`, and Drizzle setup.
 
 ```ts
+import { createRequestHandler, RouterContextProvider } from "react-router";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/d1";
+import { appContext } from "~/context";
+import { schema } from "~/db/schema";
 
-import { schema } from "../app/db/schema";
-import { requestHandler } from "./request-handler";
+const requestHandler = createRequestHandler(
+  () => import("virtual:react-router/server-build"),
+  import.meta.env.MODE,
+);
 
 export default {
   async fetch(request, env, ctx) {
@@ -68,17 +75,18 @@ export default {
       },
     };
     const auth = betterAuth(betterAuthOptions);
+    const routerContext = new RouterContextProvider();
 
-    return requestHandler(request, {
+    routerContext.set(appContext, {
       cloudflare: { env, ctx },
       db,
       auth,
     });
+
+    return requestHandler(request, routerContext);
   },
 } satisfies ExportedHandler<Env>;
 ```
-
-Adapt import paths to the target project. Do not replace unrelated request handler behavior.
 
 ## Types and Cloudflare env
 
