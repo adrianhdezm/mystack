@@ -35,7 +35,7 @@ After installing or updating the plugin, start a new thread so the latest skills
 
 #### Product creation
 
-- `creating-products` — interviews the user, classifies project complexity, orchestrates the required Product Builder skills, proposes the data model and page map, and implements after approval.
+- `creating-products` — orchestrates the full product lifecycle: interviews the user, classifies complexity, sets up the foundation, plans features via a manifest, and implements and verifies each feature end-to-end.
 - `preparing-repositories` — prepares an empty GitHub repository and local clone for Product Builder work.
 - `bootstrapping-code` — bootstraps the initial codebase (pnpm, TypeScript, Vite, Cloudflare Workers, React Router v7, Tailwind CSS v4, shadcn/ui).
 
@@ -44,12 +44,14 @@ After installing or updating the plugin, start a new thread so the latest skills
 - `adding-database` — adds Cloudflare D1 persistence with Drizzle ORM, Wrangler bindings, migrations, and React Router context.
 - `adding-file-storage` — adds Cloudflare R2 file storage with D1 metadata, Wrangler bindings, and React Router context.
 - `adding-authentication` — adds Better Auth email-and-password login, signup, logout, auth routes, secrets, and D1 migrations.
+- `adding-ai` — adds Vercel AI SDK with OpenAI provider for text generation, structured output, and image generation.
 
 #### Feature lifecycle
 
 - `planning-features` — plans a feature end-to-end (database changes, pages, components, acceptance criteria) and saves a numbered spec to `docs/features/`.
 - `implementing-features` — implements a feature spec from `docs/features/` as a full vertical slice, maintaining `docs/data-model.md`, `docs/conventions/`, and `docs/architecture.md`.
 - `verifying-features` — verifies a feature implementation against its spec, checking acceptance criteria and reporting deviations or missing items.
+- `testing-features` — generates a happy-path E2E test plan from all feature specs and executes it in the browser via Chrome DevTools MCP.
 
 #### Patterns
 
