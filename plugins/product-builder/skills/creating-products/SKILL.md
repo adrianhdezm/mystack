@@ -14,7 +14,12 @@ Each phase is a single goal. Set the goal and work until it is met before advanc
 ### Phase 1 — Interview and Classification
 
 ```
-/goal Complete when the user has approved the PROJECT_COMPLEXITY block. Check: the user explicitly confirms the classification.
+/goal Complete when all acceptance criteria are met.
+
+Acceptance criteria:
+- [ ] User answered all interview questions from references/interview-and-classification.md
+- [ ] PROJECT_COMPLEXITY block is populated with tier, justification, and capabilities
+- [ ] User explicitly approved the PROJECT_COMPLEXITY block
 
 Read references/interview-and-classification.md for interview questions, classification tiers, and the approval format. Interview the user, classify the project, and present for approval.
 
@@ -24,7 +29,18 @@ Between iterations, ask only for the minimum missing value that blocks progress.
 ### Phase 2 — Foundation
 
 ```
-/goal Complete when the project is scaffolded and all foundation capabilities for the approved classification are installed and documented. Check: pnpm dev starts without errors, read docs/architecture.md and confirm it lists every capability with its integration point, read docs/data-model.md and confirm it reflects all foundation tables, confirm docs/conventions/ contains entries from each skill, and confirm AGENTS.md is updated. Constraint: preserve any existing repo content the user has committed.
+/goal Complete when all acceptance criteria are met. Constraint: preserve any existing repo content the user has committed.
+
+Acceptance criteria:
+- [ ] REPOSITORY, LOCAL_FOLDER, and PRODUCT_IDEA are resolved
+- [ ] preparing-repositories completed successfully
+- [ ] bootstrapping-code completed successfully
+- [ ] pnpm dev starts without errors
+- [ ] Each foundation skill for the classification ran successfully
+- [ ] docs/architecture.md lists every capability with its integration point
+- [ ] docs/data-model.md reflects all foundation tables
+- [ ] docs/conventions/ contains entries from each foundation skill
+- [ ] AGENTS.md is updated
 
 First, require or derive REPOSITORY, LOCAL_FOLDER, and PRODUCT_IDEA. If the repository or local folder is missing, run preparing-repositories — it must ask only for missing blocking values. Do not create fallback folders. Then run bootstrapping-code for scaffolding. Confirm pnpm dev starts without errors before proceeding.
 
@@ -36,7 +52,15 @@ If the user cannot provide REPOSITORY or LOCAL_FOLDER after being asked, bootstr
 ### Phase 3 — Feature Planning
 
 ```
-/goal Complete when every feature has a user-approved spec. Check: read docs/features/manifest.json and confirm every feature has status "ready" (or "blocked" with a documented reason) — no feature has status "listed". Constraint: preserve all foundation code and documentation unchanged.
+/goal Complete when all acceptance criteria are met. Constraint: preserve all foundation code and documentation unchanged.
+
+Acceptance criteria:
+- [ ] User approved the proposed feature list
+- [ ] docs/features/manifest.json exists with all approved features
+- [ ] planning-features ran for each feature in id order
+- [ ] Each feature spec was approved by the user
+- [ ] Every feature in manifest.json has status "ready" or "blocked" with a documented reason
+- [ ] No feature has status "listed"
 
 Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Propose features that together deliver the first usable version — short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
 
@@ -46,7 +70,13 @@ Between iterations, if the user requests changes, update and re-present for appr
 ### Phase 4 — Feature Implementation
 
 ```
-/goal Complete when every feature is implemented. Check: read docs/features/manifest.json and confirm every feature has status "implemented" (or "blocked" with a documented reason). Constraint: preserve all implemented features and their specs unchanged while implementing subsequent features.
+/goal Complete when all acceptance criteria are met. Constraint: preserve all implemented features and their specs unchanged while implementing subsequent features.
+
+Acceptance criteria:
+- [ ] implementing-features ran for each "ready" feature in dependency order
+- [ ] Each implemented feature was committed
+- [ ] Every feature in manifest.json has status "implemented" or "blocked" with a documented reason
+- [ ] No feature has status "ready"
 
 For each "ready" feature in manifest id order respecting depends_on, run implementing-features. Commit after each implemented feature.
 
@@ -56,7 +86,16 @@ Use implementing-features only. Between iterations, if a feature requires user i
 ### Phase 5 — Verification
 
 ```
-/goal Complete when every feature is verified, E2E tests pass, and the project builds cleanly. Check: read docs/features/manifest.json and confirm every feature has status "verified" (or "blocked" with a documented reason), then run pnpm typecheck, pnpm lint, and pnpm build — all must exit 0. Constraint: both verifying-features and testing-features are mandatory — do not skip either.
+/goal Complete when all acceptance criteria are met. Constraint: both verifying-features and testing-features are mandatory — do not skip either.
+
+Acceptance criteria:
+- [ ] verifying-features ran for each "implemented" feature
+- [ ] Every feature in manifest.json has status "verified" or "blocked" with a documented reason
+- [ ] testing-features ran for a comprehensive E2E pass
+- [ ] E2E tests pass
+- [ ] pnpm typecheck exits 0
+- [ ] pnpm lint exits 0
+- [ ] pnpm build exits 0
 
 For each "implemented" feature in manifest id order, run verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify. After all features reach "verified", run testing-features for a comprehensive E2E pass across all features. If E2E tests fail, fix the issues with implementing-features and re-run testing-features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
 
