@@ -12,6 +12,8 @@ Ask or infer:
 - Is data private to a user, shared with a team, public, or admin-only?
 - Are accounts, roles, invitations, or protected pages required?
 - Are uploads, generated files, imports, exports, or attachments required?
+- Does the product need a public landing or marketing page, or should visitors go straight to login or signup?
+- After login, where should users land — a dashboard, a specific workflow page, or the public landing page?
 - What are the must-have pages or views for the first version?
 - What external services, payments, email, AI APIs, or integrations are needed?
 - What should be avoided in the first version?

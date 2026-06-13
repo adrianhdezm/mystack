@@ -36,6 +36,7 @@ Acceptance criteria:
 - [ ] preparing-repositories completed successfully
 - [ ] bootstrapping-code completed successfully
 - [ ] pnpm dev starts without errors
+- [ ] docs/vision.md is generated from interview answers and approved by the user
 - [ ] Each foundation skill for the classification ran successfully
 - [ ] docs/architecture.md lists every capability with its integration point
 - [ ] docs/data-model.md reflects all foundation tables
@@ -43,6 +44,8 @@ Acceptance criteria:
 - [ ] AGENTS.md is updated
 
 First, require or derive REPOSITORY, LOCAL_FOLDER, and PRODUCT_IDEA. If the repository or local folder is missing, run preparing-repositories — it must ask only for missing blocking values. Do not create fallback folders. Then run bootstrapping-code for scaffolding. Confirm pnpm dev starts without errors before proceeding.
+
+Then generate docs/vision.md using shared/templates/vision-template.md, populating it from the interview answers and original prompt. Present for user approval before proceeding.
 
 Then read references/foundation-capabilities.md for the classification-to-skill mapping and dependency order. Run each skill in order, verifying its doc updates before running the next.
 

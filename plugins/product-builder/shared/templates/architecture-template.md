@@ -20,6 +20,7 @@ app/
 ├── routes/            # React Router route modules
 └── lib/               # Utilities and helpers
 docs/
+├── vision.md          # Product vision and pitch
 ├── architecture.md    # This file
 ├── conventions/       # Project conventions (patterns + anti-patterns)
 └── features/          # Feature specs
