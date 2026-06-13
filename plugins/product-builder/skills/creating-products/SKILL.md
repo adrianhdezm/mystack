@@ -5,7 +5,7 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 # Creating Products
 
-This is the Product Builder entry point. It drives four sequential goals that take a product idea from interview through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
+This is the Product Builder entry point. It drives five sequential goals that take a product idea from interview through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
 
 ## Required inputs
 
@@ -56,11 +56,21 @@ Between iterations, if the user requests changes, update and re-present for appr
 ### Phase 4 — Feature Implementation
 
 ```
-/goal Complete when every feature is verified, E2E tests pass, and the project builds cleanly. Check: read docs/features/manifest.json and confirm every feature has status "verified" (or "blocked" with a documented reason), then run pnpm typecheck, pnpm lint, and pnpm build — all must exit 0. Constraint: preserve all verified features and their specs unchanged while implementing subsequent features.
+/goal Complete when every feature is implemented. Check: read docs/features/manifest.json and confirm every feature has status "implemented" (or "blocked" with a documented reason). Constraint: preserve all implemented features and their specs unchanged while implementing subsequent features.
 
-For each "ready" feature in manifest id order respecting depends_on, run implementing-features then verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify. Commit after each verified feature. After the last feature reaches "verified", run testing-features for a comprehensive E2E pass across all features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
+For each "ready" feature in manifest id order respecting depends_on, run implementing-features. Commit after each implemented feature.
 
-Use implementing-features, verifying-features, and testing-features skills only. Between iterations, if a feature requires user input set its status to "blocked" with a reason and advance to the next eligible feature. If all remaining features are blocked or build/lint/typecheck failures cannot be resolved, stop and report the failures and what is needed.
+Use implementing-features only. Between iterations, if a feature requires user input set its status to "blocked" with a reason and advance to the next eligible feature. If all remaining features are blocked, stop and report what is needed.
+```
+
+### Phase 5 — Verification
+
+```
+/goal Complete when every feature is verified, E2E tests pass, and the project builds cleanly. Check: read docs/features/manifest.json and confirm every feature has status "verified" (or "blocked" with a documented reason), then run pnpm typecheck, pnpm lint, and pnpm build — all must exit 0. Constraint: both verifying-features and testing-features are mandatory — do not skip either.
+
+For each "implemented" feature in manifest id order, run verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify. After all features reach "verified", run testing-features for a comprehensive E2E pass across all features. If E2E tests fail, fix the issues with implementing-features and re-run testing-features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
+
+Use verifying-features, testing-features, and implementing-features skills only. Between iterations, if a feature requires user input set its status to "blocked" with a reason and advance to the next eligible feature. If all remaining features are blocked or build/lint/typecheck failures cannot be resolved, stop and report the failures and what is needed.
 ```
 
 ### Final Summary
