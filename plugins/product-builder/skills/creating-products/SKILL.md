@@ -5,7 +5,7 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 # Creating Products
 
-This is the Product Builder entry point. It interviews the user, classifies project complexity, prepares the foundation, then plans and implements features.
+This is the Product Builder entry point. It drives four sequential goals that take a product idea from interview through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
 
 ## Required inputs
 
@@ -21,55 +21,48 @@ If the repository or local folder is missing, run `preparing-repositories`; it m
 
 ## Workflow
 
-### Phase 1 — Interview and Foundation
+Each phase is a single goal. Set the goal and work until it is met before advancing to the next phase.
 
-1. Interview the user using [interview-and-decisions.md](references/interview-and-decisions.md). Ask only for information that cannot be inferred and materially changes the foundation or product design.
-2. Classify the project and select foundation capabilities using the classification matrix in [interview-and-decisions.md](references/interview-and-decisions.md).
-3. Prepare the repository by running `preparing-repositories`.
-4. Bootstrap the app by running `bootstrapping-code` with the returned `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.
-5. Add foundation capabilities in dependency order based on project classification:
-   - `simple`: skip `adding-database`, `adding-authentication`, and `adding-file-storage`.
-   - `standard`: run `adding-database`, then `adding-authentication`; skip `adding-file-storage`.
-   - `advanced`: run `adding-database`, then `adding-authentication`, then `adding-file-storage`.
+### Phase 1 — Interview and Classification
 
-   If `ai=yes`, run `adding-ai` after the classification-based skills above.
+```
+/goal Complete when the user has approved the PROJECT_COMPLEXITY block and the project scaffolds successfully. Check: the user explicitly confirms the classification and pnpm dev starts without errors in the bootstrapped project directory. Constraint: preserve any existing repo content the user has committed.
 
-   Each foundation skill updates `docs/architecture.md`, `docs/data-model.md`, `docs/conventions/`, and `AGENTS.md` with its additions. After all foundation skills complete, `docs/architecture.md` should reflect the full stack, structure, and active conventions. Verify this before moving to Phase 2.
+Read references/interview-and-classification.md for interview questions, classification tiers, and the approval format. Interview the user, classify the project, and present for approval. Then run preparing-repositories for repo setup and bootstrapping-code for scaffolding.
 
-### Phase 2 — Feature Planning
+Between iterations, ask only for the minimum missing value that blocks progress. If the user cannot provide REPOSITORY or LOCAL_FOLDER after being asked, or bootstrapping fails and cannot be resolved, stop and report what is blocking.
+```
 
-6. Based on the interview and product idea, propose a list of features that together deliver the first usable version. Present each feature as a short title and one-line description. Order them by dependency — foundational features first.
-7. Ask the user to approve, reorder, add, or remove features before proceeding.
-8. Run `planning-features` for each approved feature, in order. Each run produces numbered spec files in `docs/features/`.
+### Phase 2 — Foundation
 
-### Phase 3 — Feature Implementation Loop
+```
+/goal Complete when all foundation capabilities for the approved classification are installed and documented. Check: read docs/architecture.md and confirm it lists every capability with its integration point, read docs/data-model.md and confirm it reflects all foundation tables, confirm docs/conventions/ contains entries from each skill, and confirm AGENTS.md is updated. Constraint: preserve the bootstrapped app structure and any user-committed code.
 
-9. For each planned feature spec in `docs/features/`, in order: a. Run `implementing-features` with the spec. b. Run `verifying-features` with the same spec. c. If verification passes, commit and move to the next feature. d. If verification finds issues, run `implementing-features` again to address them, then re-verify. Repeat until the spec passes or the issue requires user input. e. Summarize the feature result before starting the next one.
+Read references/foundation-capabilities.md for the classification-to-skill mapping and dependency order. Run each skill in order, verifying its doc updates before running the next.
 
-### Phase 4 — Final Verification
+If a foundation skill fails repeatedly and cannot be resolved without user input, stop and report the failure and what is needed.
+```
 
-10. Run formatting, typecheck, lint, and build across the full project. If any command fails, fix the issue and re-run until it passes.
-11. If any failure traces back to a specific feature (e.g., a type error in a route, a broken E2E step), return to Phase 3 for that feature: run `implementing-features` to fix the issue, then `verifying-features` to re-verify. Repeat until all features pass or the issue requires user input.
-12. Once all checks pass, commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, and any open questions from `docs/architecture.md`.
+### Phase 3 — Feature Planning
 
-## Approval gate
+```
+/goal Complete when every feature has a user-approved spec. Check: read docs/features/manifest.json and confirm every feature has status "ready" (or "blocked" with a documented reason) — no feature has status "listed". Constraint: preserve all foundation code and documentation unchanged.
 
-Do not treat the initial product idea as approval for specific features. The user must approve the proposed feature list before planning begins, and each feature spec must follow the `planning-features` approval flow before implementation.
+Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Propose features that together deliver the first usable version — short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
 
-If the user requests a change during review, update the proposal and ask for approval again before implementing.
+Between iterations, if the user requests changes, update and re-present for approval. If a feature cannot be finalized after multiple iterations, set it to "blocked" with a reason and continue with remaining features. If all features are blocked, stop and report what decisions are needed.
+```
 
-## Validation checklist
+### Phase 4 — Feature Implementation
 
-- [ ] Interview captured the core users, workflow, data, privacy, uploads, and collaboration needs.
-- [ ] Complexity and matrix-derived capabilities are stated before foundation work.
-- [ ] Repository preparation and bootstrapping completed before add-on skills.
-- [ ] Database was added before file storage or authentication when required.
-- [ ] After foundation phase, `docs/architecture.md` reflects the full stack, structure, and active conventions.
-- [ ] After foundation phase, `docs/data-model.md` reflects all entities from foundation skills.
-- [ ] After foundation phase, `AGENTS.md` includes a Project Documentation section referencing `docs/`.
-- [ ] Feature list was proposed and approved by the user before planning.
-- [ ] `planning-features` was run for each approved feature.
-- [ ] `implementing-features` and `verifying-features` were run for each feature spec.
-- [ ] `docs/architecture.md` was maintained throughout.
-- [ ] Formatting, typecheck, lint, and build pass after all features.
-- [ ] Final summary includes features implemented, commit hash, verification and E2E test results, and open questions.
+```
+/goal Complete when every feature is verified, E2E tests pass, and the project builds cleanly. Check: read docs/features/manifest.json and confirm every feature has status "verified" (or "blocked" with a documented reason), then run pnpm typecheck, pnpm lint, and pnpm build — all must exit 0. Constraint: preserve all verified features and their specs unchanged while implementing subsequent features.
+
+For each "ready" feature in manifest id order respecting depends_on, run implementing-features then verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify. Commit after each verified feature. After the last feature reaches "verified", run testing-features for a comprehensive E2E pass across all features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
+
+Use implementing-features, verifying-features, and testing-features skills only. Between iterations, if a feature requires user input set its status to "blocked" with a reason and advance to the next eligible feature. If all remaining features are blocked or build/lint/typecheck failures cannot be resolved, stop and report the failures and what is needed.
+```
+
+### Final Summary
+
+Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, and any open questions from `docs/architecture.md`.

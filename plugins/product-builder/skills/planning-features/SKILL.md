@@ -50,6 +50,10 @@ Create `docs/features/` if it does not exist. Write one file per spec using the 
 
 Name files as `NN-short-name.spec.md` continuing the existing numbering sequence. If `00` and `01` exist, start at `02`.
 
+### 5) Update Manifest
+
+If `docs/features/manifest.json` exists, update the status of each spec written in this run from `listed` to `ready`.
+
 ## Validation Checklist
 
 - [ ] Clarifying questions were asked when the feature description was ambiguous.

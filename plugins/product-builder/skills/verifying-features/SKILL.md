@@ -73,19 +73,19 @@ Produce a static verification report with these sections:
 - `docs/data-model.md` out of sync with `app/db/schema.ts`.
 ```
 
-Do not present this report yet — it feeds into the consolidated result in step 7. Do not modify code — this skill is read-only.
+Do not modify code — this skill is read-only.
 
-### 6) E2E Testing
+### 6) Update Manifest
 
-Run `testing-features` to verify the features work end-to-end in the browser.
+If `docs/features/manifest.json` exists and verification passes (Pass or Pass with notes), set the feature's status to `verified`.
 
-### 7) Consolidated Result
+### 7) Result
 
-Present a consolidated result to the user combining the static verification report (step 5) and the E2E test report (step 6):
+Present the verification report to the user with a verdict:
 
-- **Pass** — all acceptance criteria met, checks pass, and all E2E steps pass.
-- **Pass with notes** — all criteria met but there are minor deviations, inconsistencies, or non-blocking E2E observations. List recommendations.
-- **Fail** — one or more acceptance criteria not met, checks fail, or E2E steps fail. List the specific items that need to be fixed and suggest running `implementing-features` again with the spec to address them.
+- **Pass** — all acceptance criteria met and checks pass.
+- **Pass with notes** — all criteria met but there are minor deviations or inconsistencies. List recommendations.
+- **Fail** — one or more acceptance criteria not met or checks fail. List the specific items that need to be fixed and suggest running `implementing-features` again with the spec to address them.
 
 ## Validation Checklist
 
@@ -97,6 +97,5 @@ Present a consolidated result to the user combining the static verification repo
 - [ ] Every acceptance criterion was individually evaluated.
 - [ ] `pnpm typecheck`, `pnpm lint`, and `pnpm build` were run.
 - [ ] Report was presented with clear status for each criterion.
-- [ ] `testing-features` was run for E2E verification.
-- [ ] Consolidated verdict was presented combining static and E2E results.
+- [ ] Verdict was presented (Pass, Pass with notes, or Fail).
 - [ ] No code was modified during verification.

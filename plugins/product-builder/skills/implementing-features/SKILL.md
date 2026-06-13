@@ -22,7 +22,11 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns established during prior implementations.
 
-### 2) Implement
+### 2) Update Manifest
+
+If `docs/features/manifest.json` exists, set the feature's status to `implementing`.
+
+### 3) Implement
 
 - Build everything the spec describes: schema, migrations, DAOs, queries, services, routes, loaders/actions, components — the full vertical slice.
 - When a feature's loader or action needs data joined across tables:
@@ -34,9 +38,9 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 - When the spec is ambiguous, make a reasonable choice and log it in `docs/architecture.md`.
 - Run `pnpm typecheck` periodically to catch errors early.
 
-### 3) Update Architecture
+### 4) Update Architecture
 
-Update `docs/architecture.md`. Foundation skills (`bootstrapping-code`, `adding-database`, `adding-authentication`, `adding-file-storage`) create this file and populate the Stack, Structure, and Conventions sections. If it does not exist (standalone use without foundation skills), create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the Stack and Structure to match the current project.
+Update `docs/architecture.md`. Foundation skills (`bootstrapping-code`, `adding-database`, `adding-authentication`, `adding-file-storage`, `adding-ai`) create this file and populate the Stack, Structure, and Conventions sections. If it does not exist (standalone use without foundation skills), create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the Stack and Structure to match the current project.
 
 #### Data Model
 
@@ -76,14 +80,18 @@ If you create a new convention file, add a linked entry in the Conventions secti
 
 Omit empty subsections in the Implementation Log.
 
-### 4) Verify
+### 5) Verify
 
 - Run `pnpm typecheck` — must pass.
 - Run `pnpm lint` — fix any issues.
 - Walk through the acceptance criteria from the spec and confirm each one is met.
 - If a criterion cannot be met, log it as an open question in `docs/architecture.md`.
 
-### 5) Summary
+### 6) Update Manifest
+
+If `docs/features/manifest.json` exists, set the feature's status to `implemented`.
+
+### 7) Summary
 
 - State what was built and where.
 - Highlight open questions or deviations that need user input.
