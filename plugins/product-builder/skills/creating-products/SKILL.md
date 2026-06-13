@@ -7,18 +7,6 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 This is the Product Builder entry point. It drives five sequential goals that take a product idea from interview through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
 
-## Required inputs
-
-Before repository actions, require or derive the same inputs as `preparing-repositories`:
-
-```text
-REPOSITORY: <owner>/<repo>
-LOCAL_FOLDER: <parent-folder>
-PRODUCT_IDEA: <short description>
-```
-
-If the repository or local folder is missing, run `preparing-repositories`; it must ask only for missing blocking values. Do not create fallback folders.
-
 ## Workflow
 
 Each phase is a single goal. Set the goal and work until it is met before advancing to the next phase.
@@ -26,21 +14,23 @@ Each phase is a single goal. Set the goal and work until it is met before advanc
 ### Phase 1 — Interview and Classification
 
 ```
-/goal Complete when the user has approved the PROJECT_COMPLEXITY block and the project scaffolds successfully. Check: the user explicitly confirms the classification and pnpm dev starts without errors in the bootstrapped project directory. Constraint: preserve any existing repo content the user has committed.
+/goal Complete when the user has approved the PROJECT_COMPLEXITY block. Check: the user explicitly confirms the classification.
 
-Read references/interview-and-classification.md for interview questions, classification tiers, and the approval format. Interview the user, classify the project, and present for approval. Then run preparing-repositories for repo setup and bootstrapping-code for scaffolding.
+Read references/interview-and-classification.md for interview questions, classification tiers, and the approval format. Interview the user, classify the project, and present for approval.
 
-Between iterations, ask only for the minimum missing value that blocks progress. If the user cannot provide REPOSITORY or LOCAL_FOLDER after being asked, or bootstrapping fails and cannot be resolved, stop and report what is blocking.
+Between iterations, ask only for the minimum missing value that blocks progress.
 ```
 
 ### Phase 2 — Foundation
 
 ```
-/goal Complete when all foundation capabilities for the approved classification are installed and documented. Check: read docs/architecture.md and confirm it lists every capability with its integration point, read docs/data-model.md and confirm it reflects all foundation tables, confirm docs/conventions/ contains entries from each skill, and confirm AGENTS.md is updated. Constraint: preserve the bootstrapped app structure and any user-committed code.
+/goal Complete when the project is scaffolded and all foundation capabilities for the approved classification are installed and documented. Check: pnpm dev starts without errors, read docs/architecture.md and confirm it lists every capability with its integration point, read docs/data-model.md and confirm it reflects all foundation tables, confirm docs/conventions/ contains entries from each skill, and confirm AGENTS.md is updated. Constraint: preserve any existing repo content the user has committed.
 
-Read references/foundation-capabilities.md for the classification-to-skill mapping and dependency order. Run each skill in order, verifying its doc updates before running the next.
+First, require or derive REPOSITORY, LOCAL_FOLDER, and PRODUCT_IDEA. If the repository or local folder is missing, run preparing-repositories — it must ask only for missing blocking values. Do not create fallback folders. Then run bootstrapping-code for scaffolding. Confirm pnpm dev starts without errors before proceeding.
 
-If a foundation skill fails repeatedly and cannot be resolved without user input, stop and report the failure and what is needed.
+Then read references/foundation-capabilities.md for the classification-to-skill mapping and dependency order. Run each skill in order, verifying its doc updates before running the next.
+
+If the user cannot provide REPOSITORY or LOCAL_FOLDER after being asked, bootstrapping fails and cannot be resolved, or a foundation skill fails repeatedly and cannot be resolved without user input, stop and report what is blocking.
 ```
 
 ### Phase 3 — Feature Planning
