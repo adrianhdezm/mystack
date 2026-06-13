@@ -14,6 +14,7 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 ### 1) Read Context
 
 - Read the target spec file.
+- Read `docs/vision.md` — use it to verify the feature aligns with the product's pitch, target users, primary workflow, and entry point flow.
 - Read `docs/data-model.md` — use it as the expected entity/relationship map.
 - Read `docs/architecture.md` — use the Implementation Log for known deviations and open questions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns to verify against.
@@ -83,13 +84,14 @@ If `docs/features/manifest.json` exists and verification passes (Pass or Pass wi
 
 Present the verification report to the user with a verdict:
 
-- **Pass** — all acceptance criteria met and checks pass.
-- **Pass with notes** — all criteria met but there are minor deviations or inconsistencies. List recommendations.
-- **Fail** — one or more acceptance criteria not met or checks fail. List the specific items that need to be fixed and suggest running `implementing-features` again with the spec to address them.
+- **Pass** — all acceptance criteria met, checks pass, and feature aligns with the product vision.
+- **Pass with notes** — all criteria met but there are minor deviations, inconsistencies, or vision alignment concerns. List recommendations.
+- **Fail** — one or more acceptance criteria not met, checks fail, or feature contradicts the product vision. List the specific items that need to be fixed and suggest running `implementing-features` again with the spec to address them.
 
 ## Validation Checklist
 
 - [ ] Target spec was read completely.
+- [ ] `docs/vision.md` was consulted to verify feature aligns with product vision.
 - [ ] `docs/data-model.md` was checked against `app/db/schema.ts` for consistency.
 - [ ] `docs/architecture.md` was consulted for known deviations.
 - [ ] Every spec section (database, DAOs, queries, services, routes, components) was checked against the codebase.
