@@ -38,6 +38,7 @@ pnpm wrangler types
 pnpm format
 pnpm typecheck
 pnpm lint
+pnpm test
 pnpm build
 ```
 

@@ -47,15 +47,16 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 4. Load `react-router-patterns`, then add the database schema and wire Drizzle into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
 5. If adding application tables, DAOs, queries, services, transactions, or data access workflows, follow [data-access-architecture.md](../../shared/references/data-access-architecture.md).
 6. Generate and apply migrations using [04-migrations-validation.md](references/04-migrations-validation.md).
-7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
+7. Set up integration testing with Miniflare using [05-testing-setup.md](references/05-testing-setup.md).
+8. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
    - **Stack addition**: `Drizzle ORM, Cloudflare D1`.
    - **Structure additions**: `app/db/` (schema.ts, data-access.ts, daos/, queries/), `app/services/`, `db/migrations/`.
    - **Data model link**: `See [data-model.md](data-model.md)` in architecture.
    - **New convention**: `docs/conventions/data-access.md` — seed with key patterns from [data-access-architecture.md](../../shared/references/data-access-architecture.md): DAO interface contract, one DAO per table, type ownership (`<Entity>Record`, `Create<Entity>`, `Update<Entity>`, `<Entity>Filters`), `getAll()` for filtered access, `drizzle-zod` validation schema co-location (record, create, and update schemas live in the DAO file, not in separate validation files), service atomic write boundaries using `db.batch()`, when to create a service (multiple tables, atomic writes, multiple DAOs, business workflow, custom SQL, aggregations), relation queries for cross-table reads (create a Query in `app/db/queries/<parent>-<child>.query.ts` implementing `RelationQuery<CompositeType, Filters>` from `~/db/data-access` with read-only `get()` and `getAll()` methods, using Drizzle's relational API `db.query.*` and `db.batch()` for items + count, composite type naming `<Parent>With<Child>`, services call Queries for joined data — they never import schema tables or write raw Drizzle queries), schema requires `relations()` declarations for tables with foreign keys, dependency graph (Routes → Services → Queries / DAOs → Database). Anti-patterns: no custom public query methods on DAOs, no DAO-to-DAO imports, no business logic in DAOs, no raw joins in services (use a Query), no write methods on Queries, no query-builder joins in Queries (use the relational API), no `Promise.all` for D1 queries (D1 is SQLite — all queries run sequentially over a single connection, so `Promise.all` adds overhead without parallelism; use sequential `await` instead), no looped individual queries for batch operations (use a single query with `inArray()` instead, e.g. `db.delete(table).where(inArray(table.id, ids))`), no `db.transaction()` on D1 (D1 does not support interactive SQL transactions — `db.transaction()` throws at runtime; use Drizzle's `db.batch()` API for atomic multi-statement writes, which executes statements sequentially and rolls back on failure), no conditional reads between `db.batch()` statements (all queries are declared upfront — read first, then batch the writes).
    - **README additions**: D1 setup, required environment variables, migration commands.
    - **AGENTS.md additions**: database instructions, `docs/data-model.md` reference in Project Documentation section.
-8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
-9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+9. Run formatting, typecheck, lint, test, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
+10. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -68,6 +69,10 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.
 - [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
+- [ ] `@cloudflare/vitest-pool-workers` is installed.
+- [ ] `vitest.config.ts` uses `defineWorkersConfig` with `wrangler.jsonc` and `APP_DB`.
+- [ ] `app/db/__tests__/setup.ts` exports `getTestDb()`.
+- [ ] `pnpm test` passes integration tests against Miniflare D1.
 - [ ] `data-access-architecture.md` was followed for any tables, DAOs, queries, services, transactions, or data access workflows.
 - [ ] `react-router-patterns` was loaded and followed for any React Router context or Worker request-handling changes.
 - [ ] `docs/architecture.md` includes Drizzle ORM / D1 in stack, db/ directories in structure, data model link, and data-access convention link.

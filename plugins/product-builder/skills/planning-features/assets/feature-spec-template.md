@@ -37,6 +37,13 @@ For each route, note loader and action responsibilities.
 1. When [action], then [expected result].
 2. Given [state], when [action], expect [outcome].
 
+## Test Considerations
+
+- **DAO tests**: which CRUD operations need explicit coverage (e.g., filter combinations that represent business rules).
+- **Query tests**: which cross-table reads to verify, including edge cases like empty relations.
+- **Service tests**: which workflows and error scenarios matter.
+- **Component tests**: key interactions to verify (if applicable).
+
 ## Dependencies
 
 List spec numbers this depends on (e.g., "Requires 00, 01"). Write "None" if standalone.

@@ -19,6 +19,7 @@ A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.
 - Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
 - Scan the codebase for existing code related to the spec: schema, DAOs, queries, services, routes, components.
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, query, service, and transaction conventions.
+- Read [test-patterns.md](references/test-patterns.md) for DAO, Query, and Service test templates.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns established during prior implementations.
 
@@ -34,6 +35,9 @@ If `docs/features/manifest.json` exists, set the feature's status to `implementi
   2. If not, create one following the `<parent>-<child>.query.ts` naming convention.
   3. The Query implements `RelationQuery<CompositeType, Filters>` from `~/db/data-access`.
   4. The service calls the Query — it never imports schema tables or writes raw joins.
+- After creating each DAO at `app/db/daos/<entity>.dao.ts`, create a co-located test at `app/db/daos/__tests__/<entity>.dao.test.ts` using the DAO test pattern from [test-patterns.md](references/test-patterns.md).
+- After creating each Query at `app/db/queries/<parent>-<child>.query.ts`, create a co-located test at `app/db/queries/__tests__/<parent>-<child>.query.test.ts` using the Query test pattern.
+- After creating each Service at `app/services/<entity>.service.ts`, create a co-located test at `app/services/__tests__/<entity>.service.test.ts` using the Service test pattern.
 - Follow project conventions in `docs/conventions/` and avoid listed anti-patterns. For base patterns use Drizzle for schema, React Router loaders/actions for data, shadcn/ui for components, Conform + Zod for forms.
 - When the spec is ambiguous, make a reasonable choice and log it in `docs/architecture.md`.
 - Run `pnpm typecheck` periodically to catch errors early.
@@ -84,6 +88,7 @@ Omit empty subsections in the Implementation Log.
 
 - Run `pnpm typecheck` — must pass.
 - Run `pnpm lint` — fix any issues.
+- Run `pnpm test` — must pass. If a test fails, fix the implementation or the test before proceeding.
 - Walk through the acceptance criteria from the spec and confirm each one is met.
 - If a criterion cannot be met, log it as an open question in `docs/architecture.md`.
 
@@ -107,7 +112,11 @@ If `docs/features/manifest.json` exists, set the feature's status to `implemente
 - [ ] `react-router-patterns` conventions were followed for routes, loaders, and actions.
 - [ ] Project conventions in `docs/conventions/` were followed and anti-patterns avoided.
 - [ ] All spec sections (database, DAOs, queries, services, routes, components) were implemented.
+- [ ] A `__tests__/` directory with a `.test.ts` file exists for every DAO created.
+- [ ] A `__tests__/` directory with a `.test.ts` file exists for every Query created.
+- [ ] A `__tests__/` directory with a `.test.ts` file exists for every Service created.
 - [ ] `pnpm typecheck` passes.
 - [ ] `pnpm lint` passes.
+- [ ] `pnpm test` passes.
 - [ ] Each acceptance criterion was verified or logged as an open question.
 - [ ] `docs/architecture.md` was updated with decisions, deviations, and tradeoffs.

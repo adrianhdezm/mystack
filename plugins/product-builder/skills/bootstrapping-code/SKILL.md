@@ -49,20 +49,21 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 7. Add Cloudflare using [04-cloudflare.md](references/04-cloudflare.md).
 8. Load `react-router-patterns`, then add the React Router page using [05-react-router-page.md](references/05-react-router-page.md).
 9. Add Tailwind and shadcn/ui using [06-tailwind-and-shadcn-ui.md](references/06-tailwind-and-shadcn-ui.md).
-10. Run final verification using [07-final-verification.md](references/07-final-verification.md).
-11. Create initial project documentation in `docs/`:
+10. Set up Vitest using [07-vitest-setup.md](references/07-vitest-setup.md).
+11. Run final verification using [08-final-verification.md](references/08-final-verification.md).
+12. Create initial project documentation in `docs/`:
     - Create `docs/architecture.md` using the template in [architecture-template.md](../../shared/templates/architecture-template.md). Fill in the Overview with the product description. The Stack section should list only the base stack: Cloudflare Workers, TypeScript; React Router v7 (framework mode, SSR); Tailwind CSS, shadcn/ui. The Structure section should reflect the bootstrapped directory layout. Add a single convention link for Routes: `**[Routes](conventions/routes.md)** — loader/action structure, protected routes, navigation`.
     - Create `docs/conventions/routes.md` using the template in [convention-template.md](../../shared/templates/convention-template.md). Seed it with key React Router patterns: route filenames describe role not URL syntax; use middleware only for cross-cutting request work; keep mutations in actions; ownership checks in the route/action that owns the resource param.
-12. Update the project `README.md` with a very basic overview of the bootstrapped application, including the stack, local development command, verification commands, and Cloudflare deployment target.
-13. Update the project `AGENTS.md` with basic agent instructions and the bootstrapped project structure. Include:
+13. Update the project `README.md` with a very basic overview of the bootstrapped application, including the stack, local development command, verification commands, and Cloudflare deployment target.
+14. Update the project `AGENTS.md` with basic agent instructions and the bootstrapped project structure. Include:
     - Repository purpose, common commands, and where the main application, routes, UI components, Cloudflare worker, and configuration files live.
     - A **Project Documentation** section that directs agents to read `docs/architecture.md` first for project context, then follow links to conventions and data model for detail. List the docs structure:
       - `docs/architecture.md` — stack, structure, conventions index, and implementation log.
       - `docs/conventions/` — project-specific patterns and anti-patterns.
       - `docs/features/` — feature specs (added during planning).
     - React Router guidance: route filenames describe role, not URL syntax; use middleware only for cross-cutting request work such as auth, logging, shared context, and headers; keep mutations in actions and ownership checks in the route/action that owns the resource param.
-14. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
-15. Summarize what was created, include the commit hash, and list any command that failed.
+15. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+16. Summarize what was created, include the commit hash, and list any command that failed.
 
 ## Stop message
 
@@ -88,7 +89,8 @@ Include the files found when available.
 - [ ] `pnpm view` was used for latest package checks.
 - [ ] `react-router-patterns` was loaded before React Router code was generated, and the generated code follows those patterns.
 - [ ] Cloudflare types are generated with `wrangler types`.
-- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass after fixing generated-file issues.
+- [ ] `vitest` is installed and `vitest.config.ts` exists.
+- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` pass after fixing generated-file issues.
 - [ ] Final file structure and `git status --short` were reviewed.
 - [ ] `docs/architecture.md` was created with the base stack, bootstrapped structure, and a Routes convention link.
 - [ ] `docs/conventions/routes.md` was created with seed React Router patterns.

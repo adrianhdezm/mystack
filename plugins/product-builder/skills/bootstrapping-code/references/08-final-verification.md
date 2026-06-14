@@ -1,8 +1,8 @@
-# 07 - Final Verification
+# 08 - Final Verification
 
 ## Contents
 
-- Steps (dependency install, formatting, typecheck, lint, build, file review)
+- Steps (dependency install, formatting, typecheck, lint, test, build, file review)
 - Expected Results
 
 ## Steps
@@ -37,7 +37,15 @@ pnpm lint
 
 If linting fails, fix the generated source or configuration errors and rerun `pnpm lint` until it passes.
 
-5. Run the production build.
+5. Run tests.
+
+```sh
+pnpm test
+```
+
+If any test fails, fix the generated source or configuration errors and rerun `pnpm test` until it passes.
+
+6. Run the production build.
 
 ```sh
 pnpm build
@@ -45,7 +53,7 @@ pnpm build
 
 If the build fails, fix the generated source or configuration errors and rerun `pnpm build` until it passes.
 
-6. Display the final project file structure, excluding dependency and generated output folders.
+7. Display the final project file structure, excluding dependency and generated output folders.
 
 ```sh
 find . \
@@ -76,6 +84,8 @@ Compare the output against this expected structure:
 ./app/context.ts
 ./app/entry.server.tsx
 ./app/lib
+./app/lib/__tests__
+./app/lib/__tests__/utils.test.ts
 ./app/lib/utils.ts
 ./app/root.tsx
 ./app/routes
@@ -91,6 +101,7 @@ Compare the output against this expected structure:
 ./tsconfig.cloudflare.json
 ./tsconfig.json
 ./tsconfig.node.json
+./vitest.config.ts
 ./vite.config.ts
 ./worker-configuration.d.ts
 ./workers
@@ -98,7 +109,7 @@ Compare the output against this expected structure:
 ./wrangler.jsonc
 ```
 
-7. Review git status.
+8. Review git status.
 
 ```sh
 git status --short
@@ -110,6 +121,7 @@ git status --short
 - `pnpm format` completes, and any formatting changes are kept.
 - `pnpm typecheck` passes after any generated TypeScript or Cloudflare type issues are fixed.
 - `pnpm lint` passes after any generated lint issues are fixed.
+- `pnpm test` passes with the smoke test in `app/lib/__tests__/`.
 - `pnpm build` passes.
 - The final file structure is displayed in the summary.
 - `git status --short` is reviewed so the summary can list the created and modified files.
