@@ -15,7 +15,7 @@ pnpm view drizzle-zod version
 ```sh
 pnpm add drizzle-orm@latest
 pnpm add drizzle-zod@latest
-pnpm add -D drizzle-kit@latest
+pnpm add -D drizzle-kit@latest tsx@latest
 ```
 
 3. Add database scripts to `package.json`.
@@ -30,7 +30,9 @@ pnpm add -D drizzle-kit@latest
 }
 ```
 
-4. Create `drizzle.config.ts`.
+4. Add `drizzle.config.ts` to the `include` array in `tsconfig.node.json`.
+
+5. Create `drizzle.config.ts`.
 
 ```ts
 import type { Config } from "drizzle-kit";
@@ -64,6 +66,7 @@ export default {
 
 ## Expected Results
 
-- `drizzle-orm`, `drizzle-zod`, and `drizzle-kit` are installed.
+- `drizzle-orm`, `drizzle-zod`, `drizzle-kit`, and `tsx` are installed.
 - `package.json` has D1 migration and generation scripts.
+- `drizzle.config.ts` is included in `tsconfig.node.json`.
 - `drizzle.config.ts` uses `.env` credentials and writes migrations to `db/migrations`.
