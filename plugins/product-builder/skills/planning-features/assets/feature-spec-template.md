@@ -24,6 +24,7 @@ For each route, note loader and action responsibilities.
 ## Components
 
 - shadcn/ui components to install or use (e.g., `Card`, `Dialog`, `DataTable`).
+- For delete actions, plan a shadcn `Dialog` confirmation on the list or detail page instead of a separate delete route.
 - Custom components to create, with purpose and location.
 
 ## DAOs, Queries, and Services

@@ -21,7 +21,8 @@ Use this guide when creating or reviewing React Router route modules that render
 | Use case | Pattern | Route behavior |
 | --- | --- | --- |
 | Search and filters | `<Form method="get">` | Loader reads `request.url` search params |
-| Page-level create, edit, delete, login, signup, logout | `<Form method="post">` | Action validates, mutates, then redirects |
+| Page-level create, edit, login, signup, logout | `<Form method="post">` | Action validates, mutates, then redirects |
+| Delete confirmation | `useFetcher` inside shadcn `Dialog` | Fetcher submits delete; dialog closes and page revalidates |
 | Inline toggles, row actions, autosave, ratings | `useFetcher` | Action validates and mutates without navigation |
 | Multiple independent mutations on one page | `useFetcher` | Each fetcher tracks its own pending state |
 
@@ -149,6 +150,102 @@ function FavoriteButton({
 
 Fetcher actions still need the same server-side validation and permission checks as normal route actions.
 
+## Delete Confirmation Dialog
+
+Use a shadcn `Dialog` with `useFetcher` for delete actions instead of a separate delete route or page. Install the component with `pnpm dlx shadcn@latest add dialog`. The dialog keeps the user on the current page while the fetcher handles the mutation and triggers revalidation.
+
+```tsx
+import { useEffect, useState } from "react";
+import { useFetcher } from "react-router";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+
+function DeleteProjectDialog({
+  projectId,
+  projectName,
+}: {
+  projectId: string;
+  projectName: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
+      setOpen(false);
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="destructive" size="sm">
+          Delete
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete project</DialogTitle>
+          <DialogDescription>
+            This will permanently delete &ldquo;{projectName}&rdquo;. This
+            action cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <fetcher.Form method="post">
+            <input type="hidden" name="intent" value="delete" />
+            <input type="hidden" name="projectId" value={projectId} />
+            <Button
+              type="submit"
+              variant="destructive"
+              disabled={fetcher.state !== "idle"}
+            >
+              {fetcher.state !== "idle" ? "Deleting…" : "Delete"}
+            </Button>
+          </fetcher.Form>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+The route action handles the delete intent alongside other mutations on the same route:
+
+```tsx
+export async function action({ context, request }: Route.ActionArgs) {
+  const { projectDao } = context.get(appContext);
+  const user = context.get(userContext);
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "delete") {
+    const projectId = String(formData.get("projectId"));
+    const project = await projectDao.get(projectId);
+    if (!project || project.userId !== user.id) {
+      throw data("Not found", { status: 404 });
+    }
+    await projectDao.delete(projectId);
+    return { ok: true };
+  }
+
+  return data({ error: "Invalid action" }, { status: 400 });
+}
+```
+
+After the delete succeeds, React Router revalidates the page loader and the deleted item disappears from the list. The `useEffect` closes the dialog when the fetcher returns to idle with data.
+
 ## Multiple Actions Per Route
 
 When a route supports multiple mutations, include an explicit intent field:
@@ -210,7 +307,8 @@ Use redirects to complete page-level mutations:
 
 - Create: redirect to the created resource or list page.
 - Edit: redirect to the updated resource or back to the list.
-- Delete: redirect to the parent list.
+- Delete (dialog on list page): no redirect; the fetcher revalidates the page and the item disappears. Return `{ ok: true }` from the action.
+- Delete (detail page where the resource is gone): redirect to the parent list.
 - Login/signup: redirect to a safe `redirectTo` target or dashboard.
 - Logout: redirect to login or public home.
 
@@ -223,6 +321,7 @@ Redirecting after successful POST avoids duplicate submissions on refresh and ke
 - Do not use raw `<form>` when React Router `<Form>` gives the intended behavior.
 - Do not use manual `setSearchParams` submission handling for search forms.
 - Do not use page-navigating `<Form method="post">` for tiny inline toggles when `useFetcher` fits better.
+- Do not create separate routes or pages for delete confirmations. Use a shadcn `Dialog` with `useFetcher` on the list or detail page.
 - Do not import database clients, auth secrets, or storage clients into client components.
 
 ## Review Checklist
@@ -235,4 +334,5 @@ Redirecting after successful POST avoids duplicate submissions on refresh and ke
 - [ ] Resource mutations check ownership or permissions.
 - [ ] Successful page-level mutations redirect.
 - [ ] Inline mutations use `useFetcher` and can show pending or optimistic UI.
+- [ ] Delete actions use a confirmation `Dialog` with `useFetcher`, not a separate route.
 - [ ] Search and filter forms use `<Form method="get">`.

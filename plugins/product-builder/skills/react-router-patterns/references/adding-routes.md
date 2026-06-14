@@ -113,6 +113,86 @@ export default function DashboardLayout() {
 
 Avoid flattening every route into independent pages when those pages share the same shell, auth behavior, or error handling.
 
+### App Shell Layout
+
+Every application with authenticated pages should define an app shell layout route that provides a top navigation bar and a content area. This layout wraps all authenticated routes and keeps navigation consistent.
+
+```tsx
+import { Form, Link, NavLink, Outlet } from "react-router";
+import { Button } from "~/components/ui/button";
+
+export default function AppLayout() {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <header className="border-b bg-background">
+        <nav className="container mx-auto flex h-14 items-center gap-6 px-4">
+          <Link to="/" className="font-semibold">
+            AppName
+          </Link>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }
+          >
+            Dashboard
+          </NavLink>
+          <NavLink
+            to="/projects"
+            className={({ isActive }) =>
+              isActive
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }
+          >
+            Projects
+          </NavLink>
+          <div className="ml-auto">
+            <Form method="post" action="/logout">
+              <Button variant="ghost" size="sm" type="submit">
+                Log out
+              </Button>
+            </Form>
+          </div>
+        </nav>
+      </header>
+      <main className="container mx-auto flex-1 px-4 py-6">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+```
+
+Place public routes (login, signup, home) outside the app shell layout. Group authenticated routes inside it:
+
+```ts
+import {
+  index,
+  layout,
+  route,
+  type RouteConfig,
+} from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),
+  route("login", "routes/login.tsx"),
+  route("signup", "routes/signup.tsx"),
+  layout("routes/app-layout.tsx", [
+    route("dashboard", "routes/dashboard.tsx"),
+    route("projects", "routes/projects.tsx"),
+    route("projects/new", "routes/projects-new.tsx"),
+    route("projects/:projectId", "routes/projects-detail.tsx"),
+    route("projects/:projectId/edit", "routes/projects-edit.tsx"),
+  ]),
+  route("api/auth/*", "routes/auth.tsx"),
+] satisfies RouteConfig;
+```
+
+Do not create separate delete routes (e.g., `/projects/:projectId/delete`). Handle delete with a confirmation dialog on the list or detail page. See the Delete Confirmation Dialog section in the form validation reference.
+
 ## Dynamic, Optional, And Splat Segments
 
 Use dynamic params for resource IDs:
@@ -199,6 +279,8 @@ Do not export placeholder functions.
 - [ ] Dynamic params have meaningful names.
 - [ ] The route has a clear `loader` and `action` decision.
 - [ ] The route module imports generated types from `./+types/<route-file>`.
+- [ ] Authenticated routes are wrapped in an app shell layout with top nav and `Outlet`.
 - [ ] Shared shells use layout routes and `Outlet`.
+- [ ] Delete actions use a dialog, not a separate route.
 - [ ] Catch-all routes are placed after specific routes.
 - [ ] No client-side route table bypasses `app/routes.ts`.
