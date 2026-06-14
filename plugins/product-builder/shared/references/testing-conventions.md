@@ -53,12 +53,13 @@ vitest.config.ts              — Workers pool (integration tests)
 vitest.browser.config.ts      — Playwright browser pool (component tests)
 ```
 
-The workspace globs separate test environments by path:
+The workspace registers separate config files per environment:
 
 ```ts
 // vitest.workspace.ts
 export default [
   {
+    extends: "./vitest.config.ts",
     test: {
       name: "integration",
       include: ["app/db/**/*.test.ts", "app/services/**/*.test.ts"],
@@ -71,14 +72,16 @@ export default [
     },
   },
   {
+    extends: "./vitest.browser.config.ts",
     test: {
       name: "components",
       include: ["app/components/**/*.test.tsx", "app/routes/**/*.test.tsx"],
-      browser: { enabled: true },
     },
   },
 ];
 ```
+
+The integration entry extends `vitest.config.ts` to inherit the `defineWorkersConfig` pool settings. The components entry extends `vitest.browser.config.ts` for Playwright browser testing. The unit entry needs no special environment.
 
 ## Test Database Helper
 

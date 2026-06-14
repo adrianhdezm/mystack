@@ -56,7 +56,7 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
     - Create `docs/conventions/routes.md` using the template in [convention-template.md](../../shared/templates/convention-template.md). Seed it with key React Router patterns: route filenames describe role not URL syntax; use middleware only for cross-cutting request work; keep mutations in actions; ownership checks in the route/action that owns the resource param.
 13. Update the project `README.md` with a very basic overview of the bootstrapped application, including the stack, local development command, verification commands, and Cloudflare deployment target.
 14. Update the project `AGENTS.md` with basic agent instructions and the bootstrapped project structure. Include:
-    - Repository purpose, common commands, and where the main application, routes, UI components, Cloudflare worker, and configuration files live.
+    - Repository purpose, common commands (including `pnpm test`), and where the main application, routes, UI components, Cloudflare worker, and configuration files live.
     - A **Project Documentation** section that directs agents to read `docs/architecture.md` first for project context, then follow links to conventions and data model for detail. List the docs structure:
       - `docs/architecture.md` — stack, structure, conventions index, and implementation log.
       - `docs/conventions/` — project-specific patterns and anti-patterns.

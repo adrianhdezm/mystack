@@ -20,6 +20,9 @@ pnpm add -D @cloudflare/vitest-pool-workers@latest
 import { defineWorkersConfig } from "@cloudflare/vitest-pool-workers/config";
 
 export default defineWorkersConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     include: ["app/**/*.test.{ts,tsx}"],
     poolOptions: {
@@ -33,6 +36,8 @@ export default defineWorkersConfig({
   },
 });
 ```
+
+Preserve `resolve: { tsconfigPaths: true }` from the bootstrap config — the `~/` path alias used in test imports depends on it.
 
 Migrations are applied automatically because `wrangler.jsonc` declares `migrations_dir` and `migrations_table` in the D1 binding. No manual migration step is needed in tests.
 
