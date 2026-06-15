@@ -142,6 +142,14 @@ export default defineConfig([
   pluginReactHooks.configs.flat.recommended,
   pluginjsxA11y.flatConfigs.recommended,
   pluginPrettierRecommended,
+  // React Router loaders/actions throw Response objects for redirects and error handling,
+  // which violates @typescript-eslint/only-throw-error expecting only Error instances.
+  {
+    files: ["app/routes/**/*.tsx"],
+    rules: {
+      "@typescript-eslint/only-throw-error": "off",
+    },
+  },
   {
     rules: {
       curly: "error",
