@@ -84,8 +84,6 @@ Compare the output against this expected structure:
 ./app/context.ts
 ./app/entry.server.tsx
 ./app/lib
-./app/lib/__tests__
-./app/lib/__tests__/utils.test.ts
 ./app/lib/utils.ts
 ./app/root.tsx
 ./app/routes
@@ -99,8 +97,14 @@ Compare the output against this expected structure:
 ./public/favicon.ico
 ./react-router.config.ts
 ./tsconfig.cloudflare.json
+./tests
+./tests/unit
+./tests/unit/lib
+./tests/unit/lib/utils.test.ts
+./tests/unit/vitest.config.ts
 ./tsconfig.json
 ./tsconfig.node.json
+./tsconfig.unit.json
 ./vitest.config.ts
 ./vite.config.ts
 ./worker-configuration.d.ts
@@ -121,7 +125,7 @@ git status --short
 - `pnpm format` completes, and any formatting changes are kept.
 - `pnpm typecheck` passes after any generated TypeScript or Cloudflare type issues are fixed.
 - `pnpm lint` passes after any generated lint issues are fixed.
-- `pnpm test` passes with the smoke test in `app/lib/__tests__/`.
+- `pnpm test` passes with the smoke test in `tests/unit/lib/`.
 - `pnpm build` passes.
 - The final file structure is displayed in the summary.
 - `git status --short` is reviewed so the summary can list the created and modified files.

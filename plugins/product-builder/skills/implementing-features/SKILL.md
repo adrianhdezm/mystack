@@ -35,9 +35,10 @@ If `docs/features/manifest.json` exists, set the feature's status to `implementi
   2. If not, create one following the `<parent>-<child>.query.ts` naming convention.
   3. The Query implements `RelationQuery<CompositeType, Filters>` from `~/db/data-access`.
   4. The service calls the Query — it never imports schema tables or writes raw joins.
-- After creating each DAO at `app/db/daos/<entity>.dao.ts`, create a co-located test at `app/db/daos/__tests__/<entity>.dao.test.ts` using the DAO test pattern from [test-patterns.md](references/test-patterns.md).
-- After creating each Query at `app/db/queries/<parent>-<child>.query.ts`, create a co-located test at `app/db/queries/__tests__/<parent>-<child>.query.test.ts` using the Query test pattern.
-- After creating each Service at `app/services/<entity>.service.ts`, create a co-located test at `app/services/__tests__/<entity>.service.test.ts` using the Service test pattern.
+- After creating each DAO at `app/db/daos/<entity>.dao.ts`, create a test at `tests/integration/db/daos/<entity>.dao.test.ts` using the DAO test pattern from [test-patterns.md](references/test-patterns.md).
+- After creating each Query at `app/db/queries/<parent>-<child>.query.ts`, create a test at `tests/integration/db/queries/<parent>-<child>.query.test.ts` using the Query test pattern.
+- After creating each Service at `app/services/<entity>.service.ts`, create a test at `tests/integration/services/<entity>.service.test.ts` using the Service test pattern.
+- After creating each route component at `app/routes/<route>.tsx`, create a test at `tests/unit/routes/<route>.test.tsx` using the Route Component Test pattern from [test-patterns.md](references/test-patterns.md). Use `createRoutesStub` with loader/action stubs so data flows through the router the same way it does in production.
 - Follow project conventions in `docs/conventions/` and avoid listed anti-patterns. For base patterns use Drizzle for schema, React Router loaders/actions for data, shadcn/ui for components, Conform + Zod for forms.
 - When the spec is ambiguous, make a reasonable choice and log it in `docs/architecture.md`.
 - Run `pnpm typecheck` periodically to catch errors early.
@@ -112,9 +113,10 @@ If `docs/features/manifest.json` exists, set the feature's status to `implemente
 - [ ] `react-router-patterns` conventions were followed for routes, loaders, and actions.
 - [ ] Project conventions in `docs/conventions/` were followed and anti-patterns avoided.
 - [ ] All spec sections (database, DAOs, queries, services, routes, components) were implemented.
-- [ ] A `__tests__/` directory with a `.test.ts` file exists for every DAO created.
-- [ ] A `__tests__/` directory with a `.test.ts` file exists for every Query created.
-- [ ] A `__tests__/` directory with a `.test.ts` file exists for every Service created.
+- [ ] A `.test.ts` file exists in `tests/integration/db/daos/` for every DAO created.
+- [ ] A `.test.ts` file exists in `tests/integration/db/queries/` for every Query created.
+- [ ] A `.test.ts` file exists in `tests/integration/services/` for every Service created.
+- [ ] A `.test.tsx` file exists in `tests/unit/routes/` for every route component created.
 - [ ] `pnpm typecheck` passes.
 - [ ] `pnpm lint` passes.
 - [ ] `pnpm test` passes.

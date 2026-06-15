@@ -30,7 +30,7 @@ For each section in the spec, verify the code matches:
 - **Services**: Confirm services exist in `app/services/` with correct transaction boundaries, DAO composition, and query delegation. Verify services do not import schema tables or build raw Drizzle queries.
 - **Routes**: Confirm route files exist, paths are registered in `app/routes.ts`, and loaders/actions match the spec.
 - **Components**: Confirm shadcn/ui components are installed and custom components are created as specified.
-- **Tests**: Confirm `__tests__/` directories exist for each DAO in `app/db/daos/`, each Query in `app/db/queries/`, and each Service in `app/services/`. Each test file should follow the `<source-name>.test.ts` naming convention.
+- **Tests**: Confirm test files exist for each DAO in `tests/integration/db/daos/`, each Query in `tests/integration/db/queries/`, each Service in `tests/integration/services/`, and each route component in `tests/unit/routes/`. Each test file should follow the `<source-name>.test.ts` (or `.test.tsx`) naming convention.
 - **Auth**: If routes are marked as protected, confirm authentication checks are in place.
 - **Conventions**: Check that the implementation follows project conventions (patterns and anti-patterns) in `docs/conventions/`.
 
@@ -69,7 +69,7 @@ Produce a static verification report with these sections:
 ## Missing Items
 
 - Items specified but not found in the code.
-- Test files missing for: [list any DAOs/Queries/Services without `__tests__/` coverage].
+- Test files missing for: [list any DAOs/Queries/Services without test coverage in `tests/integration/`, and any route components without test coverage in `tests/unit/routes/`].
 
 ## Inconsistencies
 
@@ -100,7 +100,8 @@ Present the verification report to the user with a verdict:
 - [ ] Every spec section (database, DAOs, queries, services, routes, components) was checked against the codebase.
 - [ ] Implementation was checked against project conventions and anti-patterns in `docs/conventions/`.
 - [ ] Every acceptance criterion was individually evaluated.
-- [ ] `__tests__/` directories were checked for all DAOs, Queries, and Services.
+- [ ] Test files in `tests/integration/` were checked for all DAOs, Queries, and Services.
+- [ ] Test files in `tests/unit/routes/` were checked for all route components.
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` were run.
 - [ ] Report was presented with clear status for each criterion.
 - [ ] Verdict was presented (Pass, Pass with notes, or Fail).

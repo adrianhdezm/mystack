@@ -18,7 +18,7 @@ If `docs/data-model.md` does not exist, create it using [data-model-template.md]
 
 If the skill introduces patterns worth reusing, add or update the relevant convention file. Use [convention-template.md](../templates/convention-template.md) when creating a new file. Add a linked entry in the Conventions section of `docs/architecture.md` for any new convention file.
 
-After `adding-database` sets up integration testing, create `docs/conventions/testing.md` using the convention template. Seed it with patterns from [testing-conventions.md](testing-conventions.md): directory-based type inference, `__tests__/` co-location, `getTestDb` import pattern, and layer-specific testing guidance.
+After `adding-database` sets up integration testing, create `docs/conventions/testing.md` using the convention template. Seed it with patterns from [testing-conventions.md](testing-conventions.md): directory structure, test type inference, `applyMigrations`/`getTestDb` import patterns, component test patterns, and layer-specific testing guidance.
 
 ## README.md
 

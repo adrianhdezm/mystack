@@ -1,19 +1,21 @@
 # Test Patterns
 
-Test templates for DAOs, Queries, and Services. Each test file lives in a `__tests__/` subdirectory next to the source file.
+Test templates for DAOs, Queries, Services, and Route Components.
 
-All integration tests import `getTestDb` from `~/db/__tests__/setup` to get a Drizzle instance backed by a Miniflare D1 database with migrations applied.
+Integration tests (DAOs, Queries, Services) live in `tests/integration/`, mirroring the `app/` structure. Unit and component tests live in `tests/unit/`, also mirroring the `app/` structure.
+
+Integration tests import `getTestDb` from the setup file to get a Drizzle instance backed by a Miniflare D1 database with migrations applied. Unit and component tests import source via the `~/` path alias.
 
 ## DAO Test
 
-File: `app/db/daos/__tests__/<entity>.dao.test.ts`
+File: `tests/integration/db/daos/<entity>.dao.test.ts`
 
 ```ts
 import { describe, expect, it } from 'vitest'
 
-import { getTestDb } from '~/db/__tests__/setup'
+import { <Entity>Dao } from '~/db/daos/<entity>.dao'
 
-import { <Entity>Dao } from '../<entity>.dao'
+import { getTestDb } from '../../setup'
 
 describe('<Entity>Dao', () => {
   const db = getTestDb()
@@ -75,16 +77,16 @@ Test every standard CRUD method. Add tests for filter combinations that encode b
 
 ## Query Test
 
-File: `app/db/queries/__tests__/<parent>-<child>.query.test.ts`
+File: `tests/integration/db/queries/<parent>-<child>.query.test.ts`
 
 ```ts
 import { describe, expect, it } from 'vitest'
 
-import { getTestDb } from '~/db/__tests__/setup'
 import { <Parent>Dao } from '~/db/daos/<parent>.dao'
 import { <Child>Dao } from '~/db/daos/<child>.dao'
+import { <Parent><Child>Query } from '~/db/queries/<parent>-<child>.query'
 
-import { <Parent><Child>Query } from '../<parent>-<child>.query'
+import { getTestDb } from '../../setup'
 
 describe('<Parent><Child>Query', () => {
   const db = getTestDb()
@@ -127,16 +129,16 @@ Seed data using DAOs, not raw SQL. Verify that composite types include nested re
 
 ## Service Test
 
-File: `app/services/__tests__/<entity>.service.test.ts`
+File: `tests/integration/services/<entity>.service.test.ts`
 
 ```ts
 import { describe, expect, it } from 'vitest'
 
-import { getTestDb } from '~/db/__tests__/setup'
 import { <Entity>Dao } from '~/db/daos/<entity>.dao'
 // Import other DAOs and Queries the service composes
+import { <Entity>Service } from '~/services/<entity>.service'
 
-import { <Entity>Service } from '../<entity>.service'
+import { getTestDb } from '../setup'
 
 describe('<Entity>Service', () => {
   const db = getTestDb()
@@ -166,3 +168,108 @@ describe('<Entity>Service', () => {
 ```
 
 Test each business workflow method. Assert state by reading back through DAOs after the service call. Focus on the happy path and meaningful error states — do not test Drizzle internals or `db.batch()` mechanics.
+
+## Route Component Test
+
+File: `tests/unit/routes/<route>.test.tsx`
+
+```tsx
+import { page } from '@vitest/browser/context'
+import { describe, expect, it } from 'vitest'
+import { createRoutesStub } from 'react-router'
+import { render } from 'vitest-browser-react'
+
+import <Route> from '~/routes/<route>'
+
+function render<Route>(loaderData) {
+  const Stub = createRoutesStub([
+    {
+      path: '/<path>',
+      Component: <Route>,
+      loader: () => loaderData,
+    },
+  ])
+  return render(<Stub initialEntries={['/<path>']} />)
+}
+
+describe('<Route>', () => {
+  it('renders with loader data', async () => {
+    await render<Route>({ /* loader data shape */ })
+
+    await expect.element(page.getByText('Expected text')).toBeInTheDocument()
+  })
+
+  it('displays empty state', async () => {
+    await render<Route>({ items: [] })
+
+    await expect.element(page.getByText('No items')).toBeInTheDocument()
+  })
+})
+```
+
+### Testing action errors with Conform forms
+
+Stub the `action` to return a Conform `SubmissionResult`. The `initialValue` field must be present or Conform silently ignores the result:
+
+```tsx
+function render<Route>WithAction(actionFn: () => unknown) {
+  const Stub = createRoutesStub([
+    {
+      path: '/<path>',
+      Component: <Route>,
+      action: actionFn,
+    },
+  ])
+  return render(<Stub initialEntries={['/<path>']} />)
+}
+
+it('shows form-level error from action', async () => {
+  await render<Route>WithAction(() => ({
+    status: 'error',
+    initialValue: { email: 'test@example.com', password: 'wrongpassword' },
+    error: { '': ['Incorrect username or password'] },
+  }))
+
+  await page.getByLabelText('Email').fill('test@example.com')
+  await page.getByLabelText('Password').fill('wrongpassword')
+  await page.getByRole('button', { name: /Log in/ }).click()
+
+  await expect.element(page.getByRole('alert')).toBeInTheDocument()
+})
+```
+
+The `error` key `''` (empty string) represents form-level errors — field-level errors use the field name as key.
+
+### Testing with hydrationData
+
+For forms where required inputs cannot be filled programmatically (e.g., `type="file"`), use `hydrationData` to pre-populate `actionData`:
+
+```tsx
+render(
+  <Stub
+    initialEntries={["/upload"]}
+    hydrationData={{ actionData: { upload: { error: "message" } } }}
+  />,
+);
+```
+
+### Querying and assertions
+
+Use `page` from `@vitest/browser/context` for Playwright locators (strict by default) and `expect.element()` for async assertions:
+
+```tsx
+// Locators
+page.getByText("Welcome");
+page.getByLabelText("Password", { exact: true });
+page.getByRole("button", { name: /Upload/ }).first();
+page.getByPlaceholder("e.g., La Trattoria");
+
+// Assertions — always async
+await expect.element(page.getByText("Welcome")).toBeInTheDocument();
+await expect.element(page.getByRole("alert")).not.toBeInTheDocument();
+await expect
+  .element(page.getByText("Sign up"))
+  .toHaveAttribute("href", expect.stringContaining("redirect"));
+```
+
+All test functions must be `async`. Cleanup is automatic — `vitest-browser-react` handles it between tests.

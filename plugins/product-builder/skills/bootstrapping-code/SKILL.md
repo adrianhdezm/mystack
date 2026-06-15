@@ -89,7 +89,7 @@ Include the files found when available.
 - [ ] `pnpm view` was used for latest package checks.
 - [ ] `react-router-patterns` was loaded before React Router code was generated, and the generated code follows those patterns.
 - [ ] Cloudflare types are generated with `wrangler types`.
-- [ ] `vitest` is installed and `vitest.config.ts` exists.
+- [ ] `vitest` is installed, root `vitest.config.ts` and `tests/unit/vitest.config.ts` exist, and `tsconfig.unit.json` exists.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` pass after fixing generated-file issues.
 - [ ] Final file structure and `git status --short` were reviewed.
 - [ ] `docs/architecture.md` was created with the base stack, bootstrapped structure, and a Routes convention link.
