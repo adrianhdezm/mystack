@@ -47,14 +47,15 @@ AUTH_COOKIE_PREFIX: App
 3. Replace or extend the Drizzle schema with the required auth tables using [02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md).
 4. Wire Better Auth into React Router context and the Worker using [03-server-integration.md](references/03-server-integration.md).
 5. Load `react-router-patterns`, then add `api/auth/*`, `login`, `logout`, and `signup` routes using [04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md).
-6. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
+6. Write unit tests for the login and signup route components using [05-tests.md](references/05-tests.md).
+7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
    - **Stack addition**: `Better Auth (email + password)`.
    - **Data model addition**: auth entities (`users`, `sessions`, `accounts`, `verifications`) matching `app/db/schema.ts`.
    - **Convention update**: `docs/conventions/routes.md` — add auth-related route patterns: protected route loader check, login/signup form action with Better Auth API, logout action, safe redirect after auth.
    - **README additions**: auth setup, `AUTH_SECRET`, `pnpm wrangler secret put AUTH_SECRET` for remote deploys, migration commands.
    - **AGENTS.md additions**: auth instructions (environment variables, migration commands).
-7. Run formatting, typecheck, lint, build, and available migration commands. If any command fails, fix the issue and re-run until it passes before committing.
-8. Commit the generated and updated files using the repository's Conventional Commits format.
+8. Run formatting, typecheck, lint, build, and unit tests. If any command fails, fix the issue and re-run until it passes before committing.
+9. Commit the generated and updated files using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -77,5 +78,7 @@ AUTH_COOKIE_PREFIX: App
 - [ ] `app/routes/auth.tsx` delegates loader and action to `auth.handler(request)`.
 - [ ] Login and signup use Conform, Zod, Better Auth API errors, and safe redirects.
 - [ ] Logout signs out through `auth.api.signOut`.
-- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass after fixes.
+- [ ] `tests/unit/routes/login.test.tsx` exists and all tests pass.
+- [ ] `tests/unit/routes/signup.test.tsx` exists and all tests pass.
+- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:unit` pass after fixes.
 - [ ] Generated and updated files were committed with a Conventional Commit message.
