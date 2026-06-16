@@ -29,19 +29,18 @@ PROJECT_PATH: <absolute path>
 ## Workflow
 
 1. Verify the target project is a bootstrapped Product Builder-style Cloudflare Workers, Vite, React Router, TypeScript, and pnpm project.
-2. Load `react-router-patterns` → read `adding-routes.md`.
-3. Read `docs/vision.md` (if present) and the product brief to gather product name, headline copy, and key features.
-4. Create the public layout route file, index route file, and register both in `app/routes.ts` using [01-routes-and-layout.md](references/01-routes-and-layout.md).
-5. Build the landing page section components using [02-landing-page-sections.md](references/02-landing-page-sections.md).
-6. Write unit tests for the landing page route using [03-tests.md](references/03-tests.md).
-7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
+2. Read `docs/vision.md` (if present) and the product brief to gather product name, headline copy, and key features.
+3. Load `react-router-patterns` → `adding-routes.md`, then create the public layout route file, index route file, and register both in `app/routes.ts` using [01-routes-and-layout.md](references/01-routes-and-layout.md).
+4. Build the landing page section components using [02-landing-page-sections.md](references/02-landing-page-sections.md).
+5. Write unit tests for the landing page route using [03-tests.md](references/03-tests.md).
+6. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
    - **Stack addition**: none (shadcn/ui and Tailwind are already in the stack).
    - **Structure additions**: `app/components/landing/`, `app/routes/public-layout.tsx` (public layout), `app/routes/home.tsx` (landing page), `tests/unit/routes/home.test.tsx`.
    - **New convention**: `docs/conventions/landing-page.md` — seed with: public vs. authenticated layout split in `app/routes.ts`, component directory for landing sections, content sourced from `docs/vision.md`.
    - **README additions**: note that `/` is the public landing page and describe how to update copy.
    - **AGENTS.md additions**: landing page instructions — location of section components, how to update copy, how the public layout is separated from the authenticated layout.
-8. Run formatting, typecheck, lint, and build. If any command fails, fix the issue and re-run until it passes before committing.
-9. Commit the generated and updated files using the repository's Conventional Commits format.
+7. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. If any command fails, fix the issue and re-run until it passes before committing.
+8. Commit the generated and updated files using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -53,7 +52,6 @@ PROJECT_PATH: <absolute path>
 - [ ] Landing page copy reflects real product content from `docs/vision.md` or the user's brief.
 - [ ] The authenticated app layout (if present) is unaffected — protected routes still require login.
 - [ ] `tests/unit/routes/home.test.tsx` exists and all tests pass.
-- [ ] `react-router-patterns` → `adding-routes.md` was loaded and followed.
 - [ ] `docs/architecture.md` is updated with the new route files and component directory.
 - [ ] `docs/conventions/landing-page.md` exists and documents the public/authenticated layout split.
 - [ ] `README.md` and `AGENTS.md` document the landing page location and how to update copy.
