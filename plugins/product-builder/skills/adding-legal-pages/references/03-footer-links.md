@@ -18,13 +18,20 @@ export function SiteFooter() {
     <footer className="border-t py-8">
       <div className="container flex flex-col items-center justify-between gap-4 sm:flex-row">
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} {/* Product name */}. All rights reserved.
+          © {new Date().getFullYear()} {/* Product name */}. All rights
+          reserved.
         </p>
         <nav className="flex gap-4 text-sm text-muted-foreground">
           {/* Add only the pages that were created */}
-          <Link to="/impressum" className="hover:underline">Impressum</Link>
-          <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
-          <Link to="/terms" className="hover:underline">Terms of Service</Link>
+          <Link to="/impressum" className="hover:underline">
+            Impressum
+          </Link>
+          <Link to="/privacy-policy" className="hover:underline">
+            Privacy Policy
+          </Link>
+          <Link to="/terms" className="hover:underline">
+            Terms of Service
+          </Link>
         </nav>
       </div>
     </footer>

@@ -43,9 +43,7 @@ import { CTASection } from "~/components/landing/CTASection";
 import { Features } from "~/components/landing/Features";
 import { Hero } from "~/components/landing/Hero";
 
-export const meta: Route.MetaFunction = () => [
-  { title: "/* Product name */" },
-];
+export const meta: Route.MetaFunction = () => [{ title: "/* Product name */" }];
 
 export default function HomePage(_props: Route.ComponentProps) {
   return (

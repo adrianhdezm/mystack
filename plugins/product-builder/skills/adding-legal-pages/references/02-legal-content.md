@@ -23,14 +23,18 @@ export default function ImpressumPage() {
       <div className="prose prose-neutral dark:prose-invert">
         <h2>Angaben gemäß § 5 TMG</h2>
         <p>
-          {/* OPERATOR_NAME */}<br />
-          {/* Street, House Number */}<br />
-          {/* Postal Code, City */}<br />
+          {/* OPERATOR_NAME */}
+          <br />
+          {/* Street, House Number */}
+          <br />
+          {/* Postal Code, City */}
+          <br />
           {/* Country */}
         </p>
         <h2>Kontakt</h2>
         <p>
-          E-Mail: {/* OPERATOR_EMAIL */}<br />
+          E-Mail: {/* OPERATOR_EMAIL */}
+          <br />
           Telefon: {/* Phone number */}
         </p>
         {/* Add VAT ID section if applicable */}
@@ -65,7 +69,8 @@ export default function PrivacyPolicyPage() {
         </p>
         <h2>1. Controller</h2>
         <p>
-          {/* OPERATOR_NAME */}, {/* OPERATOR_ADDRESS */}<br />
+          {/* OPERATOR_NAME */}, {/* OPERATOR_ADDRESS */}
+          <br />
           Contact: {/* OPERATOR_EMAIL */}
         </p>
         <h2>2. Data We Collect</h2>
@@ -104,8 +109,10 @@ export default function TermsPage() {
         </p>
         <h2>1. Provider</h2>
         <p>
-          {/* OPERATOR_NAME */}<br />
-          {/* OPERATOR_ADDRESS */}<br />
+          {/* OPERATOR_NAME */}
+          <br />
+          {/* OPERATOR_ADDRESS */}
+          <br />
           {/* OPERATOR_EMAIL */}
         </p>
         <h2>2. Scope</h2>

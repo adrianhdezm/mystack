@@ -3,6 +3,7 @@
 ## Content sourcing
 
 Before writing any component, read `docs/vision.md` (if present) to gather:
+
 - Product name
 - One-line tagline or headline
 - Key features or benefits (3–6 items)
@@ -57,7 +58,8 @@ export function SiteFooter() {
     <footer className="border-t py-8">
       <div className="container flex flex-col items-center justify-between gap-4 sm:flex-row">
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} {/* Product name */}. All rights reserved.
+          © {new Date().getFullYear()} {/* Product name */}. All rights
+          reserved.
         </p>
         <nav className="flex gap-4 text-sm text-muted-foreground">
           {/* Add <Link to="/impressum">Impressum</Link> when legal_pages=yes */}
@@ -109,7 +111,7 @@ A grid of 3–6 feature cards, each with an icon, title, and short description. 
 ```tsx
 const features = [
   {
-    title: "",       // Feature title from docs/vision.md
+    title: "", // Feature title from docs/vision.md
     description: "", // One-sentence description
   },
   // ... repeat for each feature
@@ -125,7 +127,9 @@ export function Features() {
         {features.map((feature) => (
           <div key={feature.title} className="rounded-lg border p-6">
             <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
-            <p className="text-sm text-muted-foreground">{feature.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {feature.description}
+            </p>
           </div>
         ))}
       </div>
@@ -148,9 +152,7 @@ export function CTASection() {
   return (
     <section className="border-t bg-muted/50 py-24">
       <div className="container flex flex-col items-center gap-6 text-center">
-        <h2 className="text-3xl font-bold">
-          {/* Closing headline */}
-        </h2>
+        <h2 className="text-3xl font-bold">{/* Closing headline */}</h2>
         <p className="max-w-xl text-muted-foreground">
           {/* Supporting copy */}
         </p>
