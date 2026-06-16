@@ -18,11 +18,8 @@ PROJECT_PATH: <absolute path>
 - Use `pnpm` for package installation and scripts.
 - Load `react-router-patterns` → `adding-routes.md` before touching `app/routes.ts` or any route module. All route registration and module shape must follow those patterns.
 - Register all routes in `app/routes.ts` using `layout()` and `index()` helpers from `@react-router/dev/routes`. Never use filename-based routing conventions.
-- Route modules must import generated types from `./+types/<route-file>`. Do not manually type `LoaderArgs`, `MetaFunction`, or component props.
-- The landing page must be public — it must not require authentication to view.
+- The landing page must be public — it must not require authentication to view. Never wrap landing page routes in a protected layout.
 - Use shadcn/ui components and Tailwind CSS for all UI. Do not introduce additional styling libraries.
-- Separate the public layout from the authenticated app layout using sibling `layout()` groups in `app/routes.ts`. Never wrap landing page routes in a protected layout.
-- The landing page route is `/` (index route under the public layout).
 - Extract reusable sections (Hero, Features, CTA) as components in `app/components/landing/`. Keep route files thin.
 - Do not hardcode placeholder copy. Use the product name, vision, and key features from `docs/vision.md` (if present) or from the user's product brief. Ask the user for real copy if none is available.
 
