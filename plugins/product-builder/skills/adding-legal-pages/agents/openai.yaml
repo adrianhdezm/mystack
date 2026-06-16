@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding Legal Pages"
+  short_description: "Add Impressum, Privacy Policy, and Terms of Service pages as public routes with real operator information."
+  default_prompt: "Add legal pages (Impressum, Privacy Policy, Terms of Service) to this Product Builder project as public routes under the existing public layout, linked from the site footer."

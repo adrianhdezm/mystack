@@ -10,6 +10,10 @@ Add foundation capabilities in dependency order based on the approved classifica
 
 If `ai=yes`, run `adding-ai` after the classification-based skills above.
 
+If `landing_page=yes`, run `adding-landing-page` after `ai` (or after classification-based skills if `ai=no`).
+
+If `legal_pages=yes`, run `adding-legal-pages` after `adding-landing-page` (or after classification-based skills if `landing_page=no`).
+
 ## Documentation Updates
 
 Each foundation skill updates the following files with its additions:

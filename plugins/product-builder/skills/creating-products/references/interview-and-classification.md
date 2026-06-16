@@ -32,13 +32,21 @@ Choose at least `standard` when the product needs saved records, relational data
 
 AI is independent of classification. Add `ai=yes` when the product needs text generation, structured AI output, image generation, LLM-powered features, or OpenAI API integration.
 
+## Landing Page Flag
+
+Landing page is independent of classification. Add `landing_page=yes` when the product needs a public marketing or informational entry point — a homepage visitors see before logging in or signing up.
+
+## Legal Pages Flag
+
+Legal pages are independent of classification. Add `legal_pages=yes` when the product needs an Impressum, Privacy Policy, and/or Terms of Service. `legal_pages=yes` is strongly recommended whenever `landing_page=yes`, but can also be added to products without a landing page that are publicly accessible.
+
 ## Presenting for Approval
 
 Present the classification for user approval before proceeding:
 
 ```text
 PROJECT_COMPLEXITY: simple | standard | advanced
-FOUNDATION_CAPABILITIES: database=<yes/no>, authentication=<yes/no>, file_storage=<yes/no>, ai=<yes/no>
+FOUNDATION_CAPABILITIES: database=<yes/no>, authentication=<yes/no>, file_storage=<yes/no>, ai=<yes/no>, landing_page=<yes/no>, legal_pages=<yes/no>
 RATIONALE: <short reason>
 ```
 

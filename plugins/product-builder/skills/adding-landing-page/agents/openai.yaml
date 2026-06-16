@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding Landing Page"
+  short_description: "Add a public marketing landing page with hero, features, and CTA sections using React Router and shadcn/ui."
+  default_prompt: "Add a public landing page to this Product Builder project with a hero section, features section, and call-to-action using the product name and description from docs/vision.md."
