@@ -22,7 +22,6 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 
 ## Hard rules
 
-- Use `pnpm` for Wrangler, package, and project scripts.
 - Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, actions, upload forms, or resource routes. Any React Router code must follow those patterns.
 - Require an existing D1 and Drizzle setup for file metadata; if missing, run the `adding-database` skill first.
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for file metadata service boundaries, transaction ownership, and any DAO or data access workflow changes.

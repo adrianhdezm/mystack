@@ -21,7 +21,6 @@ AUTH_COOKIE_PREFIX: App
 
 ## Hard rules
 
-- Use `pnpm` for package installation and project commands.
 - Load `react-router-patterns` before adding or changing React Router routes, loaders, actions, redirects, forms, protected routes, or app-level route files. Any React Router code must follow those patterns.
 - Install `better-auth`, `zod@4`, `@conform-to/react`, and `@conform-to/zod`.
 - Generate `AUTH_SECRET` with `openssl rand -base64 32` and write it to `.env` as `AUTH_SECRET=<generated-value>`.

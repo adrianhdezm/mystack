@@ -31,7 +31,6 @@ If the user has not provided this information, ask before writing any legal cont
 
 ## Hard rules
 
-- Use `pnpm` for package installation and scripts.
 - Load `react-router-patterns` → `adding-routes.md` before touching `app/routes.ts` or any route module. All route registration must follow those patterns.
 - Register all routes in `app/routes.ts` inside the existing public layout group. Never use filename-based routing conventions.
 - Route modules must import generated types from `./+types/<route-file>`. Do not manually type `MetaFunction` or component props.

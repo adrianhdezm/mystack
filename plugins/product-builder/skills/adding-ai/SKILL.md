@@ -15,7 +15,6 @@ PROJECT_PATH: <absolute path>
 
 ## Hard rules
 
-- Use `pnpm` for package installation and scripts.
 - Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, or actions. Any React Router code must follow those patterns.
 - Use Vercel AI SDK (`ai`) with the OpenAI provider (`@ai-sdk/openai`).
 - Do not hardcode API keys in source. Use environment variables and Wrangler secrets.

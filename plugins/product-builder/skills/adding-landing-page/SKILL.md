@@ -15,7 +15,6 @@ PROJECT_PATH: <absolute path>
 
 ## Hard rules
 
-- Use `pnpm` for package installation and scripts.
 - Load `react-router-patterns` → `adding-routes.md` before touching `app/routes.ts` or any route module. All route registration and module shape must follow those patterns.
 - Register all routes in `app/routes.ts` using `layout()` and `index()` helpers from `@react-router/dev/routes`. Never use filename-based routing conventions.
 - The landing page must be public — it must not require authentication to view. Never wrap landing page routes in a protected layout.

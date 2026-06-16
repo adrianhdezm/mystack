@@ -21,7 +21,6 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 
 ## Hard rules
 
-- Use `pnpm` for package installation and scripts.
 - Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, or actions. Any React Router code must follow those patterns.
 - Use Drizzle ORM with the SQLite dialect and Cloudflare D1 driver.
 - Use `drizzle-zod` for DAO-owned validation schemas when DAOs are added.
