@@ -65,6 +65,6 @@ If `docs/features/manifest.json` exists, update the status of each spec written 
 - [ ] Pages and routes include path, loader/action responsibilities, and protected status.
 - [ ] shadcn/ui components are listed with intended usage.
 - [ ] Acceptance criteria are verifiable "When X, then Y" statements written from the user's perspective.
-- [ ] Specs are ordered with no forward dependencies.
+- [ ] No spec depends on a feature with a higher id number.
 - [ ] Specs align with project conventions in `docs/conventions/`.
 - [ ] User approved the spec list before files were written.

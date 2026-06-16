@@ -30,6 +30,7 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 - Do not store raw file contents, Cloudflare account IDs, or API tokens in D1.
 - Preserve existing `wrangler.jsonc` settings and merge R2 configuration into it.
 - Preserve existing React Router request handling and inject file storage services through router context.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) when modifying `workers/app.ts`. New bindings must be wired inline — do not create helper files in `workers/`.
 - Roll back uploaded R2 objects if inserting file metadata fails.
 
 ## Gotchas

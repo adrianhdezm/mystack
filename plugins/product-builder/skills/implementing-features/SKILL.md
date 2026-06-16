@@ -30,11 +30,7 @@ If `docs/features/manifest.json` exists, set the feature's status to `implementi
 ### 3) Implement
 
 - Build everything the spec describes: schema, migrations, DAOs, queries, services, routes, loaders/actions, components — the full vertical slice.
-- When a feature's loader or action needs data joined across tables:
-  1. Check if a Query already exists for that join in `app/db/queries/`.
-  2. If not, create one following the `<parent>-<child>.query.ts` naming convention.
-  3. The Query implements `RelationQuery<CompositeType, Filters>` from `~/db/data-access`.
-  4. The service calls the Query — it never imports schema tables or writes raw joins.
+- When a loader or action needs cross-table data, check for an existing Query in `app/db/queries/`. If none exists, create one following the patterns in [data-access-architecture.md](../../shared/references/data-access-architecture.md) — do not re-derive the interface or naming conventions here.
 - After creating each DAO at `app/db/daos/<entity>.dao.ts`, create a test at `tests/integration/db/daos/<entity>.dao.test.ts` using the DAO test pattern from [test-patterns.md](references/test-patterns.md).
 - After creating each Query at `app/db/queries/<parent>-<child>.query.ts`, create a test at `tests/integration/db/queries/<parent>-<child>.query.test.ts` using the Query test pattern.
 - After creating each Service at `app/services/<entity>.service.ts`, create a test at `tests/integration/services/<entity>.service.test.ts` using the Service test pattern.

@@ -9,7 +9,12 @@ description: Generates a happy-path E2E test plan from all feature specs in docs
 
 All feature specs from `docs/features/*.spec.md`. If none exist, stop and tell the user to run `planning-features` first.
 
-## Test User
+## Hard Rules
+
+- Require Chrome DevTools MCP to be available before starting. Check that `navigate_page`, `click`, `fill`, and `screenshot` tools are available. If any are missing, stop immediately and tell the user to connect Chrome DevTools MCP before running this skill.
+- Do not start the dev server until the test plan is approved by the user.
+
+## Test User (default)
 
 Use the following credentials for all E2E tests:
 
@@ -18,6 +23,8 @@ Name:     Max Mustermann
 Email:    max@example.com
 Password: 1234qwer
 ```
+
+If registration with these credentials fails (e.g., email domain restrictions, password policy), ask the user for valid credentials before proceeding. Do not retry silently or skip the test user step.
 
 ## Workflow
 

@@ -32,6 +32,7 @@ AUTH_COOKIE_PREFIX: App
 - Keep auth endpoints under `app/routes/auth.tsx` at route path `api/auth/*`.
 - Add login, signup/register, and logout routes using React Router actions and loaders.
 - Preserve existing route, Worker, context, shadcn/ui, and Tailwind patterns.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) when modifying `workers/app.ts`. New bindings must be wired inline — do not create helper files in `workers/`.
 
 ## Gotchas
 

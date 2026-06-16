@@ -30,6 +30,7 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 - Never delete or overwrite user files to force a bootstrap.
 - Never create a local-only Product Builder app in `work/`, `./work`, a temporary directory, the current workspace, or any agent-chosen folder.
 - Keep Cloudflare spelled correctly in generated files, package names, and user-facing output.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before creating `workers/app.ts`. The worker must follow the single-file pattern: all binding initialization, auth setup, and `RouterContextProvider` wiring inline in `fetch`. Do not extract helpers into separate files under `workers/`.
 
 ## Gotchas
 
@@ -61,6 +62,7 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
       - `docs/architecture.md` — stack, structure, conventions index, and implementation log.
       - `docs/conventions/` — project-specific patterns and anti-patterns.
       - `docs/features/` — feature specs (added during planning).
+      - `docs/e2e/` — E2E test plans and browser screenshots (added during testing).
     - React Router guidance: route filenames describe role, not URL syntax; use middleware only for cross-cutting request work such as auth, logging, shared context, and headers; keep mutations in actions and ownership checks in the route/action that owns the resource param.
 15. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 16. Summarize what was created, include the commit hash, and list any command that failed.

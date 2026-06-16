@@ -23,6 +23,7 @@ PROJECT_PATH: <absolute path>
 - AI SDK functions (`generateText`, `streamText`, `generateImage`, `Output`) must only be used inside `app/services/ai.service.ts`. Routes call service methods, never the SDK directly.
 - The foundation skill creates the base service with provider configuration. Feature implementations extend the service with domain-specific methods (e.g., `summarize()`, `classify()`, `removeBackground()`).
 - Preserve existing `wrangler.jsonc` settings, React Router request handling, and app context.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) when modifying `workers/app.ts`. New bindings must be wired inline — do not create helper files in `workers/`.
 
 ## Gotchas
 

@@ -23,6 +23,7 @@ Load the reference that matches the work being done. Each reference is self-cont
 - `context.get(appContext)` only works inside loaders, actions, and middleware. Calling it at module scope or inside a React component throws because there is no active request context.
 - React Router's `redirect()` in an action returns a `Response`, not a thrown redirect. Return it (`return redirect("/path")`), do not throw it.
 - Route type generation (`./+types/<route-file>`) depends on the route being registered in `app/routes.ts`. Adding a route file without updating `app/routes.ts` causes "module not found" errors on the type import.
+- Resource routes that return non-HTML responses must set `Content-Type` explicitly in the returned `Response`. React Router does not infer content type from the body — omitting it causes browsers to treat binary downloads as HTML or apply the wrong MIME type.
 
 ## When Adding New Routes
 

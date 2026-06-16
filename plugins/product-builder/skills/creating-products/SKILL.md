@@ -65,7 +65,7 @@ Acceptance criteria:
 - [ ] Every feature in manifest.json has status "ready" or "blocked" with a documented reason
 - [ ] No feature has status "listed"
 
-Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Propose features that together deliver the first usable version — short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
+Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Derive the feature list from the `primary workflow` and `must-have pages` identified in Phase 1. Each feature should be an end-to-end deliverable of one step in that workflow. Propose short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
 
 Between iterations, if the user requests changes, update and re-present for approval. If a feature cannot be finalized after multiple iterations, set it to "blocked" with a reason and continue with remaining features. If all features are blocked, stop and report what decisions are needed.
 ```
@@ -107,4 +107,4 @@ Use verifying-features, testing-features, and implementing-features skills only.
 
 ### Final Summary
 
-Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, and any open questions from `docs/architecture.md`.
+Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, and any open questions from `docs/architecture.md`. Output this summary directly to the user. Do not write it to a file.
