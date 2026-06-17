@@ -1,6 +1,6 @@
 {
   "name": "product-builder",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "Turn product ideas into working products with landing pages, authentication, protected routes, and dashboard pages.",
   "author": {
     "name": "Adrian Hernandez-Mendez"
