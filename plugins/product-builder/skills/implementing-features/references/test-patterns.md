@@ -4,7 +4,7 @@ Test templates for DAOs, Queries, Services, and Route Components.
 
 Integration tests (DAOs, Queries, Services) live in `tests/integration/`, mirroring the `app/` structure. Unit and component tests live in `tests/unit/`, also mirroring the `app/` structure.
 
-Integration tests import `getTestDb` from the setup file to get a Drizzle instance backed by a Miniflare D1 database with migrations applied. Unit and component tests import source via the `~/` path alias.
+Integration tests import `getTestDb` from `db-test-utils.ts` to get a Drizzle instance backed by a Miniflare D1 database with migrations applied. Unit and component tests import source via the `~/` path alias.
 
 ## DAO Test
 
@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest'
 
 import { <Entity>Dao } from '~/db/daos/<entity>.dao'
 
-import { getTestDb } from '../../setup'
+import { getTestDb } from '../../db-test-utils'
 
 describe('<Entity>Dao', () => {
   const db = getTestDb()
@@ -86,7 +86,7 @@ import { <Parent>Dao } from '~/db/daos/<parent>.dao'
 import { <Child>Dao } from '~/db/daos/<child>.dao'
 import { <Parent><Child>Query } from '~/db/queries/<parent>-<child>.query'
 
-import { getTestDb } from '../../setup'
+import { getTestDb } from '../../db-test-utils'
 
 describe('<Parent><Child>Query', () => {
   const db = getTestDb()
@@ -138,7 +138,7 @@ import { <Entity>Dao } from '~/db/daos/<entity>.dao'
 // Import other DAOs and Queries the service composes
 import { <Entity>Service } from '~/services/<entity>.service'
 
-import { getTestDb } from '../setup'
+import { getTestDb } from '../db-test-utils'
 
 describe('<Entity>Service', () => {
   const db = getTestDb()

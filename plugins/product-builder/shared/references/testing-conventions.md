@@ -13,7 +13,7 @@ tests/
       home.test.tsx
       login.test.tsx
   integration/
-    setup.ts
+    db-test-utils.ts
     env.d.ts
     db/daos/
       user.dao.test.ts
@@ -126,14 +126,30 @@ Integration tests use:
 | --------------------------------- | ------------------------- |
 | `@cloudflare/vitest-pool-workers` | Miniflare D1 test runtime |
 
+## Integration Test Setup Files
+
+Use two separate setup files with clear names:
+
+- `tests/integration/db-test-utils.ts`
+  - Exports reusable database test helpers such as `getTestDb()` and `applyMigrations()`.
+  - Must not register Vitest lifecycle hooks.
+  - Safe for individual tests to import.
+
+- `tests/integration/setup-tests.ts`
+  - Registered in `vitest.config.ts` under `test.setupFiles`.
+  - Imports helpers from `db-test-utils.ts`.
+  - Owns Vitest lifecycle hooks such as `beforeAll(applyMigrations)`.
+
+Do not put reusable helpers and automatic Vitest setup side effects in the same file. Test files should import helpers from `db-test-utils.ts`, not from `setup-tests.ts`.
+
 ## Integration Test Database Helper
 
-After `adding-database`, integration tests use `getTestDb` and `applyMigrations` from `tests/integration/setup.ts`.
+After `adding-database`, integration tests use `getTestDb` and `applyMigrations` from `tests/integration/db-test-utils.ts`.
 
 Migrations are read from `db/migrations/` at config time using Drizzle's `readMigrationFiles()`, then passed into the Miniflare worker as a JSON text binding. The Miniflare worker has a virtual filesystem that doesn't include project files, so `migrate()` from `drizzle-orm/d1/migrator` can't read migration files at runtime. The split — read in Node.js config, apply in the worker — works around this.
 
 ```ts
-// tests/integration/setup.ts
+// tests/integration/db-test-utils.ts
 import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
 
@@ -161,7 +177,7 @@ A separate `tests/integration/setup-tests.ts` setup file calls `applyMigrations(
 // tests/integration/setup-tests.ts
 import { beforeAll } from "vitest";
 
-import { applyMigrations } from "./setup";
+import { applyMigrations } from "./db-test-utils";
 
 beforeAll(applyMigrations);
 ```

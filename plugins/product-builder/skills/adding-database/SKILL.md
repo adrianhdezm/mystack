@@ -65,7 +65,7 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
 - [ ] `@cloudflare/vitest-pool-workers` is installed.
 - [ ] `tests/integration/vitest.config.ts` uses `defineWorkersConfig` with `wrangler.jsonc`, `APP_DB`, and `MIGRATIONS` binding.
-- [ ] `tests/integration/setup.ts` exports `getTestDb()` and `applyMigrations()`.
+- [ ] `tests/integration/db-test-utils.ts` exports `getTestDb()` and `applyMigrations()`.
 - [ ] `tests/integration/env.d.ts` augments `Cloudflare.Env` with the `MIGRATIONS` binding.
 - [ ] `tsconfig.integration.json` exists with Cloudflare vitest types.
 - [ ] `tsconfig.cloudflare.json` has only `"types": ["vite/client"]`.

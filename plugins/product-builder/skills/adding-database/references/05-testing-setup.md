@@ -56,7 +56,7 @@ export default defineWorkersConfig({
 
 Preserve `resolve: { tsconfigPaths: true }` — the `~/` path alias used in test imports depends on it.
 
-3. Create `tests/integration/setup.ts` — the shared test helper for integration tests.
+3. Create `tests/integration/db-test-utils.ts` — reusable database test helpers for integration tests. Must not register Vitest lifecycle hooks — individual tests import helpers from this file.
 
 ```ts
 import { env } from "cloudflare:workers";
@@ -82,15 +82,17 @@ export async function applyMigrations() {
 
 Uses `D1.prepare().run()` instead of `D1.exec()` because `exec()` fails on multi-line statements in Miniflare. Migration tracking is skipped since the test database is ephemeral.
 
-4. Create `tests/integration/setup-tests.ts` — a setup file that applies migrations before each test file. Referenced by the integration vitest config's `setupFiles`, so individual tests don't need to call `applyMigrations()` themselves. This runs inside the Miniflare worker context.
+4. Create `tests/integration/setup-tests.ts` — a setup file that applies migrations before each test file. Registered in `vitest.config.ts` under `test.setupFiles`, so individual tests don't need to call `applyMigrations()` themselves. Imports helpers from `db-test-utils.ts` and owns Vitest lifecycle hooks. This runs inside the Miniflare worker context.
 
 ```ts
 import { beforeAll } from "vitest";
 
-import { applyMigrations } from "./setup";
+import { applyMigrations } from "./db-test-utils";
 
 beforeAll(applyMigrations);
 ```
+
+Do not put reusable helpers and automatic Vitest setup side effects in the same file. Test files should import helpers from `db-test-utils.ts`, not from `setup-tests.ts`.
 
 5. Create `tests/integration/env.d.ts` — a type augmentation for the `MIGRATIONS` text binding, scoped to test code.
 
@@ -164,7 +166,7 @@ Add the `test:integration` script and update `typecheck` to include the integrat
 ```ts
 import { describe, expect, it } from "vitest";
 
-import { getTestDb } from "../../setup";
+import { getTestDb } from "../../db-test-utils";
 // Import the DAO class for the first table in the schema
 // import { ExampleDao } from '~/db/daos/example.dao'
 
@@ -190,7 +192,7 @@ If any test fails, check that `wrangler.jsonc` has the D1 binding, that migratio
 
 - `@cloudflare/vitest-pool-workers` is installed as a development dependency.
 - `tests/integration/vitest.config.ts` uses `defineWorkersConfig` with `wrangler.jsonc`, `APP_DB`, and `MIGRATIONS` binding.
-- `tests/integration/setup.ts` exports `getTestDb()` and `applyMigrations()`.
+- `tests/integration/db-test-utils.ts` exports `getTestDb()` and `applyMigrations()`.
 - `tests/integration/setup-tests.ts` calls `applyMigrations()` in a `beforeAll` hook.
 - `tests/integration/env.d.ts` augments `Cloudflare.Env` with the `MIGRATIONS` binding.
 - `tsconfig.integration.json` exists at the project root with Cloudflare vitest types.
