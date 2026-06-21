@@ -47,19 +47,27 @@ Based on the interview, the product is classified using the [interview-and-class
 | `standard`     | Yes      | Yes            | No           |
 | `advanced`     | Yes      | Yes            | Yes          |
 
-AI is independent of classification — `ai=yes` is added when the product needs text generation, structured AI output, image generation, or LLM-powered features.
+Several flags are independent of classification and are added when needed:
+
+- `ai=yes` — text generation, structured AI output, image generation, or LLM-powered features.
+- `landing_page=yes` — a public-facing marketing or landing page is needed.
+- `legal_pages=yes` — privacy policy, terms of service, or other legal pages are required.
 
 The classification is presented for user approval before proceeding:
 
 ```text
 PROJECT_COMPLEXITY: standard
-FOUNDATION_CAPABILITIES: database=yes, authentication=yes, file_storage=no, ai=no
+FOUNDATION_CAPABILITIES: database=yes, authentication=yes, file_storage=no, ai=no, landing_page=no, legal_pages=no
 RATIONALE: Persistent meal plans and grocery lists with user accounts, no file uploads for v1.
 ```
 
 **Meal-planning example:** Classified as `standard` — persistent data (meal plans, grocery lists) and user accounts are required, but no file uploads for v1.
 
-#### 3. Repository Preparation
+#### 3. Vision Document
+
+Product Builder generates `docs/vision.md` from the interview answers and original prompt using the `vision-template.md`. The document is presented for user approval before any code is written.
+
+#### 4. Repository Preparation
 
 The [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) skill creates or finds the GitHub repository and sets up the local clone.
 
@@ -71,7 +79,7 @@ LOCAL_FOLDER: <parent-folder>       (e.g. ~/Code)
 PRODUCT_IDEA: <short description>
 ```
 
-#### 4. Code Bootstrap
+#### 5. Code Bootstrap
 
 The [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) skill scaffolds the base project:
 
@@ -80,7 +88,9 @@ The [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/
 - React Router v7 (framework mode, SSR)
 - Tailwind CSS, shadcn/ui
 
-**Phase 1 is complete when** the user has approved the classification and `pnpm dev` starts without errors in the bootstrapped project directory.
+It also creates initial `docs/architecture.md`, `docs/conventions/routes.md`, `README.md`, and `AGENTS.md` that foundation skills will extend in Phase 2.
+
+**Phase 1 is complete when** the user has approved the classification and vision document, and `pnpm dev` starts without errors in the bootstrapped project directory.
 
 ---
 
@@ -94,6 +104,15 @@ Foundation skills run in dependency order based on the classification, following
 2. **[`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md)** — Adds Better Auth with email/password, session handling, and protected routes.
 3. **[`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md)** _(advanced only)_ — Adds Cloudflare R2 with upload/delete lifecycle and file metadata.
 4. **[`adding-ai`](../plugins/product-builder/skills/adding-ai/SKILL.md)** _(when ai=yes)_ — Adds Vercel AI SDK with OpenAI provider for text, structured output, and image generation.
+5. **[`adding-landing-page`](../plugins/product-builder/skills/adding-landing-page/SKILL.md)** _(when landing_page=yes)_ — Adds a public-facing marketing or landing page.
+6. **[`adding-legal-pages`](../plugins/product-builder/skills/adding-legal-pages/SKILL.md)** _(when legal_pages=yes)_ — Adds privacy policy, terms of service, and other required legal pages.
+
+> **Environment variables required before starting Phase 2.** Each foundation skill needs secrets in `.env` and Wrangler:
+> - `adding-database` → `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, `CLOUDFLARE_D1_TOKEN`
+> - `adding-authentication` → `AUTH_SECRET` (generate with `openssl rand -base64 32`)
+> - `adding-ai` → `OPENAI_API_KEY` (also added as a Wrangler secret)
+>
+> Phase 2 will block at the relevant skill if any secret is missing.
 
 Each foundation skill updates:
 
@@ -171,6 +190,8 @@ For each `ready` feature in manifest id order, respecting `depends_on`:
 ### Phase 5 — Verification
 
 **Goal:** Verify every feature, run E2E tests, and confirm the full project builds cleanly. Both `verifying-features` and `testing-features` are mandatory.
+
+> **Prerequisite for E2E testing:** Chrome DevTools MCP must be connected before Phase 5 begins. The `testing-features` skill hard-stops if the `navigate_page`, `click`, `fill`, and `screenshot` tools are unavailable. Connect Chrome DevTools MCP before proceeding.
 
 For each `implemented` feature in manifest id order:
 
@@ -261,6 +282,7 @@ meal-planner/
 | [foundation-capabilities.md](../plugins/product-builder/skills/creating-products/references/foundation-capabilities.md) | Classification-to-skill mapping and dependency order |
 | [feature-manifest.md](../plugins/product-builder/skills/creating-products/references/feature-manifest.md) | Manifest schema, field definitions, and status lifecycle |
 | [data-access-architecture.md](../plugins/product-builder/shared/references/data-access-architecture.md) | DAO, query, service, and transaction conventions |
+| [test-patterns.md](../plugins/product-builder/skills/implementing-features/references/test-patterns.md) | DAO, query, and service test templates used during implementation |
 | [architecture-template.md](../plugins/product-builder/shared/templates/architecture-template.md) | Template for `docs/architecture.md` |
 | [data-model-template.md](../plugins/product-builder/shared/templates/data-model-template.md) | Template for `docs/data-model.md` |
 | [convention-template.md](../plugins/product-builder/shared/templates/convention-template.md) | Template for convention files in `docs/conventions/` |
@@ -276,8 +298,10 @@ meal-planner/
 | [`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md) | 2 | Adds Better Auth email/password |
 | [`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md) | 2 | Adds Cloudflare R2 (advanced only) |
 | [`adding-ai`](../plugins/product-builder/skills/adding-ai/SKILL.md) | 2 | Adds Vercel AI SDK + OpenAI (when ai=yes) |
+| [`adding-landing-page`](../plugins/product-builder/skills/adding-landing-page/SKILL.md) | 2 | Adds public marketing/landing page (when landing_page=yes) |
+| [`adding-legal-pages`](../plugins/product-builder/skills/adding-legal-pages/SKILL.md) | 2 | Adds legal pages (when legal_pages=yes) |
 | [`planning-features`](../plugins/product-builder/skills/planning-features/SKILL.md) | 3 | Creates numbered feature specs |
-| [`implementing-features`](../plugins/product-builder/skills/implementing-features/SKILL.md) | 4 | Implements a feature from its spec |
+| [`implementing-features`](../plugins/product-builder/skills/implementing-features/SKILL.md) | 4–5 | Implements a feature from its spec; re-runs in Phase 5 for fixes |
 | [`verifying-features`](../plugins/product-builder/skills/verifying-features/SKILL.md) | 5 | Verifies implementation against spec |
 | [`testing-features`](../plugins/product-builder/skills/testing-features/SKILL.md) | 5 | Runs E2E browser tests via Chrome DevTools |
 | [`react-router-patterns`](../plugins/product-builder/skills/react-router-patterns/SKILL.md) | 3–4 | Route design and implementation patterns |
