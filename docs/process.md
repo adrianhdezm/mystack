@@ -11,7 +11,7 @@ weekly preferences into grocery lists and quick dinner plans.
 
 ## Process Overview
 
-The process runs in six phases, orchestrated by the [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) skill. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block. Each phase invokes specialized sub-skills in sequence.
+The process runs in seven phases, orchestrated by the [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) skill. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block. Each phase invokes specialized sub-skills in sequence.
 
 ---
 
@@ -180,21 +180,27 @@ For each `ready` feature in manifest id order, respecting `depends_on`:
 
 ### Phase 5 — Verification
 
-**Goal:** Verify every feature, run E2E tests, and confirm the full project builds cleanly. Both `verifying-features` and `testing-features` are mandatory.
-
-> **Prerequisite for E2E testing:** Chrome DevTools MCP must be connected before Phase 5 begins. The `testing-features` skill hard-stops if the `navigate_page`, `click`, `fill`, and `screenshot` tools are unavailable. Connect Chrome DevTools MCP before proceeding.
+**Goal:** Verify every feature against its spec.
 
 For each `implemented` feature in manifest id order:
 
 1. **Verify** — [`verifying-features`](../plugins/product-builder/skills/verifying-features/SKILL.md) checks the implementation against acceptance criteria and sets the manifest status to `verified`.
 2. **Iterate** — If verification fails, [`implementing-features`](../plugins/product-builder/skills/implementing-features/SKILL.md) runs again targeting the failed acceptance criteria, then re-verifies. This repeats until the spec passes or user input is needed.
 
-After all features reach `verified`:
+**Phase 5 is complete when** every feature has status `verified` (or `blocked` with a documented reason).
 
-3. **E2E Test** — [`testing-features`](../plugins/product-builder/skills/testing-features/SKILL.md) generates a happy-path E2E test plan from all feature specs and executes it in the browser via Chrome DevTools MCP. If E2E tests fail, issues are fixed with `implementing-features` and `testing-features` re-runs.
-4. **Build** — Run `pnpm typecheck`, `pnpm lint`, and `pnpm build` — fix any failures and re-run until all pass.
+---
 
-**Phase 5 is complete when** every feature has status `verified` (or `blocked` with a documented reason), E2E tests pass, and typecheck, lint, and build all exit 0.
+### Phase 6 — Testing
+
+**Goal:** Run E2E tests and confirm the full project builds cleanly.
+
+> **Prerequisite for E2E testing:** Chrome DevTools MCP must be connected before Phase 6 begins. The `testing-features` skill hard-stops if the `navigate_page`, `click`, `fill`, and `screenshot` tools are unavailable. Connect Chrome DevTools MCP before proceeding.
+
+1. **E2E Test** — [`testing-features`](../plugins/product-builder/skills/testing-features/SKILL.md) generates a happy-path E2E test plan from all feature specs and executes it in the browser via Chrome DevTools MCP. If E2E tests fail, issues are fixed with `implementing-features` and `testing-features` re-runs.
+2. **Build** — Run `pnpm typecheck`, `pnpm lint`, and `pnpm build` — fix any failures and re-run until all pass.
+
+**Phase 6 is complete when** E2E tests pass and typecheck, lint, and build all exit 0.
 
 ---
 
@@ -292,7 +298,7 @@ meal-planner/
 | [`adding-landing-page`](../plugins/product-builder/skills/adding-landing-page/SKILL.md) | 2 | Adds public marketing/landing page (when landing_page=yes) |
 | [`adding-legal-pages`](../plugins/product-builder/skills/adding-legal-pages/SKILL.md) | 2 | Adds legal pages (when legal_pages=yes) |
 | [`planning-features`](../plugins/product-builder/skills/planning-features/SKILL.md) | 3 | Creates numbered feature specs |
-| [`implementing-features`](../plugins/product-builder/skills/implementing-features/SKILL.md) | 4–5 | Implements a feature from its spec; re-runs in Phase 5 for fixes |
+| [`implementing-features`](../plugins/product-builder/skills/implementing-features/SKILL.md) | 4–6 | Implements a feature from its spec; re-runs in Phases 5–6 for fixes |
 | [`verifying-features`](../plugins/product-builder/skills/verifying-features/SKILL.md) | 5 | Verifies implementation against spec |
-| [`testing-features`](../plugins/product-builder/skills/testing-features/SKILL.md) | 5 | Runs E2E browser tests via Chrome DevTools |
+| [`testing-features`](../plugins/product-builder/skills/testing-features/SKILL.md) | 6 | Runs E2E browser tests via Chrome DevTools |
 | [`react-router-patterns`](../plugins/product-builder/skills/react-router-patterns/SKILL.md) | 3–4 | Route design and implementation patterns |

@@ -5,7 +5,7 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 # Creating Products
 
-This is the Product Builder entry point. It drives six sequential phases that take a product idea from an empty repository through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
+This is the Product Builder entry point. It drives seven sequential phases that take a product idea from an empty repository through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
 
 ## Workflow
 
@@ -106,22 +106,34 @@ Use implementing-features only. Between iterations, if a feature requires user i
 ### Phase 5 — Verification
 
 ```
-/goal Complete when all acceptance criteria are met. Constraint: both verifying-features and testing-features are mandatory — do not skip either.
+/goal Complete when all acceptance criteria are met.
 
 Acceptance criteria:
 - [ ] verifying-features ran for each "implemented" feature
 - [ ] Every feature in manifest.json has status "verified" or "blocked" with a documented reason
+
+For each "implemented" feature in manifest id order, run verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify.
+
+Use verifying-features and implementing-features skills only. Between iterations, if a feature requires user input set its status to "blocked" with a reason and advance to the next eligible feature. If all remaining features are blocked, stop and report what is needed.
+```
+
+### Phase 6 — Testing
+
+```
+/goal Complete when all acceptance criteria are met. Constraint: do not skip testing-features — it is mandatory.
+
+Acceptance criteria:
 - [ ] testing-features ran for a comprehensive E2E pass
 - [ ] E2E tests pass
 - [ ] pnpm typecheck exits 0
 - [ ] pnpm lint exits 0
 - [ ] pnpm build exits 0
 
-For each "implemented" feature in manifest id order, run verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify. After all features reach "verified", run testing-features for a comprehensive E2E pass across all features. If E2E tests fail, fix the issues with implementing-features and re-run testing-features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
+Run testing-features for a comprehensive E2E pass across all verified features. If E2E tests fail, fix the issues with implementing-features and re-run testing-features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
 
-Use verifying-features, testing-features, and implementing-features skills only. Between iterations, if a feature requires user input set its status to "blocked" with a reason and advance to the next eligible feature. If all remaining features are blocked or build/lint/typecheck failures cannot be resolved, stop and report the failures and what is needed.
+Use testing-features and implementing-features skills only. If build/lint/typecheck failures cannot be resolved without user input, stop and report the failures and what is needed.
 ```
 
 ### Final Summary
 
-Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, and any open questions from `docs/architecture.md`. Output this summary directly to the user. Do not write it to a file.
+Commit the final state and summarize: foundation skills used, features implemented, commit hash, verification results, E2E test results, build/lint/typecheck results, and any open questions from `docs/architecture.md`. Output this summary directly to the user. Do not write it to a file.

@@ -13,7 +13,7 @@ See [process.md](process.md) for the phase-by-phase orchestration narrative.
 
 ### `creating-products`
 
-Drives the full product lifecycle across six phases by invoking all other skills in sequence.
+Drives the full product lifecycle across seven phases by invoking all other skills in sequence.
 
 **Inputs**
 - Product idea or problem description (from the user)
@@ -267,6 +267,8 @@ Verifies a feature implementation against its spec and acceptance criteria.
 - Updates `docs/features/manifest.json` — status set to `verified` (on pass only)
 
 ---
+
+## Phase 6 — Testing
 
 ### `testing-features`
 
