@@ -43,7 +43,7 @@ Run writing-prd. It will interview the user, determine foundation capabilities, 
 /goal Complete when all acceptance criteria are met. Constraint: preserve any existing repo content.
 
 Acceptance criteria:
-- [ ] bootstrapping-code completed successfully
+- [ ] scaffolding-project completed successfully
 - [ ] pnpm dev starts without errors
 - [ ] Each foundation skill for the approved capabilities ran successfully
 - [ ] docs/architecture.md lists every capability with its integration point
@@ -51,7 +51,7 @@ Acceptance criteria:
 - [ ] docs/conventions/ contains entries from each foundation skill
 - [ ] AGENTS.md is updated
 
-Read docs/prd.md and extract the Foundation Capabilities table. Run bootstrapping-code for scaffolding. Confirm pnpm dev starts without errors before proceeding.
+Read docs/prd.md and extract the Foundation Capabilities table. Run scaffolding-project for scaffolding. Confirm pnpm dev starts without errors before proceeding.
 
 Then run the foundation skill for each capability where `Value=yes`, in dependency order derived from the `Depends On` column:
 

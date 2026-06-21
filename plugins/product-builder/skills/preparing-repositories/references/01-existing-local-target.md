@@ -19,7 +19,7 @@ Verify there are no pre-existing local files beyond repository metadata:
 find "$LOCAL_REPOSITORY_PATH" -mindepth 1 -maxdepth 1 ! -name .git -print
 ```
 
-If this prints any path, stop. Do not bootstrap over pre-existing local files, even basic files such as `README.md`, `.gitignore`, or `LICENSE`. This restriction applies before `bootstrapping-code` starts; files created by that skill are expected to be reused and updated by later bootstrap steps.
+If this prints any path, stop. Do not bootstrap over pre-existing local files, even basic files such as `README.md`, `.gitignore`, or `LICENSE`. This restriction applies before `scaffolding-project` starts; files created by that skill are expected to be reused and updated by later bootstrap steps.
 
 If all checks pass, skip remote creation and cloning, then return:
 

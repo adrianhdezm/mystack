@@ -41,7 +41,7 @@ If `docs/features/manifest.json` exists, set the feature's status to `implementi
 
 ### 4) Update Architecture
 
-Update `docs/architecture.md`. Foundation skills (`bootstrapping-code`, `adding-database`, `adding-authentication`, `adding-file-storage`, `adding-ai`) create this file and populate the Stack, Structure, and Conventions sections. If it does not exist (standalone use without foundation skills), create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the Stack and Structure to match the current project.
+Update `docs/architecture.md`. Foundation skills (`scaffolding-project`, `adding-database`, `adding-authentication`, `adding-file-storage`, `adding-ai`) create this file and populate the Stack, Structure, and Conventions sections. If it does not exist (standalone use without foundation skills), create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the Stack and Structure to match the current project.
 
 #### Data Model
 

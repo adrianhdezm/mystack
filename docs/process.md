@@ -78,7 +78,7 @@ After the interview, `writing-prd` derives each capability flag and presents the
 
 #### 1. Code Bootstrap
 
-The [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) skill scaffolds the base project:
+The [`scaffolding-project`](../plugins/product-builder/skills/scaffolding-project/SKILL.md) skill scaffolds the base project:
 
 - pnpm, TypeScript, Vite
 - Cloudflare Workers
@@ -284,7 +284,7 @@ meal-planner/
 | [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) | All | Orchestrator — drives the full process |
 | [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) | 0 | Creates or finds the GitHub repo and local clone |
 | [`writing-prd`](../plugins/product-builder/skills/writing-prd/SKILL.md) | 1 | Interviews the user, determines foundation capabilities, writes `docs/prd.md` |
-| [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) | 2 | Scaffolds the base project |
+| [`scaffolding-project`](../plugins/product-builder/skills/scaffolding-project/SKILL.md) | 2 | Scaffolds the base project |
 | [`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md) | 2 | Adds Cloudflare D1 + Drizzle ORM |
 | [`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md) | 2 | Adds Better Auth email/password |
 | [`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md) | 2 | Adds Cloudflare R2 (when file_storage=yes) |

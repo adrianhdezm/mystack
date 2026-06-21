@@ -37,7 +37,7 @@ After installing or updating the plugin, start a new thread so the latest skills
 
 - `creating-products` — orchestrates the full product lifecycle: interviews the user, classifies complexity, sets up the foundation, plans features via a manifest, and implements and verifies each feature end-to-end.
 - `preparing-repositories` — prepares an empty GitHub repository and local clone for Product Builder work.
-- `bootstrapping-code` — bootstraps the initial codebase (pnpm, TypeScript, Vite, Cloudflare Workers, React Router v7, Tailwind CSS v4, shadcn/ui).
+- `scaffolding-project` — scaffolds the initial codebase (pnpm, TypeScript, Vite, Cloudflare Workers, React Router v7, Tailwind CSS v4, shadcn/ui).
 
 #### Infrastructure
 
