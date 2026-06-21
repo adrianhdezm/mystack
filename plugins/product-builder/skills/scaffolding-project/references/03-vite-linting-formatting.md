@@ -65,7 +65,7 @@ export default defineConfig({
 });
 ```
 
-6. Check and install the latest linting packages.
+6. Check and install the latest linting packages. Pin `eslint` and `@eslint/js` to `^9` — do not install v10 or higher.
 
 ```sh
 pnpm view @eslint/js version
@@ -77,7 +77,7 @@ pnpm view eslint-plugin-react version
 pnpm view eslint-plugin-react-hooks version
 pnpm view globals version
 pnpm view typescript-eslint version
-pnpm add -D @eslint/js@latest eslint@latest eslint-config-prettier@latest eslint-plugin-jsx-a11y@latest eslint-plugin-prettier@latest eslint-plugin-react@latest eslint-plugin-react-hooks@latest globals@latest typescript-eslint@latest
+pnpm add -D @eslint/js@^9 eslint@^9 eslint-config-prettier@latest eslint-plugin-jsx-a11y@latest eslint-plugin-prettier@latest eslint-plugin-react@latest eslint-plugin-react-hooks@latest globals@latest typescript-eslint@latest
 ```
 
 7. Create `eslint.config.js` with this content:
@@ -188,6 +188,6 @@ export default defineConfig([
 - `.prettierrc` exists with single quotes, 140-column print width, no trailing commas, ordered imports, and Tailwind class sorting enabled.
 - `vite` at least version 8 is installed as a development dependency.
 - `vite.config.ts` exists with an empty plugin list and `resolve.tsconfigPaths` enabled.
-- `@eslint/js`, `eslint`, `eslint-config-prettier`, `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `globals`, and `typescript-eslint` are installed as development dependencies.
+- `@eslint/js` (v9), `eslint` (v9), `eslint-config-prettier`, `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `globals`, and `typescript-eslint` are installed as development dependencies.
 - `eslint.config.js` exists with React, React Hooks, JSX accessibility, TypeScript, and Prettier recommended configuration.
 - `package.json` includes `format` and `lint` scripts.
