@@ -9,7 +9,7 @@ Before adding or changing these files, load `react-router-patterns` and follow i
 
 ## Steps
 
-1. Check the latest React and React Router package versions.
+1. Check the latest React and React Router package versions. Pin `react-router` and `@react-router/dev` to `^7` — do not install v8 or higher.
 
 ```sh
 pnpm view react version
@@ -22,8 +22,8 @@ pnpm view @react-router/dev version
 2. Install React and React Router dependencies.
 
 ```sh
-pnpm add react@latest react-dom@latest react-router@latest isbot@latest
-pnpm add -D @react-router/dev@latest
+pnpm add react@latest react-dom@latest react-router@^7 isbot@latest
+pnpm add -D @react-router/dev@^7
 ```
 
 3. Create `react-router.config.ts`.
@@ -278,9 +278,9 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 
 ## Expected Results
 
-- `react`, `react-dom`, `react-router`, and `isbot` are installed as dependencies.
-- `@react-router/dev` is installed as a development dependency.
-- `react-router.config.ts` exists with SSR enabled and the React Router v8 future flags configured.
+- `react`, `react-dom`, `react-router` (v7), and `isbot` are installed as dependencies.
+- `@react-router/dev` (v7) is installed as a development dependency.
+- `react-router.config.ts` exists with SSR enabled and the React Router v7 future flags for v8 configured.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx` exists with the layout, outlet, and route error boundary.
 - `app/entry.server.tsx`, `app/routes.ts`, `app/context.ts`, and `app/routes/home.tsx` exist.
