@@ -1,4 +1,0 @@
-interface:
-  display_name: "Bootstrapping Code"
-  short_description: "Scaffold a pnpm, TypeScript, React Router, Tailwind, and shadcn/ui project on Cloudflare."
-  default_prompt: "Bootstrap the prepared repository into a Product Builder project with pnpm, TypeScript, Vite, React Router, Tailwind, and shadcn/ui on Cloudflare Workers."
