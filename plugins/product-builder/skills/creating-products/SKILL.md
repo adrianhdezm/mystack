@@ -5,51 +5,68 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 # Creating Products
 
-This is the Product Builder entry point. It drives five sequential goals that take a product idea from interview through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
+This is the Product Builder entry point. It drives six sequential phases that take a product idea from an empty repository through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
 
 ## Workflow
 
 Each phase is a single goal. Set the goal and work until it is met before advancing to the next phase.
 
-### Phase 1 — Interview and Classification
+### Phase 0 — Repository
 
 ```
 /goal Complete when all acceptance criteria are met.
 
 Acceptance criteria:
-- [ ] User answered all interview questions from references/interview-and-classification.md
-- [ ] PROJECT_COMPLEXITY block is populated with tier, justification, and capabilities
-- [ ] User explicitly approved the PROJECT_COMPLEXITY block
+- [ ] REPOSITORY and LOCAL_FOLDER are resolved
+- [ ] preparing-repositories completed successfully
+- [ ] LOCAL_REPOSITORY_PATH is established and the repo is empty
 
-Read references/interview-and-classification.md for interview questions, classification tiers, and the approval format. Interview the user, classify the project, and present for approval.
+Run preparing-repositories. It will derive REPOSITORY and LOCAL_FOLDER from the user's prompt or ask for only the missing value. Do not create fallback folders. Stop and report if preparing-repositories cannot be completed.
+```
 
-Between iterations, ask only for the minimum missing value that blocks progress.
+### Phase 1 — PRD
+
+```
+/goal Complete when all acceptance criteria are met.
+
+Acceptance criteria:
+- [ ] writing-prd completed successfully
+- [ ] docs/prd.md exists in the repository
+- [ ] docs/prd.md contains a Foundation Capabilities table with Value and Rationale filled in for every capability
+
+Run writing-prd. It will interview the user, determine foundation capabilities, present them for approval, and write docs/prd.md. Stop and report if writing-prd cannot be completed.
 ```
 
 ### Phase 2 — Foundation
 
 ```
-/goal Complete when all acceptance criteria are met. Constraint: preserve any existing repo content the user has committed.
+/goal Complete when all acceptance criteria are met. Constraint: preserve any existing repo content.
 
 Acceptance criteria:
-- [ ] REPOSITORY, LOCAL_FOLDER, and PRODUCT_IDEA are resolved
-- [ ] preparing-repositories completed successfully
 - [ ] bootstrapping-code completed successfully
 - [ ] pnpm dev starts without errors
-- [ ] docs/vision.md is generated from interview answers and approved by the user
-- [ ] Each foundation skill for the classification ran successfully
+- [ ] Each foundation skill for the approved capabilities ran successfully
 - [ ] docs/architecture.md lists every capability with its integration point
 - [ ] docs/data-model.md reflects all foundation tables
 - [ ] docs/conventions/ contains entries from each foundation skill
 - [ ] AGENTS.md is updated
 
-First, require or derive REPOSITORY, LOCAL_FOLDER, and PRODUCT_IDEA. If the repository or local folder is missing, run preparing-repositories — it must ask only for missing blocking values. Do not create fallback folders. Then run bootstrapping-code for scaffolding. Confirm pnpm dev starts without errors before proceeding.
+Read docs/prd.md and extract the Foundation Capabilities table. Run bootstrapping-code for scaffolding. Confirm pnpm dev starts without errors before proceeding.
 
-Then generate docs/vision.md using shared/templates/vision-template.md, populating it from the interview answers and original prompt. Present for user approval before proceeding.
+Then run the foundation skill for each capability where `Value=yes`, in dependency order derived from the `Depends On` column:
 
-Then read references/foundation-capabilities.md for the classification-to-skill mapping and dependency order. Run each skill in order, verifying its doc updates before running the next.
+| Capability | Skill | Depends On |
+| --- | --- | --- |
+| `database` | `adding-database` | — |
+| `authentication` | `adding-authentication` | `database` |
+| `file_storage` | `adding-file-storage` | `database` |
+| `ai` | `adding-ai` | — |
+| `landing_page` | `adding-landing-page` | — |
+| `legal_pages` | `adding-legal-pages` | `landing_page` |
 
-If the user cannot provide REPOSITORY or LOCAL_FOLDER after being asked, bootstrapping fails and cannot be resolved, or a foundation skill fails repeatedly and cannot be resolved without user input, stop and report what is blocking.
+Run each skill only after all its dependencies have completed. Verify each skill's doc updates before running the next.
+
+If bootstrapping fails and cannot be resolved, or a foundation skill fails repeatedly and cannot be resolved without user input, stop and report what is blocking.
 ```
 
 ### Phase 3 — Feature Planning
@@ -65,7 +82,7 @@ Acceptance criteria:
 - [ ] Every feature in manifest.json has status "ready" or "blocked" with a documented reason
 - [ ] No feature has status "listed"
 
-Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Derive the feature list from the `primary workflow` and `must-have pages` identified in Phase 1. Each feature should be an end-to-end deliverable of one step in that workflow. Propose short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
+Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Derive the feature list from the primary workflow and must-have pages in docs/prd.md. Each feature should be an end-to-end deliverable of one step in that workflow. Propose short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
 
 Between iterations, if the user requests changes, update and re-present for approval. If a feature cannot be finalized after multiple iterations, set it to "blocked" with a reason and continue with remaining features. If all features are blocked, stop and report what decisions are needed.
 ```

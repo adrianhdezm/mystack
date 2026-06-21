@@ -32,7 +32,7 @@ function renderHomePage() {
 describe("HomePage", () => {
   it("renders the hero headline", async () => {
     renderHomePage();
-    // Replace with the real headline text from docs/vision.md
+    // Replace with the real headline text from docs/prd.md
     await expect
       .element(page.getByRole("heading", { level: 1 }))
       .toBeInTheDocument();
@@ -47,7 +47,7 @@ describe("HomePage", () => {
 
   it("renders the primary CTA link", async () => {
     renderHomePage();
-    // Replace with the real CTA label text from docs/vision.md
+    // Replace with the real CTA label text from docs/prd.md
     await expect
       .element(page.getByRole("link", { name: /get started/i }))
       .toBeInTheDocument();
@@ -62,7 +62,7 @@ describe("HomePage", () => {
 });
 ```
 
-Replace the heading text and CTA label matchers with values from the actual product content in `docs/vision.md`.
+Replace the heading text and CTA label matchers with values from the actual product content in `docs/prd.md`.
 
 ### 2. Run the unit tests
 

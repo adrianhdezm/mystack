@@ -11,17 +11,34 @@ weekly preferences into grocery lists and quick dinner plans.
 
 ## Process Overview
 
-The process runs in five phases, orchestrated by the [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) skill. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block. Each phase invokes specialized sub-skills in sequence.
+The process runs in six phases, orchestrated by the [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) skill. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block. Each phase invokes specialized sub-skills in sequence.
 
 ---
 
-### Phase 1 — Interview and Classification
+### Phase 0 — Repository
 
-**Goal:** Understand the product, classify its complexity, prepare the repository, and scaffold the base project.
+**Goal:** Establish an empty GitHub repository and a local clone before any product work begins.
 
-#### 1. Interview
+The [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) skill creates or finds the GitHub repository and sets up the local clone.
 
-Product Builder asks targeted questions to understand the product before writing any code. It follows the [interview-and-classification](../plugins/product-builder/skills/creating-products/references/interview-and-classification.md) reference to cover:
+**Inputs required:**
+
+```
+REPOSITORY: <owner>/<repo>          (e.g. adrianhmendez/meal-planner)
+LOCAL_FOLDER: <parent-folder>       (e.g. ~/Code)
+```
+
+The skill derives both values from the user's prompt or asks for only the missing value. It hard-stops if the remote repository is not empty.
+
+**Phase 0 is complete when** `LOCAL_REPOSITORY_PATH` is established and the repository is empty.
+
+---
+
+### Phase 1 — PRD
+
+**Goal:** Interview the user, determine foundation capabilities, and write `docs/prd.md` into the repository.
+
+The [`writing-prd`](../plugins/product-builder/skills/writing-prd/SKILL.md) skill runs the full product interview and capability determination. It covers:
 
 - Who uses the product and what job they complete.
 - The primary workflow from first visit to outcome.
@@ -32,54 +49,34 @@ Product Builder asks targeted questions to understand the product before writing
 - Must-have pages or views for the first version.
 - External services or integrations.
 - What to exclude from v1.
+- Success metrics and assumptions.
 
-Product Builder prefers inference over questions — it only asks when the answer materially changes the implementation.
+Product Builder prefers inference over questions — it only asks when the answer materially changes the product or its implementation.
 
 **Meal-planning example:** Product Builder would infer that busy parents need accounts (personal preferences and saved plans), a database (recipes, grocery lists, meal plans), and no file storage for v1. It might ask whether plans are per-household or per-user, and whether recipes come from a built-in set or user-created.
 
-#### 2. Complexity Classification
+#### Capabilities
 
-Based on the interview, the product is classified using the [interview-and-classification](../plugins/product-builder/skills/creating-products/references/interview-and-classification.md) tiers:
+After the interview, `writing-prd` derives each capability flag and presents them for user approval:
 
-| Classification | Database | Authentication | File Storage |
-| -------------- | -------- | -------------- | ------------ |
-| `simple`       | No       | No             | No           |
-| `standard`     | Yes      | Yes            | No           |
-| `advanced`     | Yes      | Yes            | Yes          |
+| Capability | Value | Rationale |
+| --- | --- | --- |
+| `database` | yes | Meal plans and grocery lists require persistent storage |
+| `authentication` | yes | Plans are per-user; accounts and login are required |
+| `file_storage` | no | No uploads needed for v1 |
+| `ai` | no | Meal plans are rule-based, no LLM needed for v1 |
+| `landing_page` | no | Users go straight to login for v1 |
+| `legal_pages` | no | No public landing page in v1 |
 
-Several flags are independent of classification and are added when needed:
+**Phase 1 is complete when** `docs/prd.md` exists in the repository and contains an approved `Foundation Capabilities` section.
 
-- `ai=yes` — text generation, structured AI output, image generation, or LLM-powered features.
-- `landing_page=yes` — a public-facing marketing or landing page is needed.
-- `legal_pages=yes` — privacy policy, terms of service, or other legal pages are required.
+---
 
-The classification is presented for user approval before proceeding:
+### Phase 2 — Foundation
 
-```text
-PROJECT_COMPLEXITY: standard
-FOUNDATION_CAPABILITIES: database=yes, authentication=yes, file_storage=no, ai=no, landing_page=no, legal_pages=no
-RATIONALE: Persistent meal plans and grocery lists with user accounts, no file uploads for v1.
-```
+**Goal:** Scaffold the base project and install all foundation capabilities.
 
-**Meal-planning example:** Classified as `standard` — persistent data (meal plans, grocery lists) and user accounts are required, but no file uploads for v1.
-
-#### 3. Vision Document
-
-Product Builder generates `docs/vision.md` from the interview answers and original prompt using the `vision-template.md`. The document is presented for user approval before any code is written.
-
-#### 4. Repository Preparation
-
-The [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) skill creates or finds the GitHub repository and sets up the local clone.
-
-**Inputs required:**
-
-```
-REPOSITORY: <owner>/<repo>          (e.g. adrianhmendez/meal-planner)
-LOCAL_FOLDER: <parent-folder>       (e.g. ~/Code)
-PRODUCT_IDEA: <short description>
-```
-
-#### 5. Code Bootstrap
+#### 1. Code Bootstrap
 
 The [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) skill scaffolds the base project:
 
@@ -88,26 +85,20 @@ The [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/
 - React Router v7 (framework mode, SSR)
 - Tailwind CSS, shadcn/ui
 
-It also creates initial `docs/architecture.md`, `docs/conventions/routes.md`, `README.md`, and `AGENTS.md` that foundation skills will extend in Phase 2.
+It also creates initial `docs/architecture.md`, `docs/conventions/routes.md`, `README.md`, and `AGENTS.md` that foundation skills will extend.
 
-**Phase 1 is complete when** the user has approved the classification and vision document, and `pnpm dev` starts without errors in the bootstrapped project directory.
+#### 2. Foundation Skills
 
----
+Foundation skills run in dependency order based on the Foundation Capabilities table in `docs/prd.md`:
 
-### Phase 2 — Foundation
-
-**Goal:** Install all foundation capabilities for the approved classification and verify their documentation.
-
-Foundation skills run in dependency order based on the classification, following the [foundation-capabilities](../plugins/product-builder/skills/creating-products/references/foundation-capabilities.md) mapping:
-
-1. **[`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md)** — Adds Cloudflare D1 with Drizzle ORM, migrations, and server context.
-2. **[`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md)** — Adds Better Auth with email/password, session handling, and protected routes.
-3. **[`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md)** _(advanced only)_ — Adds Cloudflare R2 with upload/delete lifecycle and file metadata.
+1. **[`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md)** _(when database=yes)_ — Adds Cloudflare D1 with Drizzle ORM, migrations, and server context.
+2. **[`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md)** _(when authentication=yes)_ — Adds Better Auth with email/password, session handling, and protected routes.
+3. **[`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md)** _(when file_storage=yes)_ — Adds Cloudflare R2 with upload/delete lifecycle and file metadata.
 4. **[`adding-ai`](../plugins/product-builder/skills/adding-ai/SKILL.md)** _(when ai=yes)_ — Adds Vercel AI SDK with OpenAI provider for text, structured output, and image generation.
 5. **[`adding-landing-page`](../plugins/product-builder/skills/adding-landing-page/SKILL.md)** _(when landing_page=yes)_ — Adds a public-facing marketing or landing page.
 6. **[`adding-legal-pages`](../plugins/product-builder/skills/adding-legal-pages/SKILL.md)** _(when legal_pages=yes)_ — Adds privacy policy, terms of service, and other required legal pages.
 
-> **Environment variables required before starting Phase 2.** Each foundation skill needs secrets in `.env` and Wrangler:
+> **Environment variables required before starting foundation skills.** Each skill needs secrets in `.env` and Wrangler:
 > - `adding-database` → `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, `CLOUDFLARE_D1_TOKEN`
 > - `adding-authentication` → `AUTH_SECRET` (generate with `openssl rand -base64 32`)
 > - `adding-ai` → `OPENAI_API_KEY` (also added as a Wrangler secret)
@@ -121,7 +112,7 @@ Each foundation skill updates:
 - `docs/conventions/` — pattern and anti-pattern files.
 - `AGENTS.md` — agent instructions referencing the docs.
 
-**Phase 2 is complete when** `docs/architecture.md` lists every capability with its integration point, `docs/data-model.md` reflects all foundation tables, `docs/conventions/` contains entries from each skill, and `AGENTS.md` is updated.
+**Phase 2 is complete when** `pnpm dev` starts without errors, `docs/architecture.md` lists every capability with its integration point, `docs/data-model.md` reflects all foundation tables, `docs/conventions/` contains entries from each skill, and `AGENTS.md` is updated.
 
 ---
 
@@ -129,7 +120,7 @@ Each foundation skill updates:
 
 **Goal:** Define and approve the feature set before any product-specific code is written.
 
-#### 5. Feature Proposal
+#### Feature Proposal
 
 Product Builder proposes a list of features that deliver the first usable version. Each feature has a short title and one-line description, ordered by dependency.
 
@@ -142,7 +133,7 @@ Product Builder proposes a list of features that deliver the first usable versio
 
 The user approves, reorders, adds, or removes features. No planning begins until the feature list is approved.
 
-#### 6. Feature Manifest
+#### Feature Manifest
 
 After approval, Product Builder creates `docs/features/manifest.json` with all features set to `listed` status. The manifest tracks every feature through its lifecycle, following the [feature-manifest](../plugins/product-builder/skills/creating-products/references/feature-manifest.md) schema:
 
@@ -155,7 +146,7 @@ After approval, Product Builder creates `docs/features/manifest.json` with all f
 | `verified`     | Passed verification              | `verifying-features`    |
 | `blocked`      | Needs user input                 | any skill               |
 
-#### 7. Feature Spec Creation
+#### Feature Spec Creation
 
 The [`planning-features`](../plugins/product-builder/skills/planning-features/SKILL.md) skill runs for each feature in id order, producing numbered spec files:
 
@@ -247,6 +238,7 @@ meal-planner/
 ├── workers/
 │   └── app.ts                  # Cloudflare Worker entry point
 ├── docs/
+│   ├── prd.md                  # Product requirements document
 │   ├── architecture.md         # Full stack, structure, conventions, implementation log
 │   ├── data-model.md           # All entities, columns, relationships
 │   ├── conventions/            # Pattern and anti-pattern files
@@ -278,8 +270,6 @@ meal-planner/
 
 | Reference | Purpose |
 | --- | --- |
-| [interview-and-classification.md](../plugins/product-builder/skills/creating-products/references/interview-and-classification.md) | Interview questions, classification tiers, and approval format |
-| [foundation-capabilities.md](../plugins/product-builder/skills/creating-products/references/foundation-capabilities.md) | Classification-to-skill mapping and dependency order |
 | [feature-manifest.md](../plugins/product-builder/skills/creating-products/references/feature-manifest.md) | Manifest schema, field definitions, and status lifecycle |
 | [data-access-architecture.md](../plugins/product-builder/shared/references/data-access-architecture.md) | DAO, query, service, and transaction conventions |
 | [test-patterns.md](../plugins/product-builder/skills/implementing-features/references/test-patterns.md) | DAO, query, and service test templates used during implementation |
@@ -292,11 +282,12 @@ meal-planner/
 | Skill | Phase | Role |
 | --- | --- | --- |
 | [`creating-products`](../plugins/product-builder/skills/creating-products/SKILL.md) | All | Orchestrator — drives the full process |
-| [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) | 1 | Creates or finds the GitHub repo and local clone |
-| [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) | 1 | Scaffolds the base project |
+| [`preparing-repositories`](../plugins/product-builder/skills/preparing-repositories/SKILL.md) | 0 | Creates or finds the GitHub repo and local clone |
+| [`writing-prd`](../plugins/product-builder/skills/writing-prd/SKILL.md) | 1 | Interviews the user, determines foundation capabilities, writes `docs/prd.md` |
+| [`bootstrapping-code`](../plugins/product-builder/skills/bootstrapping-code/SKILL.md) | 2 | Scaffolds the base project |
 | [`adding-database`](../plugins/product-builder/skills/adding-database/SKILL.md) | 2 | Adds Cloudflare D1 + Drizzle ORM |
 | [`adding-authentication`](../plugins/product-builder/skills/adding-authentication/SKILL.md) | 2 | Adds Better Auth email/password |
-| [`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md) | 2 | Adds Cloudflare R2 (advanced only) |
+| [`adding-file-storage`](../plugins/product-builder/skills/adding-file-storage/SKILL.md) | 2 | Adds Cloudflare R2 (when file_storage=yes) |
 | [`adding-ai`](../plugins/product-builder/skills/adding-ai/SKILL.md) | 2 | Adds Vercel AI SDK + OpenAI (when ai=yes) |
 | [`adding-landing-page`](../plugins/product-builder/skills/adding-landing-page/SKILL.md) | 2 | Adds public marketing/landing page (when landing_page=yes) |
 | [`adding-legal-pages`](../plugins/product-builder/skills/adding-legal-pages/SKILL.md) | 2 | Adds legal pages (when legal_pages=yes) |

@@ -2,14 +2,14 @@
 
 ## Content sourcing
 
-Before writing any component, read `docs/vision.md` (if present) to gather:
+Before writing any component, read `docs/prd.md` (if present) to gather:
 
 - Product name
 - One-line tagline or headline
 - Key features or benefits (3–6 items)
 - Primary CTA label and destination (e.g., "Get started" → `/signup`, "Try it free" → `/signup`)
 
-If `docs/vision.md` is absent, ask the user for product name, headline, and 3–6 features before writing component code. Do not use generic placeholder copy.
+If `docs/prd.md` is absent, ask the user for product name, headline, and 3–6 features before writing component code. Do not use generic placeholder copy.
 
 ## SiteHeader
 
@@ -77,7 +77,7 @@ Use React Router `<Link>` (not `<a>` tags) for all footer navigation. When `addi
 
 `app/components/landing/Hero.tsx`
 
-A full-width section with headline, subheadline, and a primary CTA button. Use the product name and tagline from `docs/vision.md`.
+A full-width section with headline, subheadline, and a primary CTA button. Use the product name and tagline from `docs/prd.md`.
 
 ```tsx
 import { Link } from "react-router";
@@ -87,7 +87,7 @@ export function Hero() {
   return (
     <section className="container flex flex-col items-center gap-6 py-24 text-center md:py-32">
       <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-        {/* Headline from docs/vision.md */}
+        {/* Headline from docs/prd.md */}
       </h1>
       <p className="max-w-2xl text-lg text-muted-foreground">
         {/* Subheadline / value proposition */}
@@ -106,12 +106,12 @@ export function Hero() {
 
 `app/components/landing/Features.tsx`
 
-A grid of 3–6 feature cards, each with an icon, title, and short description. Use real features from `docs/vision.md`.
+A grid of 3–6 feature cards, each with an icon, title, and short description. Use real features from `docs/prd.md`.
 
 ```tsx
 const features = [
   {
-    title: "", // Feature title from docs/vision.md
+    title: "", // Feature title from docs/prd.md
     description: "", // One-sentence description
   },
   // ... repeat for each feature
@@ -167,7 +167,7 @@ export function CTASection() {
 
 ## Implementation Notes
 
-- All copy must come from `docs/vision.md` or the user's brief. Ask before using placeholder text.
+- All copy must come from `docs/prd.md` or the user's brief. Ask before using placeholder text.
 - Use shadcn/ui `Button`, `Link`, and layout primitives. Do not add new UI libraries.
 - The `container` class centers content with consistent horizontal padding — use it on every section.
 - Icons are optional. If you add icons, use `lucide-react` (already in the shadcn/ui stack); do not install icon libraries.

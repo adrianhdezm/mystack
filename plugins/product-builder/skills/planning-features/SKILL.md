@@ -23,7 +23,7 @@ If the description is vague or missing key decisions, ask up to three clarifying
 
 ### 1) Read Context
 
-- Read `docs/vision.md` if it exists — use it to align feature scope with the product's pitch, target users, primary workflow, and entry point flow.
+- Read `docs/prd.md` if it exists — use it to align feature scope with the product's problem statement, target users, primary workflow, and entry point flow.
 - Read `docs/data-model.md` if it exists — this is the canonical reference for entities, relationships, and constraints. Use it to understand the current data model before proposing changes.
 - Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
 - Read all existing `docs/features/*.spec.md` files to know what is already planned.
@@ -59,7 +59,7 @@ If `docs/features/manifest.json` exists, update the status of each spec written 
 
 - [ ] Clarifying questions were asked when the feature description was ambiguous.
 - [ ] Existing specs and code were scanned before planning.
-- [ ] Feature scope aligns with the product vision in `docs/vision.md`.
+- [ ] Feature scope aligns with the product requirements in `docs/prd.md`.
 - [ ] Each spec is a vertical slice the user can interact with in the browser.
 - [ ] Database changes describe additions and modifications relative to the current data model in `docs/data-model.md`.
 - [ ] Pages and routes include path, loader/action responsibilities, and protected status.
