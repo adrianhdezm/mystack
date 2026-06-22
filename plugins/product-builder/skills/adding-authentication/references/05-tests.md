@@ -45,7 +45,7 @@ action: () => ({
   status: "error",
   initialValue: { email: "test@example.com", password: "wrong" },
   error: { "": ["Incorrect username or password"] },
-})
+});
 ```
 
 - The `error` key `""` (empty string) is a form-level error — the component should render it in an element with `role="alert"`.

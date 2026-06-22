@@ -13,13 +13,13 @@ At the start of each phase, check the resume signal for that phase (see each pha
 
 ## Resume Signals
 
-| Phase                | Skip when                                                                                 |
-| -------------------- | ----------------------------------------------------------------------------------------- |
-| 0 — Repository       | `repository.local_path` is set in `docs/context.json` **and** the path exists on disk     |
-| 1 — PRD              | `docs/prd.md` exists **and** is non-empty                                                 |
-| 2 — Foundation       | `project.name` is set **and** every `capabilities.*` that is `"planned"` is now `"ready"` |
-| 3 — Feature List     | `docs/features/manifest.json` exists and contains at least one non-`listed` feature       |
-| 4 — Per-Feature Loop | all features in manifest are `verified` or `blocked`                                      |
+| Phase | Skip when |
+| --- | --- |
+| 0 — Repository | `repository.local_path` is set in `docs/context.json` **and** the path exists on disk |
+| 1 — PRD | `docs/prd.md` exists **and** is non-empty |
+| 2 — Foundation | `project.name` is set **and** every `capabilities.*` that is `"planned"` is now `"ready"` |
+| 3 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
+| 4 — Per-Feature Loop | all features in manifest are `verified` or `blocked` |
 
 ## Workflow
 
