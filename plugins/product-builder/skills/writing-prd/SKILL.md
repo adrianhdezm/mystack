@@ -1,22 +1,25 @@
 ---
 name: writing-prd
-description: Interviews the user, determines foundation capabilities, and writes or updates the Product Requirements Document at docs/prd.md. Use when the user wants to create a PRD, define a product, document product requirements before building, or extend the PRD with a new feature after the first version ships.
+description: Interviews the user about product features and writes or updates the Product Requirements Document at docs/prd.md. Requires a bootstrapped project (run project-bootstrapper first). Use when the user wants to create a PRD, document product requirements, or extend the PRD with a new feature.
 ---
 
 # Writing PRD
 
-Interviews the user to reach shared product understanding, derives the required foundation capabilities, presents them for approval, and writes `docs/prd.md`. When the PRD already exists, runs in **update mode**: extends the document with new functionality without altering settled sections.
+Interviews the user to reach shared product understanding and writes `docs/prd.md`. Reads the committed project code and `docs/context.json` to understand what infrastructure is already wired. When the PRD already exists, runs in **update mode**: extends the document with new functionality without altering settled sections.
 
 ## Context
 
-**Guard** — stop before proceeding if `repository.local_path` is not set in `docs/context.json`:
+**Guards** — stop before proceeding if any of these are missing from `docs/context.json`:
+- `repository.local_path` — working directory
+- `project.deployment_target` — needed to understand what's wired
+- `capabilities.*` — all set to `"planned"`, `"skipped"`, or `"ready"` by `project-bootstrapper`
 
 ```text
-Stop — docs/context.json is missing repository.local_path.
-Run preparing-repositories first, then re-run this skill.
+Stop — docs/context.json is missing repository.local_path, project.deployment_target, or capabilities.*.
+Run project-bootstrapper → bootstrapping-projects first, then re-run this skill.
 ```
 
-If `docs/context.json` does not exist at all, the same condition applies — stop and run `preparing-repositories` first.
+**Capabilities are not selected here.** They were selected and committed by `project-bootstrapper` → `selecting-capabilities`. This skill reads them from context — it does not write them.
 
 ## Mode Detection
 
@@ -29,17 +32,19 @@ Read `docs/prd.md` before doing anything else.
 
 ## Create Mode Workflow
 
-### 1) Get the Problem Description
+### 1) Read the Committed Project
 
-Ask the user for a detailed description of the problem they want to solve and any solution ideas. Do not proceed until you have a substantive answer.
+Before interviewing, read:
+- `docs/context.json` — `project.idea`, `project.deployment_target`, `capabilities.*`
+- `docs/architecture.md` — understand what's already scaffolded
+- `README.md` and `AGENTS.md` — existing project documentation
+- `app/db/schema.ts` if it exists — understand the current data model
 
-### 2) Explore the Repo
+Use `project.idea` as the seed for the product description. Use `capabilities.*` to understand which infrastructure is already wired (database, auth, file storage, AI, landing page, legal pages).
 
-Scan `docs/`, `README.md`, and `AGENTS.md` for existing product documentation.
+### 2) Interview the User
 
-### 3) Interview the User
-
-Interview until you reach shared understanding. Prefer inference over questions — ask only when an answer materially changes the product or implementation. Cover at minimum:
+Interview until you reach shared understanding of the product features. The infrastructure is already decided — focus only on product behavior. Prefer inference over questions — ask only when an answer materially changes the product or implementation. Cover at minimum:
 
 - Who are the target users / personas?
 - What pain points or jobs-to-be-done does this solve?
@@ -48,38 +53,14 @@ Interview until you reach shared understanding. Prefer inference over questions 
 - What are we **not** doing in this version? Push back until the boundary is crisp.
 - What records must be saved between sessions?
 - Is data private to a user, shared with a team, public, or admin-only?
-- Are accounts, roles, invitations, or protected pages required?
-- Are uploads, generated files, imports, exports, or attachments required?
-- Does the product need a public landing or marketing page?
 - What are the must-have pages or views for the first version?
-- What external services, payments, email, AI APIs, or integrations are needed?
+- What external services, payments, email, or integrations are needed (beyond what's already wired)?
 
-### 4) Determine Foundation Capabilities
+Do not re-interview about capabilities already set in context — those decisions are committed.
 
-From the interview, fill in `Value` and `Rationale` for each capability. Prefer inference.
+### 3) Write the PRD
 
-Signals: `database` — persistent state, relational data, or user-owned records. `authentication` — accounts, login, protected pages, or per-user data (requires `database`). `file_storage` — uploads, attachments, or durable binary assets (requires `database`). `ai` — text/image generation, structured AI output, or OpenAI integration. `landing_page` — public marketing page before login. `legal_pages` — Impressum, Privacy Policy, or Terms (requires `landing_page`).
-
-Enforce dependencies: if `authentication=yes` → `database=yes`; if `file_storage=yes` → `database=yes`; if `legal_pages=yes` → `landing_page=yes`.
-
-Present the table for user approval. Re-enforce dependencies and re-present if the user changes any value. Do not proceed until explicitly approved.
-
-| Capability       | Value    | Rationale |
-| ---------------- | -------- | --------- |
-| `database`       | yes / no | …         |
-| `authentication` | yes / no | …         |
-| `file_storage`   | yes / no | …         |
-| `ai`             | yes / no | …         |
-| `landing_page`   | yes / no | …         |
-| `legal_pages`    | yes / no | …         |
-
-### 5) Write the PRD
-
-Write `docs/prd.md` using [assets/prd-template.md](assets/prd-template.md). Present it to the user for approval before writing the file. Write only after approval.
-
-### 6) Update Context
-
-Write capabilities to `docs/context.json` based on the approved table: set each capability to `"planned"` if Value=yes, `"skipped"` if Value=no.
+Write `docs/prd.md` using [assets/prd-template.md](assets/prd-template.md). The Foundation Capabilities table should reflect the `capabilities.*` values from `docs/context.json` — mark each as included or not included. Present the PRD to the user for approval before writing the file. Write only after approval.
 
 ---
 
@@ -95,7 +76,7 @@ Extends `docs/prd.md` with new functionality. Does **not** alter the Problem Sta
 
 ### 2) Get the Feature Description
 
-If a feature description was passed in by the caller (e.g. from `adding-features`), use it directly — do not re-ask. Only prompt the user when no description has been supplied. Do not proceed without a substantive answer.
+If a feature description was passed in by the caller (e.g. from `adding-features`), use it directly — do not re-ask. Only prompt the user when no description has been supplied.
 
 ### 3) Interview for the New Feature
 
@@ -117,17 +98,11 @@ Prepare the content to be added to the PRD:
 - **Success Metrics additions** — how this feature's success is measured.
 - **Further Notes additions** — open questions or risks specific to this feature.
 
-Do **not** modify the Foundation Capabilities table unless a genuinely new capability is required (e.g., adding file storage to a product that previously had none). If a capability changes, re-present the full table for approval before writing.
-
 Present the drafted additions to the user for approval. Write only after approval.
 
 ### 5) Update the PRD
 
-Append the approved content to the relevant sections of `docs/prd.md`. Each addition should be clearly delineated — prefix new user story blocks or UI sections with a short comment like `<!-- Feature: <name> -->` so the document remains navigable as it grows.
-
-### 6) Update Context
-
-Update mode does not modify capabilities — the Foundation Capabilities table is settled. No context writes are needed unless a genuinely new capability is being added (in which case set it to `"planned"`).
+Append the approved content to the relevant sections of `docs/prd.md`. Each addition should be clearly delineated — prefix new user story blocks or UI sections with a short comment like `<!-- Feature: <name> -->`.
 
 ---
 
@@ -139,19 +114,18 @@ Update mode does not modify capabilities — the Foundation Capabilities table i
 
 **Both modes**
 
-- [ ] Guard passed — `repository.local_path` is set in `docs/context.json`.
+- [ ] Guards passed — `repository.local_path`, `project.deployment_target`, and `capabilities.*` set in `docs/context.json`.
 
 **Create mode**
 
-- [ ] User provided a substantive problem description before the interview began.
-- [ ] Existing repo documentation was read before interviewing.
+- [ ] Committed code and context read before interviewing.
 - [ ] All interview topics covered or noted as not applicable.
 - [ ] User stories cover happy paths, edge cases, and error scenarios.
 - [ ] Every screen or flow has a corresponding entry in User Interaction and Design.
 - [ ] Out of Scope section has at least one entry.
-- [ ] Capabilities table presented and explicitly approved before writing.
+- [ ] Foundation Capabilities table reflects `capabilities.*` from context.
 - [ ] User approved the full PRD before `docs/prd.md` was written.
-- [ ] `docs/context.json` updated with `planned`/`skipped` for each capability.
+- [ ] `docs/prd.md` written only after explicit approval.
 
 **Update mode**
 
@@ -159,10 +133,5 @@ Update mode does not modify capabilities — the Foundation Capabilities table i
 - [ ] Interview focused on the new feature only — settled sections not revisited.
 - [ ] New user stories continue the existing numbering sequence.
 - [ ] New UI sections follow the same format as existing entries.
-- [ ] Foundation Capabilities table only modified if a genuinely new capability is required; if so, set it to `"planned"` in context.
 - [ ] Drafted additions presented and approved before writing.
 - [ ] Existing PRD content left intact — only appended, never rewritten.
-
-**Both modes**
-
-- [ ] `docs/context.json` exists with default template if it was missing.
