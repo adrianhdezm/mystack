@@ -31,12 +31,16 @@ Test type is determined by directory. All test files use `.test.ts` or `.test.ts
 
 | Location | Test Type | Runner | What It Tests |
 | --- | --- | --- | --- |
-| `tests/integration/db/daos/**` | Integration | Miniflare D1 | DAO CRUD operations against a real database |
-| `tests/integration/db/queries/**` | Integration | Miniflare D1 | Cross-table reads with seeded data |
-| `tests/integration/services/**` | Integration | Miniflare D1 | Business workflows and atomic write boundaries |
+| `tests/integration/db/daos/**` | Integration | D1/Postgres | DAO CRUD operations against a real database |
+| `tests/integration/db/queries/**` | Integration | D1/Postgres | Cross-table reads with seeded data |
+| `tests/integration/services/**` | Integration | D1/Postgres | Business workflows and atomic write boundaries |
 | `tests/unit/lib/**` | Unit | Playwright browser | Pure functions, utilities, transforms |
 | `tests/unit/components/**` | Unit | Playwright browser | React component render, interaction, assertion |
 | `tests/unit/routes/**` | Unit | Playwright browser | Route component behavior with stubbed loaders/actions |
+
+Integration runner depends on the deployment target:
+- **Cloudflare:** `@cloudflare/vitest-pool-workers` (Miniflare D1)
+- **Docker/Postgres:** standard Vitest node runner against a Docker Postgres instance
 
 ## Vitest Configuration
 
@@ -56,7 +60,11 @@ export default defineConfig({
 | Config | Environment | Include |
 | --- | --- | --- |
 | `tests/unit/vitest.config.ts` | Playwright browser (chromium) | `**/*.test.ts`, `**/*.test.tsx` |
-| `tests/integration/vitest.config.ts` | `@cloudflare/vitest-pool-workers` | `**/*.test.ts` |
+| `tests/integration/vitest.config.ts` | Target-specific (see below) | `**/*.test.ts` |
+
+**Integration environment by deployment target:**
+- `cloudflare` → `@cloudflare/vitest-pool-workers` (Miniflare D1)
+- `docker-postgres` → Vitest node runner; Docker Compose Postgres must be running
 
 Each config's `include` patterns are relative to its own directory. The integration config resolves paths to the project root (for `wrangler.jsonc` and `db/migrations/`) using `import.meta.url`.
 
@@ -70,7 +78,7 @@ pnpm test:integration         # vitest run --project integration
 
 The unit config uses Playwright browser mode — a real browser instead of jsdom. Pure-function unit tests run fine in chromium alongside component tests. No setup file needed — `vitest-browser-react` handles cleanup automatically.
 
-The root `vitest.config.ts` is separate from `vite.config.ts` because the app's `vite.config.ts` loads the `cloudflare()` Vite plugin, which sets `resolve.external` on its Worker environments. Vitest rejects that option at startup with an incompatibility error.
+The root `vitest.config.ts` is separate from `vite.config.ts`. For the Cloudflare target, the app's `vite.config.ts` loads the `cloudflare()` Vite plugin which sets `resolve.external` on Worker environments — Vitest rejects that option at startup. For both targets, keeping them separate avoids environment conflicts.
 
 ### Vitest Configuration Progression
 
@@ -78,16 +86,20 @@ Projects start with a root `vitest.config.ts` and `tests/unit/vitest.config.ts` 
 
 ## TypeScript Configuration
 
-Two standalone test tsconfigs — one per test type:
+Two standalone test tsconfigs — one per test type. The base tsconfig name depends on the deployment target:
+- **Cloudflare:** `tsconfig.cloudflare.json`
+- **Docker/Postgres:** `tsconfig.app.json`
 
 ```text
-tsconfig.unit.json            # extends cloudflare, includes tests/unit/**/*
-tsconfig.integration.json     # extends cloudflare, includes tests/integration/**/*
+tsconfig.unit.json            # extends target base, includes tests/unit/**/*
+tsconfig.integration.json     # extends target base, includes tests/integration/**/*
 ```
 
-`tsconfig.unit.json` extends `tsconfig.cloudflare.json` and adds `tests/unit/**/*` to its include. No extra types needed — unit tests run in a browser and only import app code via `~/`.
+`tsconfig.unit.json` extends the target base tsconfig and adds `tests/unit/**/*` to its include. No extra types needed — unit tests run in a browser and only import app code via `~/`.
 
-`tsconfig.integration.json` extends `tsconfig.cloudflare.json` and adds `tests/integration/**/*`. It carries the Cloudflare vitest types:
+`tsconfig.integration.json` extends the target base and adds `tests/integration/**/*`.
+
+For **Cloudflare target**, it carries the Cloudflare vitest types:
 
 ```json
 {
@@ -100,9 +112,15 @@ tsconfig.integration.json     # extends cloudflare, includes tests/integration/*
 }
 ```
 
-`tsconfig.cloudflare.json` has only `"types": ["vite/client"]` — Cloudflare vitest types are scoped to integration tests.
+For **Docker/Postgres target**, it carries only Node types:
 
-Both test tsconfigs are non-composite with `noEmit: true`. TypeScript composite project references don't work well with `~/*` path aliases that point across project boundaries — the `app/` files resolve via the path alias into the cloudflare project's source, which composite mode rejects unless those files are explicitly listed in the test project too.
+```json
+{
+  "types": ["vite/client", "node"]
+}
+```
+
+Both test tsconfigs are non-composite with `noEmit: true`. TypeScript composite project references don't work well with `~/*` path aliases that point across project boundaries.
 
 The typecheck script runs all three:
 
@@ -112,7 +130,7 @@ tsc -b && tsc -p tsconfig.unit.json && tsc -p tsconfig.integration.json
 
 ## Dependencies
 
-Unit and component tests use:
+Unit and component tests use (both targets):
 
 | Package                      | Role                                    |
 | ---------------------------- | --------------------------------------- |
@@ -120,11 +138,18 @@ Unit and component tests use:
 | `@vitest/browser-playwright` | Playwright browser provider for vitest  |
 | `@vitejs/plugin-react`       | React transform for vitest browser mode |
 
-Integration tests use:
+Integration tests — **Cloudflare target:**
 
 | Package                           | Role                      |
 | --------------------------------- | ------------------------- |
 | `@cloudflare/vitest-pool-workers` | Miniflare D1 test runtime |
+
+Integration tests — **Docker/Postgres target:**
+
+| Package           | Role                                          |
+| ----------------- | --------------------------------------------- |
+| `postgres` (js)   | Postgres client for integration tests         |
+| `drizzle-orm`     | Already installed; used with the Postgres driver |
 
 ## Integration Test Setup Files
 
@@ -144,7 +169,9 @@ Do not put reusable helpers and automatic Vitest setup side effects in the same 
 
 ## Integration Test Database Helper
 
-After `adding-database`, integration tests use `getTestDb` and `applyMigrations` from `tests/integration/db-test-utils.ts`.
+After `adding-database`, integration tests use `getTestDb` and `applyMigrations` from `tests/integration/db-test-utils.ts`. The implementation differs by deployment target.
+
+### Cloudflare target (Miniflare D1)
 
 Migrations are read from `db/migrations/` at config time using Drizzle's `readMigrationFiles()`, then passed into the Miniflare worker as a JSON text binding. The Miniflare worker has a virtual filesystem that doesn't include project files, so `migrate()` from `drizzle-orm/d1/migrator` can't read migration files at runtime. The split — read in Node.js config, apply in the worker — works around this.
 
@@ -171,20 +198,36 @@ export async function applyMigrations() {
 
 Uses `D1.prepare().run()` instead of `D1.exec()` because `exec()` fails on multi-line statements in Miniflare. Migration tracking is skipped since the test database is ephemeral.
 
-A separate `tests/integration/setup-tests.ts` setup file calls `applyMigrations()` in a `beforeAll` hook. The integration vitest config references it via `setupFiles`, so individual tests don't need to call `applyMigrations()` themselves — migrations are applied automatically before each test file runs.
+### Docker/Postgres target
+
+Integration tests connect to the Docker Compose Postgres instance. The `DATABASE_URL` environment variable must be set (from `.env` or directly). Migrations are applied using standard Drizzle Kit migrate.
 
 ```ts
-// tests/integration/setup-tests.ts
-import { beforeAll } from "vitest";
+// tests/integration/db-test-utils.ts
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import postgres from "postgres";
 
-import { applyMigrations } from "./db-test-utils";
+import * as schema from "~/db/schema";
 
-beforeAll(applyMigrations);
+const connectionString = process.env.DATABASE_URL!;
+
+export function getTestDb() {
+  const client = postgres(connectionString, { max: 1 });
+  return drizzle(client, { schema });
+}
+
+export async function applyMigrations() {
+  const client = postgres(connectionString, { max: 1 });
+  const db = drizzle(client);
+  await migrate(db, { migrationsFolder: "db/migrations" });
+  await client.end();
+}
 ```
 
-The `MIGRATIONS` binding is typed via a `Cloudflare.Env` augmentation in `tests/integration/env.d.ts`, keeping it scoped to test code.
+Docker Compose must be running (`docker compose up -d`) before running integration tests.
 
-After a schema update, run `pnpm db:generate` as usual. The new migration SQL file lands in `db/migrations/`, and `readMigrationFiles()` picks it up automatically on the next test run. No manual edits to test setup code.
+A separate `tests/integration/setup-tests.ts` setup file calls `applyMigrations()` in a `beforeAll` hook (same pattern for both targets).
 
 ## Component Test Patterns
 

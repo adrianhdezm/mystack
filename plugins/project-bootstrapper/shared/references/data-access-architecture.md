@@ -12,9 +12,12 @@
 
 ## Purpose
 
-Use this reference when adding or changing application tables, DAOs, queries, services, transactions, data validation schemas, or data access workflows in a Product Builder project.
+Use this reference when adding or changing application tables, DAOs, queries, services, transactions, data validation schemas, or data access workflows in a project.
 
-The data access architecture is designed for React Router v7 applications using Cloudflare D1, Drizzle ORM, and `drizzle-zod`.
+The data access architecture is designed for React Router v7 applications using Drizzle ORM and `drizzle-zod`. The patterns are consistent across deployment targets; the key differences are noted in the **Query Execution** and **Atomic Writes** sections below.
+
+**D1 (Cloudflare target):** SQLite-based, single connection, no interactive transactions — use `db.batch()` for atomic writes; do not use `Promise.all` for queries.
+**Postgres (Docker/Postgres target):** Full Postgres with connection pool — use `db.transaction()` for atomic writes; `Promise.all` is fine for independent queries.
 
 The goals are:
 
@@ -90,10 +93,14 @@ projects      -> project.dao.ts
 
 ### DAO Constructor
 
-Each DAO accepts a typed Drizzle database instance.
+Each DAO accepts a typed Drizzle database instance. The exact type depends on the deployment target:
+- **D1 (Cloudflare):** `DrizzleD1Database<typeof schema>`
+- **Postgres (Docker/Postgres):** `PostgresJsDatabase<typeof schema>`
 
 ```ts
 constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
+// or for Postgres:
+constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
 ```
 
 This allows DAOs to be instantiated with either the request database client or a transaction client.
@@ -240,7 +247,7 @@ export const updateUserSchema = createInsertSchema(users)
 
 ### Query Execution
 
-D1 is backed by SQLite. All queries execute sequentially over a single connection. There is no connection pool and no parallel query execution.
+**D1 (Cloudflare target):** D1 is backed by SQLite with a single connection. All queries execute sequentially. There is no connection pool and no parallel query execution.
 
 Do not use `Promise.all` to run multiple D1 queries concurrently — the queries still run one at a time and the promise overhead adds complexity without benefit.
 
@@ -268,14 +275,22 @@ const [{ value: total }] = await db
   .where(where);
 ```
 
-For batch operations, use a single query with `inArray()` instead of looping individual queries:
+**Postgres (Docker/Postgres target):** Postgres uses a connection pool. `Promise.all` is safe and beneficial for independent queries.
 
 ```ts
-// wrong — N+1 deletes wrapped in Promise.all
-const results = await Promise.all(ids.map((id) => this.delete(id)));
+// correct for Postgres — runs in parallel
+const [items, [{ value: total }]] = await Promise.all([
+  db.select().from(table).where(where).limit(limit).offset(offset),
+  db.select({ value: count() }).from(table).where(where),
+]);
 ```
 
+For batch operations on both targets, use a single query with `inArray()` instead of looping individual queries:
+
 ```ts
+// wrong — N+1 deletes
+const results = await Promise.all(ids.map((id) => this.delete(id)));
+
 // correct — single DELETE statement
 const result = await db.delete(table).where(inArray(table.id, ids)).returning();
 ```
@@ -293,11 +308,21 @@ await db.transaction(async (tx) => {
 ```
 
 ```ts
-// good — atomic batch via D1 Batch API
+// correct for D1 — atomic batch via D1 Batch API
 await db.batch([
   db.delete(entries).where(eq(entries.planId, planId)),
   db.insert(entries).values({ id, planId, recipeId }),
 ]);
+```
+
+**Postgres (Docker/Postgres target):** Standard `db.transaction()` works as expected. You may also use `db.batch()` if preferred.
+
+```ts
+// correct for Postgres
+await db.transaction(async (tx) => {
+  await tx.delete(entries).where(eq(entries.planId, planId));
+  await tx.insert(entries).values({ id, planId, recipeId });
+});
 ```
 
 ### DAO Restrictions
@@ -338,10 +363,12 @@ project + members   -> project-members.query.ts
 
 ### Query Constructor
 
-Each Query accepts a typed Drizzle database instance, same as DAOs.
+Each Query accepts a typed Drizzle database instance, same type as DAOs (target-dependent).
 
 ```ts
 constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
+// or for Postgres:
+constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
 ```
 
 ### Query Interface
@@ -581,18 +608,28 @@ export async function getOrdersWithItems(db, userId) {
 }
 ```
 
-### Service Atomic Writes with Batch API
+### Service Atomic Writes
 
-D1 does not support interactive SQL transactions (`db.transaction()` will fail at runtime). For atomic multi-statement writes, use Drizzle's `db.batch()` API.
+**D1 (Cloudflare target):** D1 does not support interactive SQL transactions (`db.transaction()` will fail at runtime). For atomic multi-statement writes, use Drizzle's `db.batch()` API.
 
 Each statement in the batch executes and commits sequentially. If any statement fails, the entire batch rolls back.
 
 ```ts
-// Atomic delete-then-insert via Batch API
+// Atomic delete-then-insert via Batch API (D1)
 await db.batch([
   db.delete(entries).where(eq(entries.planId, planId)),
   db.insert(entries).values({ id, planId, recipeId }),
 ]);
+```
+
+**Postgres (Docker/Postgres target):** Use `db.transaction()` for atomic writes. `db.batch()` also works but `db.transaction()` is idiomatic for Postgres.
+
+```ts
+// Atomic delete-then-insert (Postgres)
+await db.transaction(async (tx) => {
+  await tx.delete(entries).where(eq(entries.planId, planId));
+  await tx.insert(entries).values({ id, planId, recipeId });
+});
 ```
 
 `db.batch()` accepts an array of prepared query builders: `db.select()`, `db.insert()`, `db.update()`, `db.delete()`, `db.query.<table>.findMany()`, `db.query.<table>.findFirst()`.
@@ -694,7 +731,7 @@ A DAO is valid only if:
 8. It contains no business logic.
 9. It contains no cross-table workflows.
 10. It contains no workflow-specific SQL.
-11. It does not use `Promise.all` for D1 queries.
+11. For **D1 target**: does not use `Promise.all` for D1 queries. For **Postgres target**: `Promise.all` is allowed for independent queries.
 12. It uses `inArray()` for batch operations instead of looping individual queries.
 
 A Query is valid only if:
@@ -712,7 +749,7 @@ A service is valid only if:
 
 1. It lives in `app/services/`.
 2. It owns business workflows.
-3. It uses `db.batch()` for atomic writes (not `db.transaction()`, which fails on D1).
+3. For **D1 target**: uses `db.batch()` for atomic writes (not `db.transaction()`, which fails on D1). For **Postgres target**: uses `db.transaction()` or `db.batch()` for atomic writes.
 4. It may compose multiple DAOs and Queries.
 5. It does not import schema tables or build Drizzle queries directly.
 6. It does not perform joins — it uses a Query instead.
