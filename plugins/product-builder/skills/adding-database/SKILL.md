@@ -15,13 +15,12 @@ Installs Drizzle ORM, creates and binds a Cloudflare D1 database, generates the 
 Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
 ```
 
-Set `skills.adding-database` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
+Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
   "project": { "d1_database_name": "<D1_DATABASE_NAME>" },
-  "capabilities": { "database": true },
-  "skills": { "adding-database": "done" }
+  "capabilities": { "database": "ready" }
 }
 ```
 
@@ -44,7 +43,7 @@ Default binding: `APP_DB`. Default migration directory: `db/migrations`. Default
 
 ## Workflow
 
-1. Read `docs/context.json`. Confirm `project.name` is present. Set `skills.adding-database` to `in-progress`.
+1. Read `docs/context.json`. Confirm `project.name` is present. Derive `PROJECT_PATH` from `context.repository.local_path`.
 2. Install and configure Drizzle using [01-drizzle-setup.md](references/01-drizzle-setup.md).
 3. Create or register the Cloudflare D1 database and environment variables using [02-cloudflare-d1.md](references/02-cloudflare-d1.md).
 4. Load `react-router-patterns`, then add the database schema and wire Drizzle into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
@@ -52,7 +51,7 @@ Default binding: `APP_DB`. Default migration directory: `db/migrations`. Default
 6. Generate and apply migrations using [04-migrations-validation.md](references/04-migrations-validation.md).
 7. Set up integration testing with Miniflare using [05-testing-setup.md](references/05-testing-setup.md).
 8. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) and [08-doc-updates.md](references/08-doc-updates.md): stack entry, directory structure, data model link, data-access convention, testing convention, README and AGENTS.md additions.
-9. Write `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"` to `docs/context.json`.
+9. Write `project.d1_database_name` and `capabilities.database = "ready"` to `docs/context.json`.
 10. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm db:local:migrate`. Fix any failures before committing.
 11. Commit using the repository's Conventional Commits format.
 
@@ -84,5 +83,5 @@ Default binding: `APP_DB`. Default migration directory: `db/migrations`. Default
 - [ ] `docs/data-model.md` created and reflects `app/db/schema.ts`.
 - [ ] `docs/conventions/data-access.md` and `docs/conventions/testing.md` created.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm db:local:migrate` pass.
-- [ ] `docs/context.json` updated with `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"`.
+- [ ] `docs/context.json` updated with `project.d1_database_name` and `capabilities.database = "ready"`.
 - [ ] Changes committed with Conventional Commit message.

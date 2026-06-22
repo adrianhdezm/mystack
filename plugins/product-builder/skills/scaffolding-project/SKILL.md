@@ -12,24 +12,13 @@ Installs and wires the full Product Builder base stack — pnpm, TypeScript, Vit
 **Guards** — stop before bootstrapping if either field is missing from `docs/context.json`:
 
 - `context.repository.local_path` must be present
-- `context.skills.preparing-repositories` must be `"done"`
+- `docs/prd.md` must exist
 
 ```text
-I need docs/context.json to contain repository.local_path and skills.preparing-repositories = "done" before I can bootstrap the Product Builder project.
+I need docs/context.json to contain repository.local_path and docs/prd.md to exist before I can bootstrap the Product Builder project.
 ```
 
-Set `skills.scaffolding-project` to `in-progress` at the start. Use `context.repository.local_path` as the working directory. On success write:
-
-```json
-{
-  "project": {
-    "name": "<repo name derived from local_path>",
-    "worker_name": "<worker name from wrangler.jsonc>",
-    "cloudflare_account_id": "<account ID from wrangler whoami>"
-  },
-  "skills": { "scaffolding-project": "done" }
-}
-```
+Use `context.repository.local_path` as the working directory.
 
 ## Rules
 
@@ -48,7 +37,7 @@ Set `skills.scaffolding-project` to `in-progress` at the start. Use `context.rep
 
 ## Workflow
 
-1. Read `docs/context.json`. Confirm guards pass. Set `skills.scaffolding-project` to `in-progress`.
+1. Read `docs/context.json`. Confirm guards pass (`repository.local_path` present, `docs/prd.md` exists). Derive `PROJECT_PATH` from `context.repository.local_path`.
 2. Validate `context.repository.local_path` exists, is a git repository, and contains no pre-existing files other than repository metadata. Stop with a file list if pre-existing files are found.
 3. Initialize pnpm and base files using [01-initialize-pnpm-and-base-files.md](references/01-initialize-pnpm-and-base-files.md).
 4. Add TypeScript using [02-typescript.md](references/02-typescript.md).
@@ -63,7 +52,16 @@ Set `skills.scaffolding-project` to `in-progress` at the start. Use `context.rep
     - `docs/conventions/routes.md` from [convention-template.md](../../shared/templates/convention-template.md): seed with — route filenames describe role not URL syntax; middleware only for cross-cutting request work; keep mutations in actions; ownership checks in the route/action that owns the resource param.
 12. Update `README.md` with a basic overview: stack, local dev command, verification commands, Cloudflare deployment target.
 13. Update `AGENTS.md` with agent instructions, bootstrapped project structure, a Project Documentation section referencing `docs/architecture.md`, and React Router guidance.
-14. Write `project.*` and `skills.scaffolding-project = "done"` to `docs/context.json`.
+14. Write `project.*` to `docs/context.json`:
+    ```json
+    {
+      "project": {
+        "name": "<repo name derived from local_path>",
+        "worker_name": "<worker name from wrangler.jsonc>",
+        "cloudflare_account_id": "<account ID from wrangler whoami>"
+      }
+    }
+    ```
 15. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. Fix any failures before committing.
 16. Commit using the repository's Conventional Commits format. Summarize what was created and include the commit hash.
 
@@ -81,7 +79,7 @@ Set `skills.scaffolding-project` to `in-progress` at the start. Use `context.rep
 
 ## Review Checklist
 
-- [ ] `docs/context.json` guards passed (`repository.local_path` present, `skills.preparing-repositories = "done"`).
+- [ ] `docs/context.json` guards passed (`repository.local_path` present, `docs/prd.md` exists).
 - [ ] Local repository had no pre-existing files beyond repository metadata.
 - [ ] `pnpm view` used for all package version checks.
 - [ ] `react-router-patterns` loaded before React Router code was generated.
@@ -91,5 +89,5 @@ Set `skills.scaffolding-project` to `in-progress` at the start. Use `context.rep
 - [ ] `docs/conventions/routes.md` created with seed React Router patterns.
 - [ ] `README.md` and `AGENTS.md` updated with stack, commands, and Project Documentation section.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` pass.
-- [ ] `docs/context.json` updated with `project.*` and `skills.scaffolding-project = "done"`.
+- [ ] `docs/context.json` updated with `project.*`.
 - [ ] Changes committed with Conventional Commit message.

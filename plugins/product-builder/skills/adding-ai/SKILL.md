@@ -13,14 +13,13 @@ description: Adds Vercel AI SDK with OpenAI provider to an existing Product Buil
 Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
 ```
 
-Set `skills.adding-ai` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
+On successful completion, write:
 
 **Writes:**
 
 ```json
 {
-  "capabilities": { "ai": true },
-  "skills": { "adding-ai": "done" }
+  "capabilities": { "ai": "ready" }
 }
 ```
 
@@ -63,7 +62,7 @@ PROJECT_PATH: <absolute path>
    - **New convention**: `docs/conventions/ai-service.md` — seed with key patterns from [03-ai-service.md](references/03-ai-service.md): AI SDK imports (`generateText`, `streamText`, `generateImage`, `Output`) stay inside `ai.service.ts` only, routes call service methods never the SDK directly, feature implementations extend the service with domain-specific methods, the service owns provider configuration and model selection.
    - **README additions**: OpenAI API key setup, required environment variables, AI SDK usage examples.
    - **AGENTS.md additions**: AI service instructions, available capabilities (text generation, structured output, image generation, streaming), `docs/conventions/ai-service.md` reference.
-7. Write `capabilities.ai = true` and `skills.adding-ai = "done"` to `docs/context.json`.
+7. Write `capabilities.ai = "ready"` to `docs/context.json`.
 8. Run formatting, typecheck, lint, and build. If any command fails, fix the issue and re-run until it passes before committing.
 9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
@@ -83,5 +82,5 @@ PROJECT_PATH: <absolute path>
 - [ ] `README.md` and `AGENTS.md` document AI setup, environment variables, and capabilities.
 - [ ] Project verification commands pass or failures are explained.
 - [ ] `docs/context.json` guards passed (`project.name` present).
-- [ ] `docs/context.json` was updated with `capabilities.ai = true` and `skills.adding-ai = "done"`.
+- [ ] `docs/context.json` was updated with `capabilities.ai = "ready"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.

@@ -9,19 +9,18 @@ Creates a Cloudflare R2 bucket, adds a `files` metadata table to D1, builds a `F
 
 ## Context
 
-**Guard** — stop before changing any files if `context.capabilities.database` is not `true`:
+**Guard** — stop before changing any files if `context.capabilities.database` is not `"ready"`:
 
 ```text
-Stop — docs/context.json is missing capabilities.database = true. Run adding-database first, then re-run this skill.
+Stop — docs/context.json is missing capabilities.database = "ready". Run adding-database first, then re-run this skill.
 ```
 
-Set `skills.adding-file-storage` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
+Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
   "project": { "r2_bucket_name": "<R2_BUCKET_NAME>" },
-  "capabilities": { "file_storage": true },
-  "skills": { "adding-file-storage": "done" }
+  "capabilities": { "file_storage": "ready" }
 }
 ```
 
@@ -41,14 +40,14 @@ Default R2 binding: `APP_FILES`. Default D1 binding: `APP_DB`. Default bucket na
 
 ## Workflow
 
-1. Read `docs/context.json`. Confirm `capabilities.database = true`. Set `skills.adding-file-storage` to `in-progress`.
+1. Read `docs/context.json`. Confirm `capabilities.database = "ready"`. Derive `PROJECT_PATH` from `context.repository.local_path`.
 2. Create or register the Cloudflare R2 bucket using [01-cloudflare-r2.md](references/01-cloudflare-r2.md).
 3. Add the file metadata schema and service using [02-file-schema-and-service.md](references/02-file-schema-and-service.md).
 4. Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for the file metadata service and any data access changes.
 5. Load `react-router-patterns`, then wire the service into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
 6. Generate and apply migrations, validate types using [04-migrations-validation.md](references/04-migrations-validation.md).
 7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md): stack entry (`Cloudflare R2`), `files` entity in data model, README and AGENTS.md additions.
-8. Write `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"` to `docs/context.json`.
+8. Write `project.r2_bucket_name` and `capabilities.file_storage = "ready"` to `docs/context.json`.
 9. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and migration commands. Fix any failures before committing.
 10. Commit using the repository's Conventional Commits format.
 
@@ -64,7 +63,7 @@ Default R2 binding: `APP_FILES`. Default D1 binding: `APP_DB`. Default bucket na
 
 ## Review Checklist
 
-- [ ] `docs/context.json` guard passed (`capabilities.database = true`).
+- [ ] `docs/context.json` guard passed (`capabilities.database = "ready"`).
 - [ ] `wrangler.jsonc` includes `r2_buckets` binding for `APP_FILES`.
 - [ ] `app/db/schema.ts` exports a `files` table included in `schema`.
 - [ ] Migration created the `files` metadata table.
@@ -76,5 +75,5 @@ Default R2 binding: `APP_FILES`. Default D1 binding: `APP_DB`. Default bucket na
 - [ ] Generated `Env` types include `APP_FILES`.
 - [ ] `docs/data-model.md` includes the `files` entity.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and migration commands pass.
-- [ ] `docs/context.json` updated with `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"`.
+- [ ] `docs/context.json` updated with `project.r2_bucket_name` and `capabilities.file_storage = "ready"`.
 - [ ] Changes committed with Conventional Commit message.

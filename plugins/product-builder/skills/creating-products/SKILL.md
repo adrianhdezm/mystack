@@ -5,13 +5,21 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 # Creating Products
 
-Drives seven sequential phases from an empty repository to a working, verified, E2E-tested product. Reads `docs/context.json` before each phase to skip already-completed skills and resume interrupted runs.
+Drives sequential phases from an empty repository to a working, verified, E2E-tested product. Resume signals come from data in `docs/context.json` and `docs/features/manifest.json` — not from skill flags. Read both before each phase to determine what to skip and where to resume.
 
 ## Context
 
-At the start of each phase, read `docs/context.json` and check `skills.*`. **Skip any skill where `skills.<name> = "done"`.**
+At the start of each phase, check the resume signal for that phase (see each phase's skip condition). If `docs/context.json` does not exist, start from Phase 0.
 
-If `docs/context.json` does not exist, treat all statuses as `pending` and start from Phase 0.
+## Resume Signals
+
+| Phase                | Skip when                                                                                 |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| 0 — Repository       | `repository.local_path` is set in `docs/context.json` **and** the path exists on disk     |
+| 1 — PRD              | `docs/prd.md` exists **and** is non-empty                                                 |
+| 2 — Foundation       | `project.name` is set **and** every `capabilities.*` that is `"planned"` is now `"ready"` |
+| 3 — Feature List     | `docs/features/manifest.json` exists and contains at least one non-`listed` feature       |
+| 4 — Per-Feature Loop | all features in manifest are `verified` or `blocked`                                      |
 
 ## Workflow
 
@@ -26,9 +34,9 @@ Acceptance criteria:
 - [ ] REPOSITORY and LOCAL_FOLDER are resolved
 - [ ] preparing-repositories completed successfully
 - [ ] LOCAL_REPOSITORY_PATH is established and the repo is empty
-- [ ] docs/context.json exists with skills.preparing-repositories = "done"
+- [ ] repository.local_path is set in docs/context.json
 
-Skip this phase if docs/context.json shows skills.preparing-repositories = "done".
+Skip this phase if repository.local_path is set in docs/context.json.
 
 Run preparing-repositories. It will derive REPOSITORY and LOCAL_FOLDER from the user's prompt or
 ask for only the missing value. Do not create fallback folders. Stop and report if it cannot complete.
@@ -42,9 +50,8 @@ ask for only the missing value. Do not create fallback folders. Stop and report 
 Acceptance criteria:
 - [ ] writing-prd completed successfully
 - [ ] docs/prd.md exists with a Foundation Capabilities table filled in for every capability
-- [ ] docs/context.json shows skills.writing-prd = "done"
 
-Skip this phase if docs/context.json shows skills.writing-prd = "done".
+Skip this phase if docs/prd.md exists.
 
 Run writing-prd. It will interview the user, determine capabilities, get approval, and write
 docs/prd.md. Stop and report if it cannot complete.
@@ -58,117 +65,115 @@ docs/prd.md. Stop and report if it cannot complete.
 Acceptance criteria:
 - [ ] scaffolding-project completed successfully
 - [ ] pnpm dev starts without errors
-- [ ] Each foundation skill for approved capabilities ran successfully
+- [ ] Every capability with status "planned" has been run and is now "ready"
 - [ ] docs/architecture.md lists every capability with its integration point
 - [ ] docs/data-model.md reflects all foundation tables
 - [ ] docs/conventions/ contains entries from each foundation skill
 - [ ] AGENTS.md is updated
 
-Skip scaffolding-project if skills.scaffolding-project = "done". Confirm pnpm dev starts before
+Skip scaffolding-project if project.name is already set in docs/context.json. Skip each
+foundation capability skill if its capabilities.* is already "ready". Confirm pnpm dev starts before
 proceeding to foundation skills.
 
-Run the foundation skill for each capability where Value=yes, in dependency order. Skip any skill
-where skills.<name> = "done". Run each skill only after all its dependencies have set their
-capabilities.* flags to true in docs/context.json:
+Run the foundation skill for each capability where `capabilities.* = "planned"`, in dependency order. Skip any
+where capabilities.* is already "ready". Run each skill only after all its dependencies have set their
+capabilities.* to "ready" in docs/context.json:
 
-| Capability       | Skill                   | Depends On  |
-|------------------|-------------------------|-------------|
-| database         | adding-database         | —           |
-| authentication   | adding-authentication   | database    |
-| file_storage     | adding-file-storage     | database    |
-| ai               | adding-ai               | —           |
-| landing_page     | adding-landing-page     | —           |
-| legal_pages      | adding-legal-pages      | landing_page|
+| Capability       | Skill                   | Depends On   |
+|------------------|-------------------------|--------------|
+| database         | adding-database         | —            |
+| authentication   | adding-authentication   | database     |
+| file_storage     | adding-file-storage     | database     |
+| ai               | adding-ai               | —            |
+| landing_page     | adding-landing-page     | —            |
+| legal_pages      | adding-legal-pages      | landing_page |
 
-Verify each skill's doc updates before running the next. Stop and report if a skill fails
-repeatedly and cannot be resolved without user input.
+All six capabilities follow the same loop — legal_pages is not special-cased. When both
+landing_page and authentication are planned, run adding-landing-page before adding-authentication
+so the public layout route exists when auth routes are registered inside it. Verify each
+skill's doc updates before running the next. Stop and report if a skill fails repeatedly and
+cannot be resolved without user input.
 ```
 
-### Phase 3 — Feature Planning
+### Phase 3 — Feature List
 
 ```
-/goal Complete when all acceptance criteria are met. Constraint: preserve all foundation code and
-documentation unchanged.
+/goal Approve the full feature list and register all features in the manifest. Complete when all
+acceptance criteria are met.
 
 Acceptance criteria:
 - [ ] User approved the proposed feature list
-- [ ] docs/features/manifest.json exists with all approved features
-- [ ] planning-features ran for each feature in id order
-- [ ] Each feature spec was approved by the user
-- [ ] Every feature in manifest.json has status "ready" or "blocked" with a documented reason
-- [ ] docs/context.json shows skills.planning-features = "done"
+- [ ] docs/features/manifest.json exists with all approved features at status "listed", tasks: []
+- [ ] depends_on derived from PRD workflow and proposed to user before manifest was written
+- [ ] No feature has a higher id than any feature it depends on
 
-Skip this phase if docs/context.json shows skills.planning-features = "done".
+Skip this phase if docs/features/manifest.json exists and contains at least one feature that
+is not "listed" — meaning planning has already begun.
 
-Read references/feature-manifest.md for the manifest schema and status lifecycle. Derive the
-feature list from the primary workflow and must-have pages in docs/prd.md. Propose short title
-and one-line description for each, ordered by dependency. Get user approval before creating the
-manifest. Create docs/features/manifest.json with all approved features as "listed", then run
-planning-features for each feature in id order.
+Read references/feature-manifest.md for the manifest schema. Read docs/features/manifest.json
+if it already exists — use any existing entries as the starting point to avoid re-proposing
+features already registered. Derive the feature list from the primary workflow and must-have
+pages in docs/prd.md. Propose short title, one-line description, and depends_on for each
+new feature — depends_on should list the ids of features that must be verified before this
+one can be implemented (e.g. a "task detail" feature depends on "task list"). Order features
+so no feature has a higher id than a feature it depends on. Get user approval before writing
+the manifest. Create or update docs/features/manifest.json with all approved features at
+status "listed" and tasks: [].
 
-If a feature cannot be finalized, set it to "blocked" with a reason and continue. If all features
-are blocked, stop and report what decisions are needed.
+This phase is purely structural — no specs are written here.
 ```
 
-### Phase 4 — Feature Implementation
+### Phase 4 — Per-Feature Loop
 
 ```
-/goal Complete when all acceptance criteria are met. Constraint: preserve all implemented features
-and their specs unchanged while implementing subsequent features.
+/goal Drive every feature through its full cycle: plan → implement → verify → test.
+Complete when all features are "verified" or "blocked".
 
-Acceptance criteria:
-- [ ] implementing-features ran for each "ready" feature in dependency order
-- [ ] Each implemented feature was committed
-- [ ] Every feature in manifest.json has status "implemented" or "blocked" with a documented reason
-- [ ] docs/context.json shows skills.implementing-features = "done"
+Read docs/features/manifest.json before each iteration. For each feature in id order whose
+depends_on features are all "verified":
 
-Skip this phase if docs/context.json shows skills.implementing-features = "done".
+  Step 4a — Plan
+  Run planning-features for the feature. It writes the spec and populates tasks[] in the manifest.
+  Acceptance criteria:
+  - [ ] Spec file written to docs/features/
+  - [ ] Feature status = "ready", tasks[] populated at "pending" in manifest
 
-For each "ready" feature in manifest id order respecting depends_on, run implementing-features.
-Commit after each feature. If a feature requires user input, set it to "blocked" and advance.
-Stop and report if all remaining features are blocked.
-```
+  Step 4b — Implement
+  Run implementing-features for the feature. It works through tasks in dependency order,
+  committing after each task, and derives feature status from task state.
+  Acceptance criteria:
+  - [ ] All tasks "done", feature status derived to "implemented" in manifest
+  - [ ] pnpm typecheck exits 0 after implementation
 
-### Phase 5 — Verification
+  Step 4c — Verify
+  Run verifying-features for the feature. Checks all task acceptance criteria.
+  Acceptance criteria:
+  - [ ] Feature status = "verified" in manifest
+  - [ ] pnpm typecheck, pnpm lint, pnpm test pass
 
-```
-/goal Complete when all acceptance criteria are met.
+  Step 4d — Test
+  Run testing-features for the feature. Extends docs/e2e/test-plan.md and executes it.
+  Acceptance criteria:
+  - [ ] Feature section added to docs/e2e/test-plan.md
+  - [ ] All E2E steps pass for this feature
 
-Acceptance criteria:
-- [ ] verifying-features ran for each "implemented" feature
-- [ ] Every feature in manifest.json has status "verified" or "blocked" with a documented reason
-- [ ] docs/context.json shows skills.verifying-features = "done"
+  If 4d fails: fix with implementing-features targeting the failed steps, re-run verifying-features,
+  then re-run testing-features. Do not advance to the next feature until 4d passes or the feature
+  is explicitly set to "blocked" because user input is required.
 
-Skip this phase if docs/context.json shows skills.verifying-features = "done".
+  If any other step fails, re-run the failing step (re-implement → re-verify if needed) before
+  advancing to the next feature. If a feature requires user input at any step, set it to
+  "blocked" and advance to the next eligible feature. Stop and report if all remaining
+  features are blocked.
 
-For each "implemented" feature in manifest id order, run verifying-features. If verification fails,
-re-run implementing-features targeting the failed criteria then re-verify. Set to "blocked" if user
-input is required. Stop and report if all remaining features are blocked.
-```
-
-### Phase 6 — Testing
-
-```
-/goal Complete when all acceptance criteria are met. Constraint: do not skip testing-features.
-
-Acceptance criteria:
-- [ ] testing-features ran for a comprehensive E2E pass
-- [ ] E2E tests pass
-- [ ] pnpm typecheck exits 0
-- [ ] pnpm lint exits 0
-- [ ] pnpm build exits 0
-- [ ] docs/context.json shows skills.testing-features = "done"
-
-Skip this phase if docs/context.json shows skills.testing-features = "done".
-
-Run testing-features for a comprehensive E2E pass. If tests fail, fix with implementing-features
-and re-run. Then run pnpm typecheck, pnpm lint, and pnpm build — fix failures and re-run until all
-pass. Stop and report if failures cannot be resolved without user input.
+After all features are in a terminal state, run:
+  - pnpm build — fix and re-run until it exits 0
+  - pnpm lint  — fix and re-run until it exits 0
 ```
 
 ### Final Summary
 
-Commit the final state and present a summary to the user: foundation skills used, features implemented, commit hash, verification results, E2E results, build/lint/typecheck results, and open questions from `docs/architecture.md`. Do not write the summary to a file.
+Commit the final state and present a summary to the user: foundation skills used, features implemented and verified, E2E results per feature, build/lint results, commit hash, and open questions from `docs/architecture.md`. Do not write the summary to a file.
 
 ## References
 
@@ -177,10 +182,12 @@ Commit the final state and present a summary to the user: foundation skills used
 
 ## Review Checklist
 
-- [ ] `docs/context.json` read before each phase; completed skills skipped.
+- [ ] Resume signals checked before each phase (data signals, not flags).
 - [ ] Each phase completed all acceptance criteria before advancing.
-- [ ] Foundation skills run in dependency order with capability flags verified between steps.
+- [ ] Foundation skills run in dependency order; capability flags verified as `"ready"` between steps.
+- [ ] Feature list approved before manifest was written.
+- [ ] Every feature cycled through plan → implement → verify → test in dependency order.
 - [ ] Every feature spec was user-approved before implementation.
-- [ ] All features are in a terminal state (`implemented`, `verified`, or `blocked`) in the manifest.
-- [ ] E2E tests pass, `pnpm typecheck`, `pnpm lint`, and `pnpm build` exit 0.
+- [ ] All features are in a terminal state (`verified` or `blocked`) in the manifest.
+- [ ] E2E tests pass per feature, `pnpm lint` and `pnpm build` exit 0.
 - [ ] Final summary presented to the user with commit hash and open questions.

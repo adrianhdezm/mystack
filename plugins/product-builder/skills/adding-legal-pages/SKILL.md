@@ -9,15 +9,15 @@ Adds static Impressum, Privacy Policy, and/or Terms of Service routes under the 
 
 ## Context
 
-**Guard** — stop before changing any files if `context.capabilities.landing_page` is not `true`:
+**Guard** — stop before changing any files if `context.capabilities.landing_page` is not `"ready"`:
 
 ```text
-Stop — docs/context.json is missing capabilities.landing_page = true. Run adding-landing-page first, then re-run this skill.
+Stop — docs/context.json is missing capabilities.landing_page = "ready". Run adding-landing-page first, then re-run this skill.
 ```
 
 **Reads:** `context.operator.*` — if `operator.name`, `operator.address`, and `operator.email` are present, use them directly. Only ask the user for fields that are missing.
 
-Set `skills.adding-legal-pages` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
+Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
@@ -26,8 +26,7 @@ Set `skills.adding-legal-pages` to `in-progress` at the start. Derive `PROJECT_P
     "address": "<full postal address>",
     "email": "<contact email>"
   },
-  "capabilities": { "legal_pages": true },
-  "skills": { "adding-legal-pages": "done" }
+  "capabilities": { "legal_pages": "ready" }
 }
 ```
 
@@ -56,13 +55,13 @@ INCLUDE_TERMS:          yes/no
 
 ## Workflow
 
-1. Read `docs/context.json`. Confirm `capabilities.landing_page = true`. Read `operator.*` and write any missing fields after collecting from the user. Set `skills.adding-legal-pages` to `in-progress`.
+1. Read `docs/context.json`. Confirm `capabilities.landing_page = "ready"`. Read `operator.*` and write any missing fields after collecting from the user. Derive `PROJECT_PATH` from `context.repository.local_path`.
 2. Confirm which pages to create (`INCLUDE_IMPRESSUM`, `INCLUDE_PRIVACY_POLICY`, `INCLUDE_TERMS`) and that all operator fields are present.
 3. Create legal page routes using [01-legal-routes.md](references/01-legal-routes.md).
 4. Populate page content using [02-legal-content.md](references/02-legal-content.md).
 5. Update `SiteFooter` to link to the new pages using [03-footer-links.md](references/03-footer-links.md).
 6. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md): structure additions, README and AGENTS.md additions.
-7. Write `operator.*`, `capabilities.legal_pages = true`, and `skills.adding-legal-pages = "done"` to `docs/context.json`.
+7. Write `operator.*` and `capabilities.legal_pages = "ready"` to `docs/context.json`.
 8. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build`. Fix any failures before committing.
 9. Commit using the repository's Conventional Commits format.
 
@@ -76,7 +75,7 @@ INCLUDE_TERMS:          yes/no
 
 ## Review Checklist
 
-- [ ] `docs/context.json` guard passed (`capabilities.landing_page = true`).
+- [ ] `docs/context.json` guard passed (`capabilities.landing_page = "ready"`).
 - [ ] All operator fields present in context before page content was written.
 - [ ] Each requested page (`/impressum`, `/privacy-policy`, `/terms`) is public with no auth requirement.
 - [ ] All pages registered inside `layout("routes/public-layout.tsx", [...])` in `app/routes.ts`.
@@ -84,5 +83,5 @@ INCLUDE_TERMS:          yes/no
 - [ ] `SiteFooter` links to every created legal page using React Router `<Link>`.
 - [ ] Page content uses real operator information — no placeholder text.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass.
-- [ ] `docs/context.json` updated with `operator.*`, `capabilities.legal_pages = true`, and `skills.adding-legal-pages = "done"`.
+- [ ] `docs/context.json` updated with `operator.*` and `capabilities.legal_pages = "ready"`.
 - [ ] Changes committed with Conventional Commit message.

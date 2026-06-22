@@ -15,12 +15,11 @@ Creates a public layout route and an index landing page at `/`, built from real 
 Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
 ```
 
-Set `skills.adding-landing-page` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
+Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
-  "capabilities": { "landing_page": true },
-  "skills": { "adding-landing-page": "done" }
+  "capabilities": { "landing_page": "ready" }
 }
 ```
 
@@ -35,13 +34,13 @@ Set `skills.adding-landing-page` to `in-progress` at the start. Derive `PROJECT_
 
 ## Workflow
 
-1. Read `docs/context.json`. Confirm `project.name` is present. Set `skills.adding-landing-page` to `in-progress`.
+1. Read `docs/context.json`. Confirm `project.name` is present. Derive `PROJECT_PATH` from `context.repository.local_path`.
 2. Read `docs/prd.md` (if present) to gather product name, headline copy, and key features.
 3. Load `react-router-patterns` → `adding-routes.md`, then create the public layout route, index route, and register both in `app/routes.ts` using [01-routes-and-layout.md](references/01-routes-and-layout.md).
 4. Build landing page section components using [02-landing-page-sections.md](references/02-landing-page-sections.md).
 5. Write unit tests for the landing page route using [03-tests.md](references/03-tests.md).
 6. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md): structure additions, new `docs/conventions/landing-page.md` seeded with public/authenticated layout split and content sourcing from `docs/prd.md`, README and AGENTS.md additions.
-7. Write `capabilities.landing_page = true` and `skills.adding-landing-page = "done"` to `docs/context.json`.
+7. Write `capabilities.landing_page = "ready"` to `docs/context.json`.
 8. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. Fix any failures before committing.
 9. Commit using the repository's Conventional Commits format.
 
@@ -65,5 +64,5 @@ Set `skills.adding-landing-page` to `in-progress` at the start. Derive `PROJECT_
 - [ ] `tests/unit/routes/home.test.tsx` exists and passes.
 - [ ] `docs/conventions/landing-page.md` created with layout split and content sourcing patterns.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` pass.
-- [ ] `docs/context.json` updated with `capabilities.landing_page = true` and `skills.adding-landing-page = "done"`.
+- [ ] `docs/context.json` updated with `capabilities.landing_page = "ready"`.
 - [ ] Changes committed with Conventional Commit message.

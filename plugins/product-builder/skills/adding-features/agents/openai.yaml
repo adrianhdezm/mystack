@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adding Features"
+  short_description: "Add one new feature to an existing product — update PRD, plan, implement, verify, and test."
+  default_prompt: "Add one new feature to this Product Builder product — update docs/prd.md, plan the spec with tasks, implement the vertical slice task by task, verify it, and run the test suite."

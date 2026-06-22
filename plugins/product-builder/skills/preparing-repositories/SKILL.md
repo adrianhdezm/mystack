@@ -39,17 +39,17 @@ Derives a `<owner>/<repo>` slug and a local parent folder from the user's prompt
    ```sh
    gh repo clone "$REPOSITORY" "$LOCAL_REPOSITORY_PATH"
    ```
-8. Write to `docs/context.json` (create with default template from [context-schema.md](../../shared/references/context-schema.md) if missing):
+8. Create `<LOCAL_REPOSITORY_PATH>/docs/` if it does not exist, then write `<LOCAL_REPOSITORY_PATH>/docs/context.json` (using the default template from [context-schema.md](../../shared/references/context-schema.md) if creating from scratch):
    ```json
    {
      "repository": {
        "local_path": "<LOCAL_REPOSITORY_PATH>",
        "status": "<cloned | created-and-cloned | existing-local>",
        "github_slug": "<REPOSITORY>"
-     },
-     "skills": { "preparing-repositories": "done" }
+     }
    }
    ```
+   All subsequent skills read and write `docs/context.json` relative to `repository.local_path`.
 9. Output the contract:
    ```text
    LOCAL_REPOSITORY_PATH: <absolute path>
@@ -72,5 +72,5 @@ Derives a `<owner>/<repo>` slug and a local parent folder from the user's prompt
 - [ ] Local target had no pre-existing files beyond repository metadata.
 - [ ] Remote existed or was created with `gh repo create`.
 - [ ] Remote had zero tracked files before clone.
-- [ ] `docs/context.json` created or updated with `repository.*` and `skills.preparing-repositories = "done"`.
+- [ ] `docs/` directory created inside `LOCAL_REPOSITORY_PATH` and `docs/context.json` written with `repository.*`.
 - [ ] Output contract emitted with `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.

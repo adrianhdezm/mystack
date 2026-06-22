@@ -33,10 +33,36 @@ For each route, note loader and action responsibilities.
 - Queries to create (one per cross-table read, in `app/db/queries/`).
 - Services to create or modify, with workflow description.
 
-## Acceptance Criteria
+## Tasks
+
+Numbered implementation units. Each task is a vertical slice — it touches every layer it needs and produces a committable, working increment. Tasks are implemented in dependency order; tasks whose `depends_on` are all `done` may run independently.
+
+### Task NN.01 — Title
+
+**Layers**: e.g. schema migration, DAO  
+**depends_on**: [] or [NN.0X, …]
+
+Acceptance criteria:
 
 1. When [action], then [expected result].
-2. Given [state], when [action], expect [outcome].
+
+### Task NN.02 — Title
+
+**Layers**: e.g. service, loader/action  
+**depends_on**: [NN.01]
+
+Acceptance criteria:
+
+1. When [action], then [expected result].
+
+### Task NN.03 — Title
+
+**Layers**: e.g. page component, form, feedback states  
+**depends_on**: [NN.02]
+
+Acceptance criteria:
+
+1. When [action], then [expected result].
 
 ## Test Considerations
 
@@ -47,7 +73,7 @@ For each route, note loader and action responsibilities.
 
 ## Dependencies
 
-List spec numbers this depends on (e.g., "Requires 00, 01"). Write "None" if standalone.
+List feature spec numbers this depends on (e.g., "Requires 01, 02"). Write "None" if standalone.
 
 ## Notes
 

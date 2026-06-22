@@ -9,29 +9,32 @@ Read-only skill that checks a feature implementation against its spec — verifi
 
 ## Context
 
-**Guard** — stop before proceeding if `context.skills.implementing-features` is not `"done"`:
+**Guard** — stop before proceeding if the target feature's status in `docs/features/manifest.json` is not `implemented`:
 
 ```text
-Stop — docs/context.json is missing skills.implementing-features = "done". Run implementing-features first, then re-run this skill.
+Stop — the target feature is not "implemented" in docs/features/manifest.json.
+Run implementing-features for this feature first, then re-run this skill.
 ```
 
-Set `skills.verifying-features` to `in-progress` at the start. On success write:
-
-```json
-{
-  "skills": { "verifying-features": "done" }
-}
-```
+Progress is tracked per-feature in `docs/features/manifest.json`, not in `docs/context.json`. Do not write a global skill flag for this skill.
 
 ## Input
 
-A feature spec from `docs/features/` (e.g. `docs/features/02-color-upload.spec.md`). If not specified, list available specs and ask.
+A feature spec from `docs/features/` (e.g. `docs/features/02-color-upload.spec.md`). If not provided:
+
+1. Read `docs/features/manifest.json`.
+2. Find the first `implemented` feature.
+3. If exactly one candidate exists, propose it and proceed after confirmation.
+4. If multiple candidates exist, list them and ask the user to choose.
+5. If no `implemented` feature exists, report the current manifest state and stop.
 
 ## Workflow
 
 ### 1) Read Context
 
-- Read the target spec and all dependency specs in its Dependencies section.
+- Read the target spec completely — understand all tasks and their per-task acceptance criteria.
+- Read all dependency specs in its Dependencies section.
+- Read `docs/features/manifest.json` — confirm all tasks are `done` before proceeding. If any task is not `done`, stop and report.
 - Read `docs/prd.md` — verify the feature aligns with the product's problem statement and primary workflow.
 - Read `docs/data-model.md` — expected entity/relationship map.
 - Read `docs/architecture.md` — known deviations and open questions.
@@ -53,7 +56,7 @@ For each spec section:
 
 ### 3) Walk Acceptance Criteria
 
-For each criterion: trace the code path, mark as **met** / **partially met** / **not met**, and describe what is missing or different.
+For each task in the spec, walk its acceptance criteria: trace the code path, mark as **met** / **partially met** / **not met**, and describe what is missing or different.
 
 ### 4) Run Checks
 
@@ -66,11 +69,17 @@ Produce a static verification report:
 ```markdown
 # Verification: NN — Title
 
+## Tasks
+
+| Task  | Title           | Status         |
+| ----- | --------------- | -------------- |
+| NN.01 | Schema and DAOs | done / blocked |
+
 ## Acceptance Criteria
 
-| # | Criterion | Status | Notes |
-|---|-----------|--------|-------|
-| 1 | When X, then Y | Met / Partially met / Not met | … |
+| Task  | #   | Criterion      | Status                        | Notes |
+| ----- | --- | -------------- | ----------------------------- | ----- |
+| NN.01 | 1   | When X, then Y | Met / Partially met / Not met | …     |
 
 ## Deviations from Spec
 
@@ -88,6 +97,7 @@ Produce a static verification report:
 ```
 
 Verdict:
+
 - **Pass** — all criteria met, checks pass, feature aligns with product requirements.
 - **Pass with notes** — all criteria met but minor deviations or inconsistencies exist. List recommendations.
 - **Fail** — one or more criteria not met or checks fail. List what needs fixing and suggest re-running `implementing-features`.
@@ -96,7 +106,7 @@ Do not modify any code during this skill.
 
 ### 6) Finish
 
-If verification passes, set the feature's status to `verified` in `docs/features/manifest.json`. Write `skills.verifying-features = "done"` to `docs/context.json`.
+If verification passes, set the feature's status to `verified` in `docs/features/manifest.json`.
 
 ## References
 
@@ -104,17 +114,18 @@ If verification passes, set the feature's status to `verified` in `docs/features
 
 ## Review Checklist
 
-- [ ] `docs/context.json` guard passed (`skills.implementing-features = "done"`).
-- [ ] Target spec read completely.
+- [ ] Guard passed — target feature confirmed `implemented` in manifest.
+- [ ] Manifest read — all tasks confirmed `done` before verification began.
+- [ ] Target spec read completely including all task acceptance criteria.
 - [ ] `docs/prd.md` consulted for product alignment.
 - [ ] `docs/data-model.md` checked against `app/db/schema.ts`.
 - [ ] `docs/architecture.md` consulted for known deviations.
 - [ ] Every spec section checked against the codebase.
 - [ ] Implementation checked against `docs/conventions/`.
-- [ ] Every acceptance criterion individually evaluated.
+- [ ] Every task's acceptance criteria individually evaluated.
 - [ ] Integration tests checked for all DAOs, Queries, and Services.
 - [ ] Unit tests checked for all route components.
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` run.
 - [ ] Report presented with clear per-criterion status and a verdict.
 - [ ] No code modified during verification.
-- [ ] `docs/context.json` updated with `skills.verifying-features = "done"`.
+- [ ] Feature status set to `verified` in manifest on pass.

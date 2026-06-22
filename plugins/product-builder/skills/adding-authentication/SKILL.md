@@ -9,18 +9,17 @@ Installs Better Auth with the Drizzle adapter, extends the D1 schema with auth t
 
 ## Context
 
-**Guard** — stop before changing any files if `context.capabilities.database` is not `true`:
+**Guard** — stop before changing any files if `context.capabilities.database` is not `"ready"`:
 
 ```text
-Stop — docs/context.json is missing capabilities.database = true. Run adding-database first, then re-run this skill.
+Stop — docs/context.json is missing capabilities.database = "ready". Run adding-database first, then re-run this skill.
 ```
 
-Set `skills.adding-authentication` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
+Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
-  "capabilities": { "authentication": true },
-  "skills": { "adding-authentication": "done" }
+  "capabilities": { "authentication": "ready" }
 }
 ```
 
@@ -37,20 +36,21 @@ Default D1 binding: `APP_DB`. Default auth cookie prefix: `App`.
 - Load `react-router-patterns` before adding or changing any route, loader, action, redirect, or form.
 - Read [worker-architecture.md](../../shared/references/worker-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
 - Preserve existing route, Worker, context, shadcn/ui, and Tailwind patterns.
+- If a public layout route already exists (e.g. from `adding-landing-page`), register `login`, `signup`, and `logout` routes **outside** that layout — auth routes must not be nested under the public layout. Register them at the root level in `app/routes.ts`.
 - The cookie prefix in the Better Auth config must match what the client sends — mismatch causes sessions to silently return null (user appears logged out).
 - Better Auth tables must exist before the server starts — unapplied migrations produce a D1 "no such table" error on the first request.
 - `AUTH_SECRET` must be the same across dev and deployed environments — a new secret invalidates all existing sessions.
 
 ## Workflow
 
-1. Read `docs/context.json`. Confirm `capabilities.database = true`. Set `skills.adding-authentication` to `in-progress`.
+1. Read `docs/context.json`. Confirm `capabilities.database = "ready"`. Derive `PROJECT_PATH` from `context.repository.local_path`.
 2. Install dependencies and configure secrets using [01-dependencies-and-env.md](references/01-dependencies-and-env.md).
 3. Extend the Drizzle schema with auth tables and generate the migration using [02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md).
 4. Wire Better Auth into React Router context and the Worker using [03-server-integration.md](references/03-server-integration.md).
 5. Load `react-router-patterns`, then add `api/auth/*`, `login`, `logout`, and `signup` routes using [04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md).
 6. Write unit tests for the login and signup route components using [05-tests.md](references/05-tests.md).
 7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md): stack entry (`Better Auth`), data model auth entities, auth route patterns in `docs/conventions/routes.md`, README and AGENTS.md additions.
-8. Write `capabilities.authentication = true` and `skills.adding-authentication = "done"` to `docs/context.json`.
+8. Write `capabilities.authentication = "ready"` to `docs/context.json`.
 9. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:unit`. Fix any failures before committing.
 10. Commit using the repository's Conventional Commits format.
 
@@ -66,7 +66,7 @@ Default D1 binding: `APP_DB`. Default auth cookie prefix: `App`.
 
 ## Review Checklist
 
-- [ ] `docs/context.json` guard passed (`capabilities.database = true`).
+- [ ] `docs/context.json` guard passed (`capabilities.database = "ready"`).
 - [ ] `better-auth`, `zod@4`, `@conform-to/react`, `@conform-to/zod` installed.
 - [ ] `AUTH_SECRET` generated with `openssl rand -base64 32`; `.env` has the value; `.env.example` has empty placeholder.
 - [ ] `app/db/schema.ts` exports `users`, `sessions`, `accounts`, `verifications`, their relations, and `schema`.
@@ -79,5 +79,5 @@ Default D1 binding: `APP_DB`. Default auth cookie prefix: `App`.
 - [ ] `docs/data-model.md` includes auth entities.
 - [ ] `docs/conventions/routes.md` includes auth route patterns.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:unit` pass.
-- [ ] `docs/context.json` updated with `capabilities.authentication = true` and `skills.adding-authentication = "done"`.
+- [ ] `docs/context.json` updated with `capabilities.authentication = "ready"`.
 - [ ] Changes committed with Conventional Commit message.
