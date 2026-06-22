@@ -134,4 +134,4 @@ Both plugins share a single release script. It validates the version bump, updat
 ./scripts/release-plugin.sh project-bootstrapper 0.1.1
 ```
 
-The working tree must be clean before running. Tags are scoped per plugin (`product-builder-v0.2.1`, `project-bootstrapper-v0.1.1`).
+Tags are scoped per plugin (`product-builder-v0.2.1`, `project-bootstrapper-v0.1.1`).
