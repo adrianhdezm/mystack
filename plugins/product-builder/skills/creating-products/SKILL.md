@@ -19,8 +19,9 @@ At the start of each phase, check the resume signal for that phase. If `docs/con
 | --- | --- |
 | 0 — Bootstrap check | `project.deployment_target` is set in `docs/context.json` AND `project.name` is set |
 | 1 — PRD | `docs/prd.md` exists and is non-empty |
-| 2 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
-| 3 — Per-Feature Loop | all features in manifest are `verified` or `blocked` |
+| 2 — Product Capabilities | `capabilities.landing_page` and `capabilities.legal_pages` are `"ready"` or `"skipped"` |
+| 3 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
+| 4 — Per-Feature Loop | all features in manifest are `verified` or `blocked` |
 
 ## Workflow
 
@@ -34,7 +35,7 @@ Each phase is a single goal. Complete all acceptance criteria before advancing.
 Acceptance criteria:
 - [ ] docs/context.json exists with project.deployment_target set
 - [ ] docs/context.json has project.name set
-- [ ] All capabilities.* are "ready" or "skipped" (none are "planned")
+- [ ] Infrastructure capabilities (database, authentication, file_storage, ai) are "ready" or "skipped" (none are "planned")
 
 If any of these fail, stop with:
 
@@ -59,7 +60,31 @@ Run writing-prd. It reads the committed code and capabilities from context, inte
 about product features and user flows, and writes docs/prd.md. Stop and report if it cannot complete.
 ```
 
-### Phase 2 — Feature List
+### Phase 2 — Product Capabilities
+
+```
+/goal Run landing page and legal pages skills if approved in the PRD. Complete when all
+acceptance criteria are met.
+
+Acceptance criteria:
+- [ ] capabilities.landing_page is "ready" or "skipped" in docs/context.json
+- [ ] capabilities.legal_pages is "ready" or "skipped" in docs/context.json
+
+Skip this phase if both are already "ready" or "skipped".
+
+Run the skills in dependency order for any capability set to "planned" by writing-prd:
+
+| Capability   | Skill                | Depends On   |
+|--------------|----------------------|--------------|
+| landing_page | adding-landing-page  | —            |
+| legal_pages  | adding-legal-pages   | landing_page |
+
+Skip any already "ready". If adding-authentication was run by project-bootstrapper and
+capabilities.landing_page is "planned", run adding-landing-page first — auth routes must
+be registered outside the public layout that adding-landing-page creates.
+```
+
+### Phase 3 — Feature List
 
 ```
 /goal Approve the full feature list and register all features in the manifest. Complete when all
@@ -83,7 +108,7 @@ before writing the manifest.
 This phase is purely structural — no specs are written here.
 ```
 
-### Phase 3 — Per-Feature Loop
+### Phase 4 — Per-Feature Loop
 
 ```
 /goal Drive every feature through its full cycle: plan → implement → verify → test.
@@ -92,33 +117,33 @@ Complete when all features are "verified" or "blocked".
 Read docs/features/manifest.json before each iteration. For each feature in id order whose
 depends_on features are all "verified":
 
-  Step 3a — Plan
+  Step 4a — Plan
   Run planning-features for the feature. It writes the spec and populates tasks[] in the manifest.
   Acceptance criteria:
   - [ ] Spec file written to docs/features/
   - [ ] Feature status = "ready", tasks[] populated at "pending" in manifest
 
-  Step 3b — Implement
+  Step 4b — Implement
   Run implementing-features for the feature. It works through tasks in dependency order,
   committing after each task, and derives feature status from task state.
   Acceptance criteria:
   - [ ] All tasks "done", feature status derived to "implemented" in manifest
   - [ ] pnpm typecheck exits 0 after implementation
 
-  Step 3c — Verify
+  Step 4c — Verify
   Run verifying-features for the feature. Checks all task acceptance criteria.
   Acceptance criteria:
   - [ ] Feature status = "verified" in manifest
   - [ ] pnpm typecheck, pnpm lint, pnpm test pass
 
-  Step 3d — Test
+  Step 4d — Test
   Run testing-features for the feature. Extends docs/e2e/test-plan.md and executes it.
   Acceptance criteria:
   - [ ] Feature section added to docs/e2e/test-plan.md
   - [ ] All E2E steps pass for this feature
 
-  If 3d fails: fix with implementing-features targeting the failed steps, re-run verifying-features,
-  then re-run testing-features. Do not advance until 3d passes or the feature is set to "blocked".
+  If 4d fails: fix with implementing-features targeting the failed steps, re-run verifying-features,
+  then re-run testing-features. Do not advance until 4d passes or the feature is set to "blocked".
 
   If any other step fails, re-run the failing step before advancing. If a feature requires user
   input, set it to "blocked" and advance to the next eligible feature. Stop if all remaining
@@ -140,9 +165,10 @@ Commit the final state and present a summary: capabilities wired, features imple
 
 ## Review Checklist
 
-- [ ] Bootstrap check passed — `project.deployment_target`, `project.name`, all `capabilities.*` ready/skipped.
+- [ ] Bootstrap check passed — `project.deployment_target`, `project.name`, all infrastructure `capabilities.*` ready/skipped.
 - [ ] Resume signals checked before each phase.
 - [ ] Each phase completed all acceptance criteria before advancing.
+- [ ] `adding-landing-page` and `adding-legal-pages` run if their capabilities were `"planned"` in the PRD.
 - [ ] Feature list approved before manifest was written.
 - [ ] Every feature cycled through plan → implement → verify → test in dependency order.
 - [ ] Every feature spec was user-approved before implementation.

@@ -29,9 +29,7 @@
     "database": "ready",
     "authentication": "ready",
     "file_storage": "skipped",
-    "ai": "planned",
-    "landing_page": "ready",
-    "legal_pages": "skipped"
+    "ai": "planned"
   }
 }
 ```
@@ -78,7 +76,7 @@ Written by `preparing-repositories`. Read by `scaffolding-project`.
 
 ### `operator`
 
-Written by `adding-legal-pages`. Read by `adding-legal-pages`. Can be pre-populated manually before running any skill.
+Written by `adding-legal-pages` (in `product-builder`). Read by `adding-legal-pages`. Can be pre-populated manually before running any skill.
 
 | Field     | Description                                  |
 | --------- | -------------------------------------------- |
@@ -88,7 +86,7 @@ Written by `adding-legal-pages`. Read by `adding-legal-pages`. Can be pre-popula
 
 ### `capabilities`
 
-Written first by `selecting-capabilities` (sets `planned` or `skipped`), then by each foundation skill (sets `ready`). Read by `bootstrapping-projects` to determine which foundation skills to run.
+Written first by `selecting-capabilities` (sets `planned` or `skipped`), then by each foundation skill (sets `ready`). Read by `bootstrapping-projects` to determine which foundation skills to run. `landing_page` and `legal_pages` are managed by `product-builder` skills, not by the bootstrapper.
 
 | Field            | Set to `planned` by        | Set to `ready` by       |
 | ---------------- | -------------------------- | ----------------------- |
@@ -96,8 +94,8 @@ Written first by `selecting-capabilities` (sets `planned` or `skipped`), then by
 | `authentication` | `selecting-capabilities`   | `adding-authentication` |
 | `file_storage`   | `selecting-capabilities`   | `adding-file-storage`   |
 | `ai`             | `selecting-capabilities`   | `adding-ai`             |
-| `landing_page`   | `selecting-capabilities`   | `adding-landing-page`   |
-| `legal_pages`    | `selecting-capabilities`   | `adding-legal-pages`    |
+| `landing_page`   | `writing-prd` (product-builder) | `adding-landing-page` (product-builder) |
+| `legal_pages`    | `writing-prd` (product-builder) | `adding-legal-pages` (product-builder) |
 
 ## Reading and Writing
 

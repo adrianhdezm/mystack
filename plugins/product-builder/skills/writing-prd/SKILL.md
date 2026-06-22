@@ -19,7 +19,9 @@ Stop — docs/context.json is missing repository.local_path, project.deployment_
 Run project-bootstrapper → bootstrapping-projects first, then re-run this skill.
 ```
 
-**Capabilities are not selected here.** They were selected and committed by `project-bootstrapper` → `selecting-capabilities`. This skill reads them from context — it does not write them.
+**Infrastructure capabilities** (`database`, `authentication`, `file_storage`, `ai`) are not selected here — they were committed by `project-bootstrapper` → `selecting-capabilities`. This skill reads them from context.
+
+**Product capabilities** (`landing_page`, `legal_pages`) are decided here during the PRD interview, since they are product and content decisions, not infrastructure. This skill writes them to context.
 
 ## Mode Detection
 
@@ -40,11 +42,11 @@ Before interviewing, read:
 - `README.md` and `AGENTS.md` — existing project documentation
 - `app/db/schema.ts` if it exists — understand the current data model
 
-Use `project.idea` as the seed for the product description. Use `capabilities.*` to understand which infrastructure is already wired (database, auth, file storage, AI, landing page, legal pages).
+Use `project.idea` as the seed for the product description. Use `capabilities.*` to understand which infrastructure is already wired (database, auth, file storage, AI).
 
 ### 2) Interview the User
 
-Interview until you reach shared understanding of the product features. The infrastructure is already decided — focus only on product behavior. Prefer inference over questions — ask only when an answer materially changes the product or implementation. Cover at minimum:
+Interview until you reach shared understanding of the product features. The infrastructure is already decided — focus on product behavior, screens, and flows. Prefer inference over questions — ask only when an answer materially changes the product or implementation. Cover at minimum:
 
 - Who are the target users / personas?
 - What pain points or jobs-to-be-done does this solve?
@@ -53,14 +55,29 @@ Interview until you reach shared understanding of the product features. The infr
 - What are we **not** doing in this version? Push back until the boundary is crisp.
 - What records must be saved between sessions?
 - Is data private to a user, shared with a team, public, or admin-only?
+- Does the product need a public landing or marketing page?
+- Are Impressum, Privacy Policy, or Terms of Service required?
 - What are the must-have pages or views for the first version?
 - What external services, payments, email, or integrations are needed (beyond what's already wired)?
 
-Do not re-interview about capabilities already set in context — those decisions are committed.
+### 3) Determine Product Capabilities
 
-### 3) Write the PRD
+From the interview, determine `landing_page` and `legal_pages`:
 
-Write `docs/prd.md` using [assets/prd-template.md](assets/prd-template.md). The Foundation Capabilities table should reflect the `capabilities.*` values from `docs/context.json` — mark each as included or not included. Present the PRD to the user for approval before writing the file. Write only after approval.
+- `landing_page` — product needs a public marketing or informational page before login.
+- `legal_pages` — Impressum, Privacy Policy, or Terms of Service required. **Requires `landing_page`**.
+
+Enforce dependency: if `legal_pages=yes` → set `landing_page=yes`.
+
+Present for approval alongside the PRD draft. Write `capabilities.landing_page` and `capabilities.legal_pages` to `docs/context.json` after the PRD is approved: `"planned"` if yes, `"skipped"` if no.
+
+### 4) Write the PRD
+
+Write `docs/prd.md` using [assets/prd-template.md](assets/prd-template.md). The Foundation Capabilities table should reflect all `capabilities.*` values — both the infrastructure ones from context and the product ones just decided. Present the PRD to the user for approval before writing the file. Write only after approval.
+
+### 5) Update Context
+
+Write `capabilities.landing_page` and `capabilities.legal_pages` to `docs/context.json` based on the approved decisions.
 
 ---
 
@@ -123,9 +140,11 @@ Append the approved content to the relevant sections of `docs/prd.md`. Each addi
 - [ ] User stories cover happy paths, edge cases, and error scenarios.
 - [ ] Every screen or flow has a corresponding entry in User Interaction and Design.
 - [ ] Out of Scope section has at least one entry.
-- [ ] Foundation Capabilities table reflects `capabilities.*` from context.
+- [ ] `landing_page` and `legal_pages` determined and dependency enforced.
+- [ ] Foundation Capabilities table reflects all `capabilities.*` (infrastructure + product).
 - [ ] User approved the full PRD before `docs/prd.md` was written.
 - [ ] `docs/prd.md` written only after explicit approval.
+- [ ] `docs/context.json` updated with `capabilities.landing_page` and `capabilities.legal_pages`.
 
 **Update mode**
 

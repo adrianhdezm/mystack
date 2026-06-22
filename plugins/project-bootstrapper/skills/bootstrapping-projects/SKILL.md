@@ -102,11 +102,6 @@ have set their capabilities.* to "ready" in docs/context.json:
 | authentication   | adding-authentication   | database     |
 | file_storage     | adding-file-storage     | database     |
 | ai               | adding-ai               | —            |
-| landing_page     | adding-landing-page     | —            |
-| legal_pages      | adding-legal-pages      | landing_page |
-
-When both landing_page and authentication are planned, run adding-landing-page before
-adding-authentication so the public layout route exists when auth routes are registered.
 
 Verify each skill's doc updates before running the next. Stop and report if a skill fails
 repeatedly and cannot be resolved without user input.
