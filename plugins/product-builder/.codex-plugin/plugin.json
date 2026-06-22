@@ -1,7 +1,7 @@
 {
   "name": "product-builder",
-  "version": "0.1.27",
-  "description": "Turn product ideas into working products with landing pages, authentication, protected routes, and dashboard pages.",
+  "version": "0.2.0",
+  "description": "Turn a bootstrapped project into a working product by writing the PRD and building features. Requires a project bootstrapped by project-bootstrapper.",
   "author": {
     "name": "Adrian Hernandez-Mendez"
   },
@@ -11,20 +11,17 @@
     "frontend",
     "backend",
     "ui",
-    "database",
-    "storage",
-    "uploads",
-    "r2",
-    "cloudflare",
     "react",
     "tailwind",
-    "shadcn"
+    "shadcn",
+    "prd",
+    "features"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Product Builder",
-    "shortDescription": "Build products from product ideas.",
-    "longDescription": "Helps turn an early product idea into a usable product. Product Builder first clarifies the audience, value proposition, core workflow, page map, and data model, then guides Codex through building the experience with a marketing landing page, login, registration, protected routes, dashboard pages, file storage, and polished shadcn/ui screens on the repo's Cloudflare Workers, React Router v7, Better Auth, D1, R2, and Tailwind CSS v4 stack.",
+    "shortDescription": "Build features from a bootstrapped project.",
+    "longDescription": "Drives the product development lifecycle on a bootstrapped project: writes the PRD by interviewing the user about features and user flows, plans and implements features one by one, verifies each against acceptance criteria, and runs E2E tests. Requires a project bootstrapped by project-bootstrapper (scaffold, database, auth, etc. already wired).",
     "developerName": "Adrian Hernandez-Mendez",
     "category": "Developer Tools",
     "capabilities": [
@@ -37,8 +34,8 @@
     "logo": "./assets/app-icon.png",
     "screenshots": [],
     "defaultPrompt": [
-      "Turn my product idea into a working product.",
-      "Build the landing page and protected product experience."
+      "Write the PRD and build the product features.",
+      "Plan and implement the next feature."
     ]
   }
 }

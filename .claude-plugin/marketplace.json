@@ -19,7 +19,7 @@
       "name": "product-builder",
       "source": "./plugins/product-builder",
       "description": "Turn a bootstrapped project into a working product by writing the PRD and building features.",
-      "version": "0.1.27",
+      "version": "0.2.0",
       "author": {
         "name": "Adrian Hernandez-Mendez"
       },

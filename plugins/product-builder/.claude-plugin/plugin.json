@@ -1,7 +1,7 @@
 {
   "name": "product-builder",
-  "version": "0.1.27",
-  "description": "Turn product ideas into working products with landing pages, authentication, protected routes, and dashboard pages.",
+  "version": "0.2.0",
+  "description": "Turn a bootstrapped project into a working product by writing the PRD and building features. Requires a project bootstrapped by project-bootstrapper.",
   "author": {
     "name": "Adrian Hernandez-Mendez"
   },
@@ -11,12 +11,11 @@
     "frontend",
     "backend",
     "ui",
-    "database",
-    "storage",
-    "cloudflare",
     "react",
     "tailwind",
-    "shadcn"
+    "shadcn",
+    "prd",
+    "features"
   ],
   "skills": "./skills/"
 }

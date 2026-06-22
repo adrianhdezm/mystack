@@ -32,18 +32,18 @@ Update `server/app.ts` to construct `FilesService` once at module scope (the S3 
 import { S3Client } from '@aws-sdk/client-s3';
 import { FilesService } from '../app/services/file.service';
 
-// Create S3 client once — MinIO is S3-compatible
+// Create S3 client once — RustFS is S3-compatible
 const s3Client = new S3Client({
-  endpoint: process.env.MINIO_ENDPOINT,
-  region: 'us-east-1',  // required by AWS SDK, value ignored by MinIO
+  endpoint: process.env.S3_ENDPOINT,
+  region: 'us-east-1',  // required by AWS SDK, value ignored by RustFS
   credentials: {
-    accessKeyId: process.env.MINIO_ACCESS_KEY!,
-    secretAccessKey: process.env.MINIO_SECRET_KEY!,
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET_KEY!,
   },
-  forcePathStyle: true,  // required for MinIO
+  forcePathStyle: true,  // required for RustFS
 });
 
-const bucketName = process.env.MINIO_BUCKET!;
+const bucketName = process.env.S3_BUCKET!;
 const files = new FilesService(db, s3Client, bucketName);
 ```
 
@@ -58,7 +58,7 @@ routerContext.set(appContext, {
 });
 ```
 
-Add `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, and `MINIO_BUCKET` to `.env` if not already present (they were added in `01-minio-setup.md`).
+Add `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, and `S3_BUCKET` to `.env` if not already present (they were added in `01-rustfs-setup.md`).
 
 ## Expected Results
 

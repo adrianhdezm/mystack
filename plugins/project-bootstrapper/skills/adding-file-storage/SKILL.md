@@ -42,17 +42,17 @@ On success write to `docs/context.json`:
 - Default R2 binding: `APP_FILES`.
 
 **Docker/Postgres target only:**
-- Use MinIO (S3-compatible) running in Docker Compose for local development.
-- Use the AWS SDK v3 (`@aws-sdk/client-s3`) with the S3-compatible MinIO endpoint.
-- Add MinIO service to `docker-compose.yml`.
-- `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, and `MINIO_BUCKET` go in `.env`.
+- Use RustFS (S3-compatible) running in Docker Compose for local development.
+- Use the AWS SDK v3 (`@aws-sdk/client-s3`) with the S3-compatible RustFS endpoint.
+- Add RustFS service to `docker-compose.yml`.
+- `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, and `S3_BUCKET` go in `.env`.
 
 ## Workflow
 
 1. Read `docs/context.json`. Confirm guard passes. Derive `PROJECT_PATH` and `DEPLOYMENT_TARGET`.
 2. **Set up object storage:**
    - `cloudflare` → Create R2 bucket using [references/cloudflare/01-cloudflare-r2.md](references/cloudflare/01-cloudflare-r2.md)
-   - `docker-postgres` → Set up MinIO using [references/docker-postgres/01-minio-setup.md](references/docker-postgres/01-minio-setup.md)
+   - `docker-postgres` → Set up RustFS using [references/docker-postgres/01-rustfs-setup.md](references/docker-postgres/01-rustfs-setup.md)
 3. Add the file metadata schema and service using [references/02-file-schema-and-service.md](references/02-file-schema-and-service.md).
 4. Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for the file metadata service.
 5. **Wire the service into app context and the server:**
@@ -77,7 +77,7 @@ On success write to `docs/context.json`:
 - [shared/references/worker-architecture.md](../../shared/references/worker-architecture.md)
 
 **Docker/Postgres target:**
-- [references/docker-postgres/01-minio-setup.md](references/docker-postgres/01-minio-setup.md)
+- [references/docker-postgres/01-rustfs-setup.md](references/docker-postgres/01-rustfs-setup.md)
 - [references/docker-postgres/03-app-integration.md](references/docker-postgres/03-app-integration.md)
 
 ## Review Checklist
