@@ -1,7 +1,93 @@
 ---
 name: adding-ai
-description: Adds Vercel AI SDK with OpenAI provider to an existing Product Builder project using a service class, Wrangler secrets, and React Router server context. Use when the user asks to add AI, LLM, text generation, image generation, structured output, OpenAI, or AI SDK to an existing Cloudflare Workers React Router project.
+description: Adds Vercel AI SDK with OpenAI provider to a bootstrapped project. Dispatches Cloudflare (Wrangler secrets) or Docker/Postgres (.env + process.env) based on deployment_target. Use when capabilities.ai is planned and scaffolding-project has run.
 ---
+
+# Adding AI
+
+Installs the Vercel AI SDK with OpenAI provider, creates an `AIService` class, wires it into the server and app context, and configures API key and model ID environment variables.
+
+## Context
+
+**Guard** — stop before changing any files if `context.project.name` is missing:
+
+```text
+Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
+```
+
+Derive `PROJECT_PATH` from `context.repository.local_path`. Derive `DEPLOYMENT_TARGET` from `context.project.deployment_target`.
+
+On success write:
+
+```json
+{
+  "capabilities": { "ai": "ready" }
+}
+```
+
+## Hard rules
+
+- Load `react-router-patterns` before changing React Router context or server request handling.
+- Use Vercel AI SDK (`ai`) with the OpenAI provider (`@ai-sdk/openai`).
+- Do not hardcode API keys in source.
+- Keep the AI service in `app/services/ai.service.ts` as a thin provider wrapper.
+- AI SDK functions (`generateText`, `streamText`, `generateImage`, `Output`) must only be used inside `app/services/ai.service.ts`. Routes call service methods, never the SDK directly.
+- The foundation skill creates the base service with provider configuration. Feature implementations extend the service with domain-specific methods.
+- Preserve existing server entry, React Router request handling, and app context.
+
+**Cloudflare target only:**
+- Cloudflare Workers do not have `process.env`. The OpenAI API key must come from the Worker `env` object, not `process.env`.
+- `OPENAI_API_KEY` is a Wrangler secret — set via `wrangler secret put` for remote deployments.
+- Model IDs go in `wrangler.jsonc` vars (not secrets).
+- The default OpenAI provider (`import { openai } from "@ai-sdk/openai"`) reads from `process.env` — always use `createOpenAI({ apiKey })` instead.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) when modifying `workers/app.ts`.
+
+**Docker/Postgres target only:**
+- API key and model IDs go in `.env` and are read via `process.env`.
+- `AIService` can be constructed once at module scope in `server/app.ts`.
+
+## Workflow
+
+1. Read `docs/context.json`. Confirm guard passes. Derive `PROJECT_PATH` and `DEPLOYMENT_TARGET`.
+2. Install AI SDK packages using [references/01-ai-sdk-setup.md](references/01-ai-sdk-setup.md).
+3. **Set up environment variables and secrets:**
+   - `cloudflare` → [references/cloudflare/02-env-and-secret.md](references/cloudflare/02-env-and-secret.md)
+   - `docker-postgres` → [references/docker-postgres/02-env-and-secret.md](references/docker-postgres/02-env-and-secret.md)
+4. Create the AI service using [references/03-ai-service.md](references/03-ai-service.md).
+5. **Wire the service into app context and the server:**
+   - `cloudflare` → [references/cloudflare/04-app-integration.md](references/cloudflare/04-app-integration.md)
+   - `docker-postgres` → [references/docker-postgres/04-app-integration.md](references/docker-postgres/04-app-integration.md)
+6. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md).
+7. Write `capabilities.ai = "ready"` to `docs/context.json`.
+8. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build`. Fix any failures before proceeding.
+
+## References
+
+**Shared (both targets):**
+- [references/01-ai-sdk-setup.md](references/01-ai-sdk-setup.md)
+- [references/03-ai-service.md](references/03-ai-service.md)
+- [shared/references/documentation-updates.md](../../shared/references/documentation-updates.md)
+
+**Cloudflare target:**
+- [references/cloudflare/02-env-and-secret.md](references/cloudflare/02-env-and-secret.md)
+- [references/cloudflare/04-app-integration.md](references/cloudflare/04-app-integration.md)
+- [shared/references/worker-architecture.md](../../shared/references/worker-architecture.md)
+
+**Docker/Postgres target:**
+- [references/docker-postgres/02-env-and-secret.md](references/docker-postgres/02-env-and-secret.md)
+- [references/docker-postgres/04-app-integration.md](references/docker-postgres/04-app-integration.md)
+
+## Review Checklist
+
+- [ ] Guard passed — `project.name` present in `docs/context.json`.
+- [ ] `ai` and `@ai-sdk/openai` installed.
+- [ ] `OPENAI_API_KEY` set in `.env`; `.env.example` has empty placeholder.
+- [ ] `app/services/ai.service.ts` exports `AIService` with a configured OpenAI provider.
+- [ ] `app/context.ts` exposes `ai: AIService`.
+- [ ] Server entry constructs `new AIService(...)` and passes it to context.
+- [ ] `docs/architecture.md` includes Vercel AI SDK / OpenAI in the Stack section.
+- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, and `pnpm build` pass.
+- [ ] `docs/context.json` updated with `capabilities.ai = "ready"`.
 
 # Adding AI
 
