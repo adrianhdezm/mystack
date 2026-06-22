@@ -44,14 +44,6 @@ fi
 
 # ── pre-flight checks ─────────────────────────────────────────────────────────
 
-EXPECTED_EMAIL="aahdezm@gmail.com"
-ACTUAL_EMAIL="$(git config user.email || true)"
-if [[ "$ACTUAL_EMAIL" != "$EXPECTED_EMAIL" ]]; then
-  echo "Error: git user.email is '$ACTUAL_EMAIL', expected '$EXPECTED_EMAIL'" >&2
-  echo "Fix with: git config user.email '$EXPECTED_EMAIL'" >&2
-  exit 1
-fi
-
 VERSION_FILE="plugins/$PLUGIN/VERSION"
 CURRENT=$(cat "$VERSION_FILE")
 
