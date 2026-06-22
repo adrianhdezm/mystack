@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing PRD"
+  short_description: "Interview the user and write or update the Product Requirements Document."
+  default_prompt: "Interview me about my product, determine foundation capabilities, and write or update docs/prd.md for this Product Builder project."
