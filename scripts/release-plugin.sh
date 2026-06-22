@@ -1,33 +1,65 @@
 #!/usr/bin/env bash
+# release-plugin.sh <plugin> <version>
+#
+# Bumps the version for a single plugin across all manifests, commits, and tags.
+# Supported plugins: product-builder, project-bootstrapper
+#
+# Examples:
+#   ./scripts/release-plugin.sh product-builder 0.2.1
+#   ./scripts/release-plugin.sh project-bootstrapper 0.1.1
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <version>" >&2
-  echo "Example: $0 0.1.13" >&2
+SUPPORTED_PLUGINS=(product-builder project-bootstrapper)
+
+# ── argument validation ───────────────────────────────────────────────────────
+
+if [[ $# -ne 2 ]]; then
+  echo "Usage: $0 <plugin> <version>" >&2
+  echo "Example: $0 product-builder 0.2.1" >&2
+  echo "         $0 project-bootstrapper 0.1.1" >&2
   exit 1
 fi
 
-VERSION=$1
+PLUGIN=$1
+VERSION=$2
 
+# Validate plugin name
+valid_plugin=false
+for p in "${SUPPORTED_PLUGINS[@]}"; do
+  [[ "$p" == "$PLUGIN" ]] && valid_plugin=true && break
+done
+if [[ "$valid_plugin" == false ]]; then
+  echo "Error: unknown plugin '$PLUGIN'" >&2
+  echo "Supported: ${SUPPORTED_PLUGINS[*]}" >&2
+  exit 1
+fi
+
+# Validate semver format
 if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Error: invalid version '$VERSION' — expected semver (e.g. 0.1.13)" >&2
+  echo "Error: invalid version '$VERSION' — expected semver (e.g. 0.2.1)" >&2
   exit 1
 fi
 
-CURRENT=$(cat plugins/product-builder/VERSION)
+# ── pre-flight checks ─────────────────────────────────────────────────────────
+
+VERSION_FILE="plugins/$PLUGIN/VERSION"
+CURRENT=$(cat "$VERSION_FILE")
+
 if [[ "$VERSION" == "$CURRENT" ]]; then
   echo "Error: version '$VERSION' is already the current version" >&2
   exit 1
 fi
+
 if [[ "$(printf '%s\n%s' "$CURRENT" "$VERSION" | sort -V | tail -1)" != "$VERSION" ]]; then
   echo "Error: version '$VERSION' is not higher than current '$CURRENT'" >&2
   exit 1
 fi
 
-if git tag -l "$VERSION" | grep -q .; then
-  echo "Error: tag '$VERSION' already exists" >&2
+TAG="$PLUGIN-v$VERSION"
+if git tag -l "$TAG" | grep -q .; then
+  echo "Error: tag '$TAG' already exists" >&2
   exit 1
 fi
 
@@ -36,32 +68,32 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 
-echo "$VERSION" > plugins/product-builder/VERSION
+# ── update files ──────────────────────────────────────────────────────────────
 
 tmp=$(mktemp)
 trap 'rm -f "$tmp"' EXIT
 
-jq --arg version "$VERSION" \
-  '.version = $version' \
-  plugins/product-builder/.codex-plugin/plugin.json \
-  > "$tmp"
-mv "$tmp" plugins/product-builder/.codex-plugin/plugin.json
+echo "$VERSION" > "$VERSION_FILE"
 
+# .codex-plugin/plugin.json
+jq --arg v "$VERSION" '.version = $v' \
+  "plugins/$PLUGIN/.codex-plugin/plugin.json" > "$tmp"
+mv "$tmp" "plugins/$PLUGIN/.codex-plugin/plugin.json"
+
+# .claude-plugin/plugin.json
 tmp=$(mktemp)
+jq --arg v "$VERSION" '.version = $v' \
+  "plugins/$PLUGIN/.claude-plugin/plugin.json" > "$tmp"
+mv "$tmp" "plugins/$PLUGIN/.claude-plugin/plugin.json"
 
-jq --arg version "$VERSION" \
-  '.version = $version' \
-  plugins/product-builder/.claude-plugin/plugin.json \
-  > "$tmp"
-mv "$tmp" plugins/product-builder/.claude-plugin/plugin.json
-
+# .claude-plugin/marketplace.json
 tmp=$(mktemp)
-
-jq --arg version "$VERSION" \
-  '(.plugins[] | select(.name=="product-builder")).version = $version' \
-  .claude-plugin/marketplace.json \
-  > "$tmp"
+jq --arg name "$PLUGIN" --arg v "$VERSION" \
+  '(.plugins[] | select(.name==$name)).version = $v' \
+  .claude-plugin/marketplace.json > "$tmp"
 mv "$tmp" .claude-plugin/marketplace.json
+
+# ── verify ────────────────────────────────────────────────────────────────────
 
 errors=0
 check() {
@@ -72,29 +104,29 @@ check() {
   fi
 }
 
+check "VERSION file" "$(cat "$VERSION_FILE")"
 check "codex plugin.json" \
-  "$(jq -r '.version' plugins/product-builder/.codex-plugin/plugin.json)"
+  "$(jq -r '.version' "plugins/$PLUGIN/.codex-plugin/plugin.json")"
 check "claude plugin.json" \
-  "$(jq -r '.version' plugins/product-builder/.claude-plugin/plugin.json)"
+  "$(jq -r '.version' "plugins/$PLUGIN/.claude-plugin/plugin.json")"
 check "marketplace.json" \
-  "$(jq -r '.plugins[] | select(.name=="product-builder") | .version' .claude-plugin/marketplace.json)"
+  "$(jq -r --arg name "$PLUGIN" '.plugins[] | select(.name==$name) | .version' .claude-plugin/marketplace.json)"
 
 if [[ $errors -gt 0 ]]; then
-  echo "$errors file(s) out of sync" >&2
+  echo "$errors file(s) out of sync — aborting" >&2
   exit 1
 fi
 
+# ── commit and tag ────────────────────────────────────────────────────────────
+
 git add \
-  plugins/product-builder/VERSION \
-  plugins/product-builder/.codex-plugin/plugin.json \
-  plugins/product-builder/.claude-plugin/plugin.json \
+  "$VERSION_FILE" \
+  "plugins/$PLUGIN/.codex-plugin/plugin.json" \
+  "plugins/$PLUGIN/.claude-plugin/plugin.json" \
   .claude-plugin/marketplace.json
 
-git commit -m "$(cat <<EOF
-release(product-builder): v$VERSION
-EOF
-)"
+git commit -m "release($PLUGIN): v$VERSION"
 
-git tag "$VERSION"
+git tag "$TAG"
 
-echo "✓ Committed and tagged $VERSION"
+echo "✓ Released $PLUGIN v$VERSION (tag: $TAG)"
