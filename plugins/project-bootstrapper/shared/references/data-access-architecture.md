@@ -95,12 +95,12 @@ projects      -> project.dao.ts
 
 Each DAO accepts a typed Drizzle database instance. The exact type depends on the deployment target:
 - **D1 (Cloudflare):** `DrizzleD1Database<typeof schema>`
-- **Postgres (Docker/Postgres):** `PostgresJsDatabase<typeof schema>`
+- **Postgres (Docker/Postgres):** `NodePgDatabase<typeof schema>` (from `drizzle-orm/node-postgres`)
 
 ```ts
 constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
 // or for Postgres:
-constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
+constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 ```
 
 This allows DAOs to be instantiated with either the request database client or a transaction client.
@@ -368,7 +368,7 @@ Each Query accepts a typed Drizzle database instance, same type as DAOs (target-
 ```ts
 constructor(private readonly db: DrizzleD1Database<typeof schema>) {}
 // or for Postgres:
-constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
+constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 ```
 
 ### Query Interface

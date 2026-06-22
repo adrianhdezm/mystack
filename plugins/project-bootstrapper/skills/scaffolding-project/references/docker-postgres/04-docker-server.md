@@ -8,10 +8,16 @@ Sets up the Node.js server entry point using Hono, and creates `docker-compose.y
 
 ```sh
 pnpm view hono version
-pnpm add hono@latest
+pnpm view @hono/node-server version
 ```
 
-2. Create `server/app.ts` — the Node.js server entry point.
+2. Install Hono and the Node.js server adapter.
+
+```sh
+pnpm add hono@latest @hono/node-server@latest
+```
+
+3. Create `server/app.ts` — the Node.js server entry point.
 
 ```ts
 import { Hono } from 'hono';
@@ -36,13 +42,6 @@ serve({ fetch: app.fetch, port }, () => {
 });
 
 export default app;
-```
-
-3. Install the Hono Node.js server adapter.
-
-```sh
-pnpm view @hono/node-server version
-pnpm add @hono/node-server@latest
 ```
 
 4. Create `docker-compose.yml` for local development.

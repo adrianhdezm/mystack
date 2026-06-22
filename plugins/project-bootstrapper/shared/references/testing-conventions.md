@@ -204,24 +204,24 @@ Integration tests connect to the Docker Compose Postgres instance. The `DATABASE
 
 ```ts
 // tests/integration/db-test-utils.ts
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import postgres from "postgres";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { Pool } from 'pg';
 
-import * as schema from "~/db/schema";
+import * as schema from '~/db/schema';
 
 const connectionString = process.env.DATABASE_URL!;
 
 export function getTestDb() {
-  const client = postgres(connectionString, { max: 1 });
-  return drizzle(client, { schema });
+  const pool = new Pool({ connectionString, max: 1 });
+  return drizzle(pool, { schema });
 }
 
 export async function applyMigrations() {
-  const client = postgres(connectionString, { max: 1 });
-  const db = drizzle(client);
-  await migrate(db, { migrationsFolder: "db/migrations" });
-  await client.end();
+  const pool = new Pool({ connectionString, max: 1 });
+  const db = drizzle(pool);
+  await migrate(db, { migrationsFolder: 'db/migrations' });
+  await pool.end();
 }
 ```
 
