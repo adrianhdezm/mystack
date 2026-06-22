@@ -1,0 +1,4 @@
+interface:
+  display_name: "Selecting Capabilities"
+  short_description: "Collect the product idea, choose a deployment target, and select infrastructure capabilities."
+  default_prompt: "Collect the product idea, select the deployment target (Cloudflare or Docker/Postgres), and choose which capabilities to include (database, auth, file storage, AI, landing page, legal pages)."

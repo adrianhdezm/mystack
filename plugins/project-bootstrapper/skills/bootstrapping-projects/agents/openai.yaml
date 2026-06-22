@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bootstrapping Projects"
+  short_description: "Bootstrap a new project from an idea — repo, capabilities, scaffold, and foundation skills."
+  default_prompt: "Bootstrap a new project: prepare the repository, select capabilities and deployment target, scaffold the infrastructure, and run all foundation skills."
