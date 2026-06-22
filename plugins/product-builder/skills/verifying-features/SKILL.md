@@ -3,21 +3,19 @@ name: verifying-features
 description: Verifies a Product Builder feature implementation against its spec from docs/features/, checking acceptance criteria and reporting deviations, missing items, and inconsistencies. Use when the user asks to verify, review, check, validate, or QA a feature implementation.
 ---
 
-# Verify Feature
+# Verifying Features
+
+Read-only skill that checks a feature implementation against its spec — verifies each acceptance criterion, runs the project checks, and produces a structured report with a Pass / Pass with notes / Fail verdict.
 
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
-**Guard** — stop before proceeding if `context.skills.implementing-features` is not `"done"` in `docs/context.json`. Stop with:
+**Guard** — stop before proceeding if `context.skills.implementing-features` is not `"done"`:
 
 ```text
 Stop — docs/context.json is missing skills.implementing-features = "done". Run implementing-features first, then re-run this skill.
 ```
 
-Set `skills.verifying-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
-
-**Writes:**
+Set `skills.verifying-features` to `in-progress` at the start. On success write:
 
 ```json
 {
@@ -27,60 +25,52 @@ Set `skills.verifying-features` to `in-progress` at the start of the workflow. O
 
 ## Input
 
-A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.md`). If the user does not specify which spec, list available `docs/features/*.spec.md` files and ask.
+A feature spec from `docs/features/` (e.g. `docs/features/02-color-upload.spec.md`). If not specified, list available specs and ask.
 
 ## Workflow
 
 ### 1) Read Context
 
-- Read the target spec file.
-- Read `docs/prd.md` — use it to verify the feature aligns with the product's problem statement, target users, primary workflow, and entry point flow.
-- Read `docs/data-model.md` — use it as the expected entity/relationship map.
-- Read `docs/architecture.md` — use the Implementation Log for known deviations and open questions.
-- Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns to verify against.
-- Read dependency specs listed in the Dependencies section.
+- Read the target spec and all dependency specs in its Dependencies section.
+- Read `docs/prd.md` — verify the feature aligns with the product's problem statement and primary workflow.
+- Read `docs/data-model.md` — expected entity/relationship map.
+- Read `docs/architecture.md` — known deviations and open questions.
+- Read all `docs/conventions/*.md` — patterns and anti-patterns to verify against.
 
 ### 2) Check Implementation
 
-For each section in the spec, verify the code matches:
+For each spec section:
 
-- **Database**: Confirm tables, columns, indexes, and relationships exist in `app/db/schema.ts` and migrations under `db/migrations/`. Verify `docs/data-model.md` matches `app/db/schema.ts`.
-- **DAOs**: Confirm DAOs exist in `app/db/daos/` and implement the `Dao` interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md).
-- **Queries**: Confirm relation queries exist in `app/db/queries/` for any cross-table reads and implement the `RelationQuery` interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md). Verify services use queries instead of raw Drizzle joins.
-- **Services**: Confirm services exist in `app/services/` with correct transaction boundaries, DAO composition, and query delegation. Verify services do not import schema tables or build raw Drizzle queries.
-- **Routes**: Confirm route files exist, paths are registered in `app/routes.ts`, and loaders/actions match the spec.
-- **Components**: Confirm shadcn/ui components are installed and custom components are created as specified.
-- **Tests**: Confirm test files exist for each DAO in `tests/integration/db/daos/`, each Query in `tests/integration/db/queries/`, each Service in `tests/integration/services/`, and each route component in `tests/unit/routes/`. Each test file should follow the `<source-name>.test.ts` (or `.test.tsx`) naming convention.
-- **Auth**: If routes are marked as protected, confirm authentication checks are in place.
-- **Conventions**: Check that the implementation follows project conventions (patterns and anti-patterns) in `docs/conventions/`.
+- **Database**: tables, columns, indexes, and relationships in `app/db/schema.ts` and `db/migrations/`. Verify `docs/data-model.md` matches `app/db/schema.ts`.
+- **DAOs**: exist in `app/db/daos/` and implement the `Dao` interface per [data-access-architecture.md](../../shared/references/data-access-architecture.md).
+- **Queries**: exist in `app/db/queries/` for cross-table reads; implement `RelationQuery` interface; services use queries instead of raw Drizzle joins.
+- **Services**: in `app/services/` with correct transaction boundaries and DAO composition; do not import schema tables or build raw Drizzle queries.
+- **Routes**: files exist, paths registered in `app/routes.ts`, loaders/actions match the spec.
+- **Components**: shadcn/ui components installed; custom components created as specified.
+- **Tests**: integration tests in `tests/integration/db/daos/`, `tests/integration/db/queries/`, `tests/integration/services/`; unit tests in `tests/unit/routes/`.
+- **Auth**: protected routes have authentication checks.
+- **Conventions**: implementation follows patterns and avoids anti-patterns in `docs/conventions/`.
 
 ### 3) Walk Acceptance Criteria
 
-For each acceptance criterion in the spec:
-
-1. Trace the code path that fulfills it.
-2. Mark as **met**, **partially met**, or **not met**.
-3. For partially met or not met, describe what is missing or different.
+For each criterion: trace the code path, mark as **met** / **partially met** / **not met**, and describe what is missing or different.
 
 ### 4) Run Checks
 
-- Run `pnpm typecheck` and report the result.
-- Run `pnpm lint` and report the result.
-- Run `pnpm test` and report the result.
-- Run `pnpm build` and report the result.
+Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. Report each result.
 
-### 5) Report
+### 5) Report and Verdict
 
-Produce a static verification report with these sections:
+Produce a static verification report:
 
 ```markdown
 # Verification: NN — Title
 
 ## Acceptance Criteria
 
-| #   | Criterion      | Status                        | Notes   |
-| --- | -------------- | ----------------------------- | ------- |
-| 1   | When X, then Y | Met / Partially met / Not met | Details |
+| # | Criterion | Status | Notes |
+|---|-----------|--------|-------|
+| 1 | When X, then Y | Met / Partially met / Not met | … |
 
 ## Deviations from Spec
 
@@ -89,7 +79,7 @@ Produce a static verification report with these sections:
 ## Missing Items
 
 - Items specified but not found in the code.
-- Test files missing for: [list any DAOs/Queries/Services without test coverage in `tests/integration/`, and any route components without test coverage in `tests/unit/routes/`].
+- Test files missing for: [list DAOs/Queries/Services/routes without coverage].
 
 ## Inconsistencies
 
@@ -97,38 +87,34 @@ Produce a static verification report with these sections:
 - `docs/data-model.md` out of sync with `app/db/schema.ts`.
 ```
 
-Do not modify code — this skill is read-only.
+Verdict:
+- **Pass** — all criteria met, checks pass, feature aligns with product requirements.
+- **Pass with notes** — all criteria met but minor deviations or inconsistencies exist. List recommendations.
+- **Fail** — one or more criteria not met or checks fail. List what needs fixing and suggest re-running `implementing-features`.
 
-### 6) Update Manifest
+Do not modify any code during this skill.
 
-If `docs/features/manifest.json` exists and verification passes (Pass or Pass with notes), set the feature's status to `verified`.
+### 6) Finish
 
-### 7) Update Context
+If verification passes, set the feature's status to `verified` in `docs/features/manifest.json`. Write `skills.verifying-features = "done"` to `docs/context.json`.
 
-Write `skills.verifying-features = "done"` to `docs/context.json`.
+## References
 
-### 8) Result
+- **Data access architecture**: [data-access-architecture.md](../../shared/references/data-access-architecture.md)
 
-Present the verification report to the user with a verdict:
+## Review Checklist
 
-- **Pass** — all acceptance criteria met, checks pass, and feature aligns with the product requirements.
-- **Pass with notes** — all criteria met but there are minor deviations, inconsistencies, or PRD alignment concerns. List recommendations.
-- **Fail** — one or more acceptance criteria not met, checks fail, or feature contradicts the product requirements. List the specific items that need to be fixed and suggest running `implementing-features` again with the spec to address them.
-
-## Validation Checklist
-
-- [ ] Target spec was read completely.
-- [ ] `docs/prd.md` was consulted to verify feature aligns with product requirements.
-- [ ] `docs/data-model.md` was checked against `app/db/schema.ts` for consistency.
-- [ ] `docs/architecture.md` was consulted for known deviations.
-- [ ] Every spec section (database, DAOs, queries, services, routes, components) was checked against the codebase.
-- [ ] Implementation was checked against project conventions and anti-patterns in `docs/conventions/`.
-- [ ] Every acceptance criterion was individually evaluated.
-- [ ] Test files in `tests/integration/` were checked for all DAOs, Queries, and Services.
-- [ ] Test files in `tests/unit/routes/` were checked for all route components.
-- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` were run.
-- [ ] Report was presented with clear status for each criterion.
-- [ ] Verdict was presented (Pass, Pass with notes, or Fail).
-- [ ] No code was modified during verification.
-- [ ] `docs/context.json` guards passed (`skills.implementing-features = "done"`).
-- [ ] `docs/context.json` was updated with `skills.verifying-features = "done"`.
+- [ ] `docs/context.json` guard passed (`skills.implementing-features = "done"`).
+- [ ] Target spec read completely.
+- [ ] `docs/prd.md` consulted for product alignment.
+- [ ] `docs/data-model.md` checked against `app/db/schema.ts`.
+- [ ] `docs/architecture.md` consulted for known deviations.
+- [ ] Every spec section checked against the codebase.
+- [ ] Implementation checked against `docs/conventions/`.
+- [ ] Every acceptance criterion individually evaluated.
+- [ ] Integration tests checked for all DAOs, Queries, and Services.
+- [ ] Unit tests checked for all route components.
+- [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` run.
+- [ ] Report presented with clear per-criterion status and a verdict.
+- [ ] No code modified during verification.
+- [ ] `docs/context.json` updated with `skills.verifying-features = "done"`.

@@ -5,19 +5,17 @@ description: Adds Cloudflare R2 file storage to an existing Product Builder proj
 
 # Adding File Storage
 
+Creates a Cloudflare R2 bucket, adds a `files` metadata table to D1, builds a `FilesService` that stores bytes in R2 and metadata in D1, and wires the service into the Worker and app context.
+
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
-**Guard** — stop before changing any files if `context.capabilities.database` is not `true` in `docs/context.json`. Stop with:
+**Guard** — stop before changing any files if `context.capabilities.database` is not `true`:
 
 ```text
 Stop — docs/context.json is missing capabilities.database = true. Run adding-database first, then re-run this skill.
 ```
 
-Set `skills.adding-file-storage` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
-
-**Writes:**
+Set `skills.adding-file-storage` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
@@ -27,71 +25,56 @@ Set `skills.adding-file-storage` to `in-progress` at the start of the workflow. 
 }
 ```
 
-## Required inputs
+Default R2 binding: `APP_FILES`. Default D1 binding: `APP_DB`. Default bucket name: `<project-name>-files`.
 
-Work in the target project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask for only the path before changing files.
+## Rules
 
-```text
-R2_BUCKET_NAME: <project-name>-files
-R2_BINDING: APP_FILES
-D1_BINDING: APP_DB
-```
-
-Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding unless the existing project already uses different binding names.
-
-## Hard rules
-
-- Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, actions, upload forms, or resource routes. Any React Router code must follow those patterns.
-- Require `context.capabilities.database = true` in `docs/context.json`; if missing, run the `adding-database` skill first.
-- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for file metadata service boundaries, transaction ownership, and any DAO or data access workflow changes.
-- Store file bytes in Cloudflare R2 and file metadata in the D1 `files` table.
-- Do not store raw file contents, Cloudflare account IDs, or API tokens in D1.
-- Preserve existing `wrangler.jsonc` settings and merge R2 configuration into it.
-- Preserve existing React Router request handling and inject file storage services through router context.
-- Read [worker-architecture.md](../../shared/references/worker-architecture.md) when modifying `workers/app.ts`. New bindings must be wired inline — do not create helper files in `workers/`.
-- Roll back uploaded R2 objects if inserting file metadata fails.
-
-## Gotchas
-
-- R2 buckets created with `wrangler r2 bucket create` are region-specific. The bucket name must be globally unique across all Cloudflare accounts — a "bucket already exists" error usually means the name is taken, not that the bucket was already created in this account.
-- R2 bindings in `wrangler.jsonc` use `r2_buckets` (plural), not `r2_bucket`. Using the singular form silently ignores the binding.
-- Uploading to R2 succeeds even if the D1 metadata insert later fails. Always delete the R2 object in the catch path to avoid orphaned files with no metadata.
-- `env.APP_FILES.put()` accepts a `ReadableStream`, `ArrayBuffer`, or `string` — not a `File` or `Blob` directly. Extract the body from the uploaded file before calling `put()`.
+- Store file bytes in Cloudflare R2 and file metadata in the D1 `files` table — never store raw file contents in D1.
+- Roll back uploaded R2 objects if inserting file metadata fails — always delete the R2 object in the catch path.
+- Use `r2_buckets` (plural) in `wrangler.jsonc` — the singular `r2_bucket` silently ignores the binding.
+- `env.APP_FILES.put()` accepts `ReadableStream`, `ArrayBuffer`, or `string` — not `File` or `Blob` directly; extract the body before calling `put()`.
+- R2 bucket names are globally unique across all Cloudflare accounts — a "bucket already exists" error means the name is taken, not that the bucket exists in this account.
+- Preserve existing `wrangler.jsonc` settings — merge R2 configuration in, never overwrite.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for service boundaries and transaction ownership.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
+- Load `react-router-patterns` before changing React Router context, Worker request handling, or any route.
 
 ## Workflow
 
-1. Verify the target project is a Product Builder-style Cloudflare Workers, Vite, React Router, TypeScript, pnpm, D1, and Drizzle project.
+1. Read `docs/context.json`. Confirm `capabilities.database = true`. Set `skills.adding-file-storage` to `in-progress`.
 2. Create or register the Cloudflare R2 bucket using [01-cloudflare-r2.md](references/01-cloudflare-r2.md).
 3. Add the file metadata schema and service using [02-file-schema-and-service.md](references/02-file-schema-and-service.md).
 4. Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for the file metadata service and any data access changes.
 5. Load `react-router-patterns`, then wire the service into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
-6. Generate/apply migrations and validate types using [04-migrations-validation.md](references/04-migrations-validation.md).
-7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) with these specifics:
-   - **Stack addition**: `Cloudflare R2 (file storage)`.
-   - **Data model addition**: `files` entity with columns, types, and relationships matching `app/db/schema.ts`.
-   - **README additions**: R2 bucket setup, file metadata table, upload/delete behavior.
-   - **AGENTS.md additions**: file storage instructions.
+6. Generate and apply migrations, validate types using [04-migrations-validation.md](references/04-migrations-validation.md).
+7. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md): stack entry (`Cloudflare R2`), `files` entity in data model, README and AGENTS.md additions.
 8. Write `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"` to `docs/context.json`.
-9. Run formatting, typecheck, lint, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
-10. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+9. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and migration commands. Fix any failures before committing.
+10. Commit using the repository's Conventional Commits format.
 
-## Validation checklist
+## References
 
-- [ ] `wrangler.jsonc` includes an R2 binding for `APP_FILES`.
-- [ ] `app/db/schema.ts` exports a `files` table and includes it in `schema`.
-- [ ] A generated migration creates the `files` metadata table.
+- **Cloudflare R2**: [references/01-cloudflare-r2.md](references/01-cloudflare-r2.md)
+- **File schema and service**: [references/02-file-schema-and-service.md](references/02-file-schema-and-service.md)
+- **App integration**: [references/03-app-integration.md](references/03-app-integration.md)
+- **Migrations and validation**: [references/04-migrations-validation.md](references/04-migrations-validation.md)
+- **Documentation updates**: [documentation-updates.md](../../shared/references/documentation-updates.md)
+- **Data access architecture**: [data-access-architecture.md](../../shared/references/data-access-architecture.md)
+- **Worker architecture**: [worker-architecture.md](../../shared/references/worker-architecture.md)
+
+## Review Checklist
+
+- [ ] `docs/context.json` guard passed (`capabilities.database = true`).
+- [ ] `wrangler.jsonc` includes `r2_buckets` binding for `APP_FILES`.
+- [ ] `app/db/schema.ts` exports a `files` table included in `schema`.
+- [ ] Migration created the `files` metadata table.
 - [ ] `app/services/file.service.ts` uploads to R2 before inserting metadata.
 - [ ] Failed metadata inserts delete the newly uploaded R2 object.
-- [ ] Deleting a file removes both the D1 metadata row and the R2 object.
+- [ ] Deleting a file removes both the D1 row and the R2 object.
 - [ ] `app/context.ts` exposes `files: FilesService`.
-- [ ] `workers/app.ts` constructs `new FilesService(db, env.APP_FILES)`.
-- [ ] `data-access-architecture.md` was followed for file metadata service boundaries and any DAO or data access workflow changes.
-- [ ] `react-router-patterns` was loaded and followed for any React Router context, Worker request-handling, route, upload, or resource endpoint changes.
+- [ ] `workers/app.ts` constructs `new FilesService(db, env.APP_FILES)` inline.
 - [ ] Generated `Env` types include `APP_FILES`.
-- [ ] `docs/architecture.md` includes Cloudflare R2 in the Stack section.
-- [ ] `docs/data-model.md` includes the `files` entity matching `app/db/schema.ts`.
-- [ ] `README.md` and `AGENTS.md` document file storage setup and behavior, and `AGENTS.md` references `docs/`.
-- [ ] Migrations and project verification commands work or failures are explained.
-- [ ] `docs/context.json` guards passed (`capabilities.database = true`).
-- [ ] `docs/context.json` was updated with `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"`.
-- [ ] Generated and updated files were committed with a Conventional Commit message.
+- [ ] `docs/data-model.md` includes the `files` entity.
+- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and migration commands pass.
+- [ ] `docs/context.json` updated with `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"`.
+- [ ] Changes committed with Conventional Commit message.

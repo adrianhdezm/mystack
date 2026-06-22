@@ -5,138 +5,72 @@ description: Prepares a GitHub repository for Product Builder work by deriving o
 
 # Preparing Repositories
 
-## Input discovery
+Derives a `<owner>/<repo>` slug and a local parent folder from the user's prompt, creates or validates the remote repository with `gh`, verifies it is empty, and clones it. Writes the result to `docs/context.json` for downstream skills.
 
-Derive these values from the user's prompt before taking action:
+## Rules
 
-```text
-REPOSITORY: <owner>/<repo>
-LOCAL_FOLDER: <parent-folder>
-```
-
-Prefer inference over asking. The user does not need to provide explicit `REPOSITORY:` or `LOCAL_FOLDER:` labels when the prompt contains enough information.
-
-Derive `REPOSITORY` from:
-
-- An explicit `<owner>/<repo>` GitHub repository slug.
-- A GitHub repository URL such as `https://github.com/<owner>/<repo>` or `git@github.com:<owner>/<repo>.git`; normalize it to `<owner>/<repo>`.
-- A repository name plus a clear GitHub owner or account in the prompt.
-
-Derive `LOCAL_FOLDER` from:
-
-- An explicit parent folder such as `~/Code`.
-- A requested local repository path such as `~/Code/<repo>`; use the parent folder as `LOCAL_FOLDER`.
-- Wording such as "in", "under", "inside", "clone to", or "create at" followed by a local path.
-
-If `REPOSITORY` cannot be derived with high confidence, ask the user for only the repository before taking repository actions.
-
-If `LOCAL_FOLDER` cannot be derived with high confidence, ask the user where the code should be located before taking repository actions. Do not derive `LOCAL_FOLDER` from the current working directory, the repository name, the GitHub owner, or nearby existing folders.
-
-If a derived value is ambiguous, state the candidates and ask the user to choose. Do not invent a GitHub owner or local folder.
-
-Missing repository or local target information is blocking, not optional. Never continue by creating a fallback folder such as `work/`, `./work`, the current workspace, a temporary directory, or any other agent-chosen location. Never say that the missing repository or destination will not block the work. Ask for the missing value and wait.
-
-Validate the final `REPOSITORY` as exactly `<owner>/<repo>`, with no branch, spaces, empty segments, or extra path parts. Expand `LOCAL_FOLDER` to an absolute parent folder. Derive the expected local path as `<LOCAL_FOLDER>/<repo>`.
-
-## Hard rules
-
-- Use the GitHub CLI (`gh`) for GitHub operations: auth checks, repository lookup, repository creation, remote inspection, and cloning.
+- Use the GitHub CLI (`gh`) for all GitHub operations — auth checks, repository lookup, creation, remote inspection, and cloning.
 - Stop if `gh auth status` fails.
-- Stop before creating files, scaffolding code, or bootstrapping if either `REPOSITORY` or `LOCAL_FOLDER` is missing or ambiguous.
-- Stop before returning a repository path if the local target contains pre-existing app files or user files.
-- Stop before cloning if the remote repository has any tracked files, including only `README.md`, `.gitignore`, license, or other starter files.
+- `REPOSITORY` must be exactly `<owner>/<repo>` — reject branches, spaces, empty segments, and extra path parts.
+- Derive `LOCAL_FOLDER` only from explicit prompt content ("in `~/Code`", "clone to `~/Code/<repo>`"). Never derive it from the current working directory, repository name, GitHub owner, or nearby folders.
+- Stop before returning a path if the local target contains pre-existing app files or user files.
+- Stop before cloning if the remote has any tracked files (including `README.md`, `.gitignore`, or license files).
 - Never delete, overwrite, or clean user files to make a repository usable.
-- Never create a local-only Product Builder app. Product Builder must prepare a GitHub repository and an explicit local destination first.
+- Never create a local-only Product Builder app — a GitHub repository and an explicit local destination are mandatory.
+- Missing `REPOSITORY` or `LOCAL_FOLDER` is blocking — never fall back to `work/`, a temp directory, or any agent-chosen location.
 
 ## Workflow
 
-1. Derive `REPOSITORY` and `LOCAL_FOLDER` from the user's prompt using the input discovery rules above.
-2. If either value is missing or ambiguous, ask for only the missing or ambiguous value and wait before continuing.
-3. Validate `REPOSITORY` as exactly `<owner>/<repo>`. Reject branches, spaces, empty segments, and extra path parts after URL normalization.
-4. Expand `LOCAL_FOLDER` to an absolute parent folder and derive `LOCAL_REPOSITORY_PATH` as `<LOCAL_FOLDER>/<repo>`.
-5. Verify required local tools and GitHub authentication:
-
+1. Derive `REPOSITORY` and `LOCAL_FOLDER` from the user's prompt:
+   - `REPOSITORY` from: an explicit `<owner>/<repo>` slug, a GitHub URL (`https://github.com/...` or `git@github.com:...` — normalize to `<owner>/<repo>`), or a repo name plus a clear GitHub owner in the prompt.
+   - `LOCAL_FOLDER` from: an explicit parent folder, a requested local path (use the parent), or path-indicating words ("in", "under", "clone to", "create at") followed by a local path.
+   - If either value cannot be derived with high confidence, ask for only the missing value and wait.
+2. Validate `REPOSITORY` as exactly `<owner>/<repo>`. Expand `LOCAL_FOLDER` to an absolute path. Derive `LOCAL_REPOSITORY_PATH` as `<LOCAL_FOLDER>/<repo>`.
+3. Verify tools and auth:
    ```sh
    command -v gh
    gh auth status
    ```
-
    Stop if either command fails.
-
-6. If the local target already exists, verify it using [01-existing-local-target.md](references/01-existing-local-target.md); if safe, return `existing-local`.
-7. If the local target does not exist, verify or create the remote using [02-missing-local-target.md](references/02-missing-local-target.md).
-8. Confirm the remote is empty using [03-empty-remote-check.md](references/03-empty-remote-check.md).
-9. Clone the empty remote repository:
-
+4. If the local target already exists, verify it using [01-existing-local-target.md](references/01-existing-local-target.md); if safe, return `existing-local`.
+5. If the local target does not exist, verify or create the remote using [02-missing-local-target.md](references/02-missing-local-target.md).
+6. Confirm the remote is empty using [03-empty-remote-check.md](references/03-empty-remote-check.md). Stop if any tracked files are found.
+7. Clone the empty remote:
    ```sh
    gh repo clone "$REPOSITORY" "$LOCAL_REPOSITORY_PATH"
-   cd "$LOCAL_REPOSITORY_PATH"
+   ```
+8. Write to `docs/context.json` (create with default template from [context-schema.md](../../shared/references/context-schema.md) if missing):
+   ```json
+   {
+     "repository": {
+       "local_path": "<LOCAL_REPOSITORY_PATH>",
+       "status": "<cloned | created-and-cloned | existing-local>",
+       "github_slug": "<REPOSITORY>"
+     },
+     "skills": { "preparing-repositories": "done" }
+   }
+   ```
+9. Output the contract:
+   ```text
+   LOCAL_REPOSITORY_PATH: <absolute path>
+   REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
    ```
 
-10. Return the output contract below with `REPOSITORY_STATUS: cloned | created-and-cloned`.
+## References
 
-## Context
+- **Existing local target**: [references/01-existing-local-target.md](references/01-existing-local-target.md)
+- **Missing local target**: [references/02-missing-local-target.md](references/02-missing-local-target.md)
+- **Empty remote check**: [references/03-empty-remote-check.md](references/03-empty-remote-check.md)
+- **Context schema**: [context-schema.md](../../shared/references/context-schema.md)
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+## Review Checklist
 
-Set `skills.preparing-repositories` to `in-progress` at the start of the workflow. On successful completion, write the following fields and set the status to `done`. If `docs/context.json` does not exist yet, create it using the default template from [context-schema.md](../../shared/references/context-schema.md) before writing.
-
-**Writes:**
-
-```json
-{
-  "repository": {
-    "local_path": "<LOCAL_REPOSITORY_PATH>",
-    "status": "<REPOSITORY_STATUS>",
-    "github_slug": "<REPOSITORY>"
-  },
-  "skills": {
-    "preparing-repositories": "done"
-  }
-}
-```
-
-## Output contract
-
-Always end with these values when successful:
-
-```text
-LOCAL_REPOSITORY_PATH: <absolute path>
-REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
-```
-
-These values are also written to `docs/context.json` so downstream skills can read them without relying on conversation history.
-
-## Stop message
-
-When stopping because the prompt does not identify a repository or destination, ask only for the missing value:
-
-```text
-I need the GitHub repository and local parent folder before I can prepare the Product Builder project. Please provide the missing value.
-```
-
-Do not use this kind of fallback:
-
-```text
-No GitHub repository or destination folder was provided, so I will create the application locally inside work/.
-```
-
-When stopping because a repository is not empty, say this directly:
-
-```text
-The repository <owner>/<repo> is not empty, so I stopped before preparing it. Remove the existing files or provide a new empty repository.
-```
-
-Include the local or remote files found when available.
-
-## Validation checklist
-
-- [ ] `gh auth status` succeeds.
-- [ ] `REPOSITORY` and `LOCAL_FOLDER` were derived from the prompt or requested only when missing.
-- [ ] `REPOSITORY` and `LOCAL_FOLDER` are valid.
-- [ ] Existing local clone, when present, points to `REPOSITORY`.
-- [ ] Local target has no pre-existing files beyond repository metadata before handoff.
-- [ ] Remote exists or was created with `gh repo create`.
-- [ ] Remote has zero tracked files before clone.
-- [ ] Output contract includes `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.
-- [ ] `docs/context.json` was created or updated with `repository.*` fields and `skills.preparing-repositories = "done"`.
+- [ ] `gh auth status` succeeded.
+- [ ] `REPOSITORY` and `LOCAL_FOLDER` derived from prompt or requested when missing — no fallback folders invented.
+- [ ] `REPOSITORY` validated as exactly `<owner>/<repo>`.
+- [ ] Existing local clone (if present) points to `REPOSITORY`.
+- [ ] Local target had no pre-existing files beyond repository metadata.
+- [ ] Remote existed or was created with `gh repo create`.
+- [ ] Remote had zero tracked files before clone.
+- [ ] `docs/context.json` created or updated with `repository.*` and `skills.preparing-repositories = "done"`.
+- [ ] Output contract emitted with `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.

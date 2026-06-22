@@ -5,70 +5,54 @@ description: Interviews the user, determines foundation capabilities, and writes
 
 # Writing PRD
 
+Interviews the user to reach shared product understanding, derives the required foundation capabilities, presents them for approval, and writes `docs/prd.md`.
+
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
-Set `skills.writing-prd` to `in-progress` at the start of the workflow. On successful completion, set it to `done`. If `docs/context.json` does not exist, create it using the default template from [context-schema.md](../../shared/references/context-schema.md) before writing.
-
-**Writes:**
+Set `skills.writing-prd` to `in-progress` at the start. If `docs/context.json` does not exist, create it using the default template from [context-schema.md](../../shared/references/context-schema.md). On success write:
 
 ```json
 {
-  "skills": {
-    "writing-prd": "done"
-  }
+  "skills": { "writing-prd": "done" }
 }
 ```
-
-## Input
-
-A product idea, problem description, or feature brief from the user. If none is provided, ask for one before proceeding.
 
 ## Workflow
 
 ### 1) Get the Problem Description
 
-Ask the user for a long, detailed description of the problem they want to solve and any potential ideas for solutions. Do not proceed until you have a substantive answer.
+Ask the user for a detailed description of the problem they want to solve and any solution ideas. Do not proceed until you have a substantive answer.
 
 ### 2) Explore the Repo
 
-Read `docs/prd.md` if it exists — use it as prior context before interviewing. Scan the repo for any existing product documentation (`docs/`, `README.md`, `AGENTS.md`) to understand the current product surface and user-facing behavior.
+Read `docs/prd.md` if it exists — use it as prior context. Scan `docs/`, `README.md`, and `AGENTS.md` for existing product documentation.
 
 ### 3) Interview the User
 
-Interview the user about every **product** aspect until you reach shared understanding. Prefer inference over questions — ask only when an answer materially changes the product or its implementation. Cover at minimum:
+Interview until you reach shared understanding. Prefer inference over questions — ask only when an answer materially changes the product or implementation. Cover at minimum:
 
 - Who are the target users / personas?
 - What pain points or jobs-to-be-done does this solve?
 - What does success look like? (metrics, outcomes)
 - Walk through every screen, flow, or endpoint the product requires — inputs, outputs, edge cases, error states.
 - What are we **not** doing in this version? Push back until the boundary is crisp.
-- What assumptions is the user making (technical, business, user behavior)?
 - What records must be saved between sessions?
 - Is data private to a user, shared with a team, public, or admin-only?
 - Are accounts, roles, invitations, or protected pages required?
 - Are uploads, generated files, imports, exports, or attachments required?
-- Does the product need a public landing or marketing page, or should visitors go straight to login or signup?
+- Does the product need a public landing or marketing page?
 - What are the must-have pages or views for the first version?
 - What external services, payments, email, AI APIs, or integrations are needed?
 
 ### 4) Determine Foundation Capabilities
 
-From the interview answers, fill in the `Value` and `Rationale` for each capability. Prefer inference — ask only when an answer cannot be determined from what the user has already described.
+From the interview, fill in `Value` and `Rationale` for each capability. Prefer inference.
 
-Signals per capability:
+Signals: `database` — persistent state, relational data, or user-owned records. `authentication` — accounts, login, protected pages, or per-user data (requires `database`). `file_storage` — uploads, attachments, or durable binary assets (requires `database`). `ai` — text/image generation, structured AI output, or OpenAI integration. `landing_page` — public marketing page before login. `legal_pages` — Impressum, Privacy Policy, or Terms (requires `landing_page`).
 
-- `database` — product saves records between sessions, has relational data, user-owned data, dashboards, or any persistent state.
-- `authentication` — product needs accounts, login, protected pages, roles, invitations, or per-user data. Requires `database`.
-- `file_storage` — product needs uploads, images, documents, attachments, generated downloadable files, import/export files, or durable binary assets. Requires `database`.
-- `ai` — product needs text generation, structured AI output, image generation, LLM-powered features, or an OpenAI API integration.
-- `landing_page` — product needs a public marketing or informational page visitors see before logging in or signing up.
-- `legal_pages` — product needs an Impressum, Privacy Policy, and/or Terms of Service. Requires `landing_page`.
+Enforce dependencies: if `authentication=yes` → `database=yes`; if `file_storage=yes` → `database=yes`; if `legal_pages=yes` → `landing_page=yes`.
 
-Enforce dependencies before presenting: if `authentication=yes`, set `database=yes`; if `file_storage=yes`, set `database=yes`; if `legal_pages=yes`, set `landing_page=yes`.
-
-Present the filled-in table for user approval:
+Present the table for user approval. Re-enforce dependencies and re-present if the user changes any value. Do not proceed until explicitly approved.
 
 | Capability       | Value    | Rationale |
 | ---------------- | -------- | --------- |
@@ -79,20 +63,26 @@ Present the filled-in table for user approval:
 | `landing_page`   | yes / no | …         |
 | `legal_pages`    | yes / no | …         |
 
-If the user changes any value, re-enforce dependencies, update the table, and re-present. Do not proceed until the user explicitly approves.
-
 ### 5) Write the PRD
 
-Once the interview is complete and the capabilities are approved, write `docs/prd.md` using the template in [assets/prd-template.md](assets/prd-template.md). Present it to the user for approval before writing the file. After approval, write the file.
+Write `docs/prd.md` using [assets/prd-template.md](assets/prd-template.md). Present it to the user for approval before writing the file. Write only after approval.
 
-## Validation Checklist
+### 6) Update Context
+
+Write `skills.writing-prd = "done"` to `docs/context.json`.
+
+## References
+
+- **PRD template**: [assets/prd-template.md](assets/prd-template.md)
+
+## Review Checklist
 
 - [ ] User provided a substantive problem description before the interview began.
 - [ ] Existing repo documentation was read before interviewing.
-- [ ] All interview topics were covered or explicitly noted as not applicable.
+- [ ] All interview topics covered or noted as not applicable.
 - [ ] User stories cover happy paths, edge cases, and error scenarios.
-- [ ] Every screen or flow mentioned in user stories has a corresponding entry in User Interaction and Design.
+- [ ] Every screen or flow has a corresponding entry in User Interaction and Design.
 - [ ] Out of Scope section has at least one entry.
-- [ ] Capabilities block was presented and explicitly approved by the user before writing the file.
+- [ ] Capabilities table presented and explicitly approved before writing.
 - [ ] User approved the full PRD before `docs/prd.md` was written.
-- [ ] `docs/context.json` was updated with `skills.writing-prd = "done"`.
+- [ ] `docs/context.json` updated with `skills.writing-prd = "done"`.

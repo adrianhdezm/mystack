@@ -3,21 +3,19 @@ name: testing-features
 description: Generates a happy-path E2E test plan from all feature specs in docs/features/, then executes it in a browser via Chrome DevTools MCP. Use when the user asks to E2E test, smoke test, or browser-test implemented features.
 ---
 
-# Test Features
+# Testing Features
+
+Reads all feature specs, writes a happy-path E2E test plan, gets user approval, starts the dev server, executes the plan via Chrome DevTools MCP, and produces a per-step pass/fail report.
 
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
-**Guard** — stop before proceeding if `context.skills.planning-features` is not `"done"` in `docs/context.json`. Stop with:
+**Guard** — stop before proceeding if `context.skills.planning-features` is not `"done"`:
 
 ```text
 Stop — docs/context.json is missing skills.planning-features = "done". Run planning-features first, then re-run this skill.
 ```
 
-Set `skills.testing-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
-
-**Writes:**
+Set `skills.testing-features` to `in-progress` at the start. On success write:
 
 ```json
 {
@@ -25,19 +23,13 @@ Set `skills.testing-features` to `in-progress` at the start of the workflow. On 
 }
 ```
 
-## Input
+## Rules
 
-All feature specs from `docs/features/*.spec.md`. If none exist, stop and tell the user to run `planning-features` first.
-
-## Hard Rules
-
-- Require Chrome DevTools MCP to be available before starting. Check that `navigate_page`, `click`, `fill`, and `screenshot` tools are available. If any are missing, stop immediately and tell the user to connect Chrome DevTools MCP before running this skill.
-- Require `context.skills.planning-features = "done"` in `docs/context.json`. If missing, stop and direct the user to run `planning-features` first.
+- Require Chrome DevTools MCP before starting. Confirm `navigate_page`, `click`, `fill`, and `screenshot` are available — stop immediately if any are missing and tell the user to connect Chrome DevTools MCP.
 - Do not start the dev server until the test plan is approved by the user.
+- Use the default test user unless credentials fail (see below) — ask the user for alternatives before retrying.
 
-## Test User (default)
-
-Use the following credentials for all E2E tests:
+## Default Test User
 
 ```text
 Name:     Max Mustermann
@@ -45,34 +37,30 @@ Email:    max@example.com
 Password: 1234qwer
 ```
 
-If registration with these credentials fails (e.g., email domain restrictions, password policy), ask the user for valid credentials before proceeding. Do not retry silently or skip the test user step.
-
 ## Workflow
 
 ### 1) Read Specs
 
-- Read every `docs/features/*.spec.md` file.
+- Read every `docs/features/*.spec.md`.
 - Read `docs/architecture.md` for known deviations that affect expected behavior.
 - Read `docs/conventions/*.md` for UI patterns (toast style, error display, navigation).
 
 ### 2) Write Test Plan
 
-Create `docs/e2e/test-plan.md` with the following structure:
+Create `docs/e2e/test-plan.md`:
 
 ```markdown
 # E2E Test Plan
 
 ## Test User
-
 - Name: Max Mustermann
 - Email: max@example.com
 - Password: 1234qwer
 
 ## Setup
-
 1. Start dev server
 2. Navigate to app root
-3. Check if test user exists (attempt login) — if not, register
+3. Attempt login — if login fails, register then log in
 
 ## Features
 
@@ -81,44 +69,36 @@ Create `docs/e2e/test-plan.md` with the following structure:
 **Routes:** `/path-a`, `/path-b`
 
 | Step | Action | Expected Result |
-| ---- | ------ | --------------- |
-| 1    | ...    | ...             |
-| 2    | ...    | ...             |
+|------|--------|-----------------|
+| 1    | …      | …               |
 ```
 
-Each feature section lists the routes under test and a table of sequential happy-path steps. Steps should be concrete browser actions (navigate, click, fill, submit) with observable expected results (text appears, redirect happens, element visible).
-
-Present the plan to the user and **wait for approval** before proceeding.
+Each feature section lists routes under test and sequential happy-path steps with concrete browser actions and observable expected results. Present the plan and **wait for user approval** before proceeding.
 
 ### 3) Start Dev Server
 
-- Run `pnpm dev` in the background.
-- Wait for the server to be reachable by navigating to the app root with `navigate_page`.
-- If the server is not reachable after 30 seconds, stop and report the failure.
+Run `pnpm dev` in the background. Navigate to the app root with `navigate_page` to confirm it is reachable. Stop and report if not reachable after 30 seconds.
 
 ### 4) Prepare Test User
 
-- Navigate to the login page.
-- Attempt to log in with the test user credentials.
-- If login fails (user does not exist), navigate to the registration page and register the test user, then log in.
-- Take a screenshot after successful login: `docs/e2e/screenshots/00-login.png`.
+Navigate to the login page. Attempt login with the default credentials. If login fails (user does not exist), register and log in. Take a screenshot: `docs/e2e/screenshots/00-login.png`.
 
 ### 5) Execute Test Plan
 
-For each feature section in the plan, in order:
+For each feature in order:
 
-1. Execute each step using Chrome DevTools MCP tools (`navigate_page`, `click`, `fill`, `fill_form`, `press_key`, `wait_for`).
-2. After each step, verify the expected result is visible on the page.
-3. Take a screenshot at key moments (after form submissions, after navigation, on final result) and save to `docs/e2e/screenshots/NN-feature-name-step-NN.png`.
-4. Record the step result as **pass** or **fail** with a note if it failed.
+1. Execute each step using `navigate_page`, `click`, `fill`, `fill_form`, `press_key`, `wait_for`.
+2. Verify the expected result is visible after each step.
+3. Take a screenshot at key moments and save to `docs/e2e/screenshots/NN-feature-name-step-NN.png`.
+4. Record each step as **pass** or **fail** with a note if it failed.
 
-If a step fails, continue with the remaining steps in that feature, then proceed to the next feature.
+If a step fails, continue with remaining steps in that feature, then proceed to the next feature.
 
 ### 6) Stop Dev Server
 
-- Stop the `pnpm dev` process started in step 3.
+Stop the `pnpm dev` process.
 
-### 7) Report
+### 7) Report and Finish
 
 Produce a test report:
 
@@ -126,37 +106,32 @@ Produce a test report:
 # E2E Test Report
 
 ## Summary
-
-Overall: X/Y features passed, A/B total steps passed.
+Overall: X/Y features passed, A/B steps passed.
 
 ## Results
 
 ### NN — Feature Title
 
 | Step | Action | Expected | Actual | Status | Screenshot |
-| ---- | ------ | -------- | ------ | ------ | ---------- |
-| 1    | ...    | ...      | ...    | Pass   | [link]     |
+|------|--------|----------|--------|--------|------------|
+| 1    | …      | …        | …      | Pass   | [link]     |
 
 ### Failures
-
-- **NN — Feature Title, Step X** — description of what went wrong.
+- **NN — Feature Title, Step X** — what went wrong.
 ```
 
-Present the report to the user.
+Present the report. Write `skills.testing-features = "done"` to `docs/context.json`.
 
-### 8) Update Context
+## Review Checklist
 
-Write `skills.testing-features = "done"` to `docs/context.json`.
-
-## Validation Checklist
-
-- [ ] All `docs/features/*.spec.md` files were read.
-- [ ] `docs/e2e/test-plan.md` was written and approved by the user before execution.
-- [ ] Dev server was started and confirmed reachable.
-- [ ] Test user was registered or confirmed to exist.
-- [ ] Every step in the plan was executed via Chrome DevTools MCP.
-- [ ] Screenshots were saved to `docs/e2e/screenshots/`.
-- [ ] Dev server was stopped after execution.
-- [ ] Test report was presented with per-step pass/fail status.
-- [ ] `docs/context.json` guards passed (`skills.planning-features = "done"`).
-- [ ] `docs/context.json` was updated with `skills.testing-features = "done"`.
+- [ ] `docs/context.json` guard passed (`skills.planning-features = "done"`).
+- [ ] Chrome DevTools MCP tools confirmed available before starting.
+- [ ] All `docs/features/*.spec.md` files read.
+- [ ] `docs/e2e/test-plan.md` written and approved before execution.
+- [ ] Dev server started and confirmed reachable.
+- [ ] Test user registered or confirmed to exist.
+- [ ] Every step executed via Chrome DevTools MCP.
+- [ ] Screenshots saved to `docs/e2e/screenshots/`.
+- [ ] Dev server stopped after execution.
+- [ ] Test report presented with per-step pass/fail status.
+- [ ] `docs/context.json` updated with `skills.testing-features = "done"`.

@@ -3,21 +3,19 @@ name: implementing-features
 description: Implements a Product Builder feature spec from docs/features/ end-to-end, writing code and maintaining docs/data-model.md, docs/conventions/, and docs/architecture.md. Use when the user asks to implement, build, or code a planned feature from a feature spec.
 ---
 
-# Implement Feature
+# Implementing Features
+
+Reads a feature spec and all project context, then builds the full vertical slice — schema, migrations, DAOs, queries, services, routes, components, and tests — and keeps `docs/data-model.md`, `docs/architecture.md`, and `docs/conventions/` up to date.
 
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
-**Guard** — stop before proceeding if `context.skills.planning-features` is not `"done"` in `docs/context.json`. Stop with:
+**Guard** — stop before proceeding if `context.skills.planning-features` is not `"done"`:
 
 ```text
 Stop — docs/context.json is missing skills.planning-features = "done". Run planning-features first, then re-run this skill.
 ```
 
-Set `skills.implementing-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
-
-**Writes:**
+Set `skills.implementing-features` to `in-progress` at the start. On success write:
 
 ```json
 {
@@ -27,21 +25,20 @@ Set `skills.implementing-features` to `in-progress` at the start of the workflow
 
 ## Input
 
-A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.md`). If the user does not specify which spec, list available `docs/features/*.spec.md` files and ask.
+A feature spec from `docs/features/` (e.g. `docs/features/02-color-upload.spec.md`). If not specified, list available specs and ask.
 
 ## Workflow
 
 ### 1) Read Context
 
-- Read the target spec file.
-- Read dependency specs listed in its Dependencies section.
-- Read `docs/data-model.md` if it exists — this is the canonical reference for entities, relationships, and constraints.
-- Read `docs/architecture.md` if it exists — use the Implementation Log for prior design decisions and deviations.
-- Scan the codebase for existing code related to the spec: schema, DAOs, queries, services, routes, components.
+- Read the target spec and all dependency specs listed in its Dependencies section.
+- Read `docs/data-model.md` — canonical entity/relationship reference.
+- Read `docs/architecture.md` — Implementation Log for prior decisions and deviations.
+- Scan existing code: schema, DAOs, queries, services, routes, components.
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, query, service, and transaction conventions.
-- Read [test-patterns.md](references/test-patterns.md) for DAO, Query, and Service test templates.
+- Read [test-patterns.md](references/test-patterns.md) for DAO, Query, Service, and route test templates.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
-- Read all `docs/conventions/*.md` files for project-specific patterns and anti-patterns established during prior implementations.
+- Read all `docs/conventions/*.md` for project-specific patterns and anti-patterns.
 
 ### 2) Update Manifest
 
@@ -49,98 +46,56 @@ If `docs/features/manifest.json` exists, set the feature's status to `implementi
 
 ### 3) Implement
 
-- Build everything the spec describes: schema, migrations, DAOs, queries, services, routes, loaders/actions, components — the full vertical slice.
-- When a loader or action needs cross-table data, check for an existing Query in `app/db/queries/`. If none exists, create one following the patterns in [data-access-architecture.md](../../shared/references/data-access-architecture.md) — do not re-derive the interface or naming conventions here.
-- After creating each DAO at `app/db/daos/<entity>.dao.ts`, create a test at `tests/integration/db/daos/<entity>.dao.test.ts` using the DAO test pattern from [test-patterns.md](references/test-patterns.md).
-- After creating each Query at `app/db/queries/<parent>-<child>.query.ts`, create a test at `tests/integration/db/queries/<parent>-<child>.query.test.ts` using the Query test pattern.
-- After creating each Service at `app/services/<entity>.service.ts`, create a test at `tests/integration/services/<entity>.service.test.ts` using the Service test pattern.
-- After creating each route component at `app/routes/<route>.tsx`, create a test at `tests/unit/routes/<route>.test.tsx` using the Route Component Test pattern from [test-patterns.md](references/test-patterns.md). Use `createRoutesStub` with loader/action stubs so data flows through the router the same way it does in production.
-- Follow project conventions in `docs/conventions/` and avoid listed anti-patterns. For base patterns use Drizzle for schema, React Router loaders/actions for data, shadcn/ui for components, Conform + Zod for forms.
+Build everything the spec describes — the full vertical slice:
+
+- Schema changes and Drizzle migrations.
+- DAOs at `app/db/daos/<entity>.dao.ts` + test at `tests/integration/db/daos/<entity>.dao.test.ts` using the DAO test pattern from [test-patterns.md](references/test-patterns.md).
+- Queries at `app/db/queries/<parent>-<child>.query.ts` + test at `tests/integration/db/queries/<parent>-<child>.query.test.ts`.
+- Services at `app/services/<entity>.service.ts` + test at `tests/integration/services/<entity>.service.test.ts`.
+- Route modules at `app/routes/<route>.tsx` + test at `tests/unit/routes/<route>.test.tsx` using `createRoutesStub` with loader/action stubs.
+- For cross-table data, check for an existing Query in `app/db/queries/` before creating one — follow [data-access-architecture.md](../../shared/references/data-access-architecture.md) conventions exactly.
+- Follow `docs/conventions/` and avoid listed anti-patterns.
 - When the spec is ambiguous, make a reasonable choice and log it in `docs/architecture.md`.
 - Run `pnpm typecheck` periodically to catch errors early.
 
-### 4) Update Architecture
+### 4) Update Architecture and Docs
 
-Update `docs/architecture.md`. Foundation skills (`scaffolding-project`, `adding-database`, `adding-authentication`, `adding-file-storage`, `adding-ai`) create this file and populate the Stack, Structure, and Conventions sections. If it does not exist (standalone use without foundation skills), create it using [architecture-template.md](../../shared/templates/architecture-template.md) and fill in the Stack and Structure to match the current project.
+**`docs/architecture.md` — Implementation Log**: Add `### NN — Title` and log Design Decisions, Deviations, Tradeoffs, and Open Questions. Omit empty subsections.
 
-#### Data Model
+**`docs/data-model.md`**: Update to reflect the current state of `app/db/schema.ts` after all schema changes. This file always represents what is built.
 
-Update `docs/data-model.md`. Foundation skills create this file with entities from the initial schema. If it does not exist, create it using [data-model-template.md](../../shared/templates/data-model-template.md). After implementing schema changes, update it to reflect the current state of `app/db/schema.ts` — entities, columns, types, relationships, and constraints. This file always represents what is built, not what is planned.
-
-#### Implementation Log
-
-Add a section header for the current spec (`### NN — Title`) under the Implementation Log in `docs/architecture.md` and log entries under it. Update as decisions happen.
-
-```markdown
-## Implementation Log
-
-### 02 — Color Upload
-
-#### Design Decisions
-
-- **Sonner for toasts** — used sonner instead of a custom toast because the project already depends on it via shadcn/ui.
-
-#### Deviations
-
-- **Error display** — spec said inline error below the form; used a toast instead for consistency with the existing delete confirmation pattern.
-
-#### Tradeoffs
-
-- **File validation on client vs server** — validated file extension on the client for fast feedback, but full .ase parsing stays server-side. Client-only validation would miss corrupted files.
-
-#### Open Questions
-
-- **Max file size** — spec does not specify. Currently allowing up to 5 MB. Confirm or adjust.
-```
-
-#### Conventions
-
-When implementation reveals a pattern worth reusing or a mistake worth preventing, add or update the relevant file in `docs/conventions/`. Foundation skills may have already seeded `docs/conventions/routes.md` and `docs/conventions/data-access.md` — read existing convention files before adding entries. Use the template in [convention-template.md](../../shared/templates/convention-template.md) when creating a new convention file. Each file covers one area (data access, UI components, form validation, routes) and contains both Patterns and Anti-patterns sections. These grow organically — only add entries that would save a future implementer from a real mistake or inconsistency.
-
-If you create a new convention file, add a linked entry in the Conventions section of `docs/architecture.md`.
-
-Omit empty subsections in the Implementation Log.
+**`docs/conventions/`**: Add or update files when implementation reveals a reusable pattern or a mistake worth preventing. Use [convention-template.md](../../shared/templates/convention-template.md) for new files. Add a linked entry in `docs/architecture.md` Conventions section for any new file.
 
 ### 5) Verify
 
-- Run `pnpm typecheck` — must pass.
-- Run `pnpm lint` — fix any issues.
-- Run `pnpm test` — must pass. If a test fails, fix the implementation or the test before proceeding.
-- Walk through the acceptance criteria from the spec and confirm each one is met.
-- If a criterion cannot be met, log it as an open question in `docs/architecture.md`.
+- `pnpm typecheck` — must pass.
+- `pnpm lint` — fix all issues.
+- `pnpm test` — must pass. Fix the implementation or test before proceeding.
+- Walk every acceptance criterion from the spec. Log unmet criteria as open questions in `docs/architecture.md`.
 
-### 6) Update Manifest
+### 6) Finish
 
-If `docs/features/manifest.json` exists, set the feature's status to `implemented`.
+If `docs/features/manifest.json` exists, set the feature's status to `implemented`. Write `skills.implementing-features = "done"` to `docs/context.json`. Summarize what was built, highlight open questions, and provide the path to `docs/architecture.md`.
 
-### 7) Update Context
+## References
 
-Write `skills.implementing-features = "done"` to `docs/context.json`.
+- **Test patterns**: [references/test-patterns.md](references/test-patterns.md)
+- **Data access architecture**: [data-access-architecture.md](../../shared/references/data-access-architecture.md)
+- **Architecture template**: [architecture-template.md](../../shared/templates/architecture-template.md)
+- **Data model template**: [data-model-template.md](../../shared/templates/data-model-template.md)
+- **Convention template**: [convention-template.md](../../shared/templates/convention-template.md)
 
-### 8) Summary
+## Review Checklist
 
-- State what was built and where.
-- Highlight open questions or deviations that need user input.
-- Provide the path to `docs/architecture.md`.
-
-## Validation Checklist
-
-- [ ] Target spec and its dependencies were read before implementation.
-- [ ] `docs/architecture.md` was read or created.
-- [ ] `docs/data-model.md` was read or created.
-- [ ] `docs/data-model.md` reflects the current state of `app/db/schema.ts` after implementation.
-- [ ] `data-access-architecture.md` conventions were followed for DAOs, queries, and services.
-- [ ] `react-router-patterns` conventions were followed for routes, loaders, and actions.
-- [ ] Project conventions in `docs/conventions/` were followed and anti-patterns avoided.
-- [ ] All spec sections (database, DAOs, queries, services, routes, components) were implemented.
-- [ ] A `.test.ts` file exists in `tests/integration/db/daos/` for every DAO created.
-- [ ] A `.test.ts` file exists in `tests/integration/db/queries/` for every Query created.
-- [ ] A `.test.ts` file exists in `tests/integration/services/` for every Service created.
-- [ ] A `.test.tsx` file exists in `tests/unit/routes/` for every route component created.
-- [ ] `pnpm typecheck` passes.
-- [ ] `pnpm lint` passes.
-- [ ] `pnpm test` passes.
-- [ ] Each acceptance criterion was verified or logged as an open question.
-- [ ] `docs/architecture.md` was updated with decisions, deviations, and tradeoffs.
-- [ ] `docs/context.json` guards passed (`skills.planning-features = "done"`).
-- [ ] `docs/context.json` was updated with `skills.implementing-features = "done"`.
+- [ ] `docs/context.json` guard passed (`skills.planning-features = "done"`).
+- [ ] Target spec and all dependency specs read before implementation.
+- [ ] `docs/architecture.md` and `docs/data-model.md` read or created.
+- [ ] All spec sections built: schema, DAOs, queries, services, routes, components.
+- [ ] Integration test exists for every DAO, Query, and Service.
+- [ ] Unit test exists for every route component.
+- [ ] `docs/data-model.md` reflects current `app/db/schema.ts`.
+- [ ] Implementation Log updated in `docs/architecture.md`.
+- [ ] `docs/conventions/` updated where new patterns emerged.
+- [ ] `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass.
+- [ ] Every acceptance criterion verified or logged as an open question.
+- [ ] `docs/context.json` updated with `skills.implementing-features = "done"`.

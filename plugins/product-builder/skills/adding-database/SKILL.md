@@ -5,19 +5,17 @@ description: Adds a Cloudflare D1 database to an existing Product Builder projec
 
 # Adding D1 Database
 
+Installs Drizzle ORM, creates and binds a Cloudflare D1 database, generates the initial schema and migrations, wires the database into the Worker and app context, and sets up Miniflare integration testing.
+
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
-**Guard** — stop before changing any files if `context.project.name` is missing from `docs/context.json`. This means `scaffolding-project` has not completed. Stop with:
+**Guard** — stop before changing any files if `context.project.name` is missing:
 
 ```text
 Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
 ```
 
-Set `skills.adding-database` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
-
-**Writes:**
+Set `skills.adding-database` to `in-progress` at the start. Derive `PROJECT_PATH` from `context.repository.local_path`. On success write:
 
 ```json
 {
@@ -27,78 +25,64 @@ Set `skills.adding-database` to `in-progress` at the start of the workflow. On s
 }
 ```
 
-## Required inputs
+Default binding: `APP_DB`. Default migration directory: `db/migrations`. Default schema: `app/db/schema.ts`.
 
-Work in the target project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask for only the path before changing files.
+## Rules
 
-```text
-D1_DATABASE_NAME: <cloudflare-d1-database-name>
-D1_BINDING: APP_DB
-```
-
-Use `APP_DB` as the default binding unless the existing project already uses a different D1 binding.
-
-## Hard rules
-
-- Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, or actions. Any React Router code must follow those patterns.
 - Use Drizzle ORM with the SQLite dialect and Cloudflare D1 driver.
 - Use `drizzle-zod` for DAO-owned validation schemas when DAOs are added.
 - Do not hardcode Cloudflare account IDs, database IDs, or API tokens in source.
-- Keep generated migrations under `db/migrations`.
-- Keep the application schema in `app/db/schema.ts`.
-- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) when adding tables, DAOs, queries, services, transactions, or data access workflows.
-- Preserve existing `wrangler.jsonc` settings and merge D1 configuration into it.
-- Preserve existing React Router request handling and inject the database through router context.
-- Read [worker-architecture.md](../../shared/references/worker-architecture.md) when modifying `workers/app.ts`. New bindings must be wired inline — do not create helper files in `workers/`.
-
-## Gotchas
-
-- D1 is SQLite. There is no `ALTER COLUMN` — changing a column type or adding a `NOT NULL` column without a default requires creating a new table, copying data, and dropping the old one. Drizzle Kit handles this automatically during migration generation, but the resulting migration may drop and recreate tables.
-- `pnpm wrangler d1 create` returns the database ID in its output. Capture it immediately — there is no list command that shows the ID later without `wrangler d1 list`, which requires an authenticated session.
-- `drizzle-kit generate` reads `drizzle.config.ts`, which needs `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in `.env`. If `.env` is missing or incomplete, the command fails with an unhelpful credentials error.
-- Local D1 (`pnpm wrangler d1 migrations apply --local`) and remote D1 (`pnpm db:migrate`) use different migration tracking. Always run both after generating a new migration.
+- Preserve existing `wrangler.jsonc` settings — merge D1 configuration in, never overwrite.
+- Inject the database through router context; do not access it outside of loaders, actions, and services.
+- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
+- Load `react-router-patterns` before changing React Router context or Worker request handling.
+- Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) before adding tables, DAOs, queries, services, or transactions.
+- `pnpm wrangler d1 create` outputs the database ID — capture it immediately; `wrangler d1 list` requires authentication to retrieve it later.
+- D1 is SQLite: no `ALTER COLUMN`. Changing a column type requires a new table + data copy. Drizzle Kit handles this but the migration may drop and recreate tables — review before applying.
+- `drizzle-kit generate` needs `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in `.env` — missing values produce an unhelpful credentials error.
+- Local D1 (`pnpm db:local:migrate`) and remote D1 (`pnpm db:migrate`) use separate migration tracking — always run both after generating a new migration.
 
 ## Workflow
 
-1. Verify the target project is a Product Builder-style Cloudflare Workers, Vite, React Router, TypeScript, and pnpm project.
+1. Read `docs/context.json`. Confirm `project.name` is present. Set `skills.adding-database` to `in-progress`.
 2. Install and configure Drizzle using [01-drizzle-setup.md](references/01-drizzle-setup.md).
 3. Create or register the Cloudflare D1 database and environment variables using [02-cloudflare-d1.md](references/02-cloudflare-d1.md).
 4. Load `react-router-patterns`, then add the database schema and wire Drizzle into app context and the Worker using [03-app-integration.md](references/03-app-integration.md).
-5. If adding application tables, DAOs, queries, services, transactions, or data access workflows, follow [data-access-architecture.md](../../shared/references/data-access-architecture.md).
+5. If adding application tables, DAOs, queries, services, or transactions, follow [data-access-architecture.md](../../shared/references/data-access-architecture.md).
 6. Generate and apply migrations using [04-migrations-validation.md](references/04-migrations-validation.md).
 7. Set up integration testing with Miniflare using [05-testing-setup.md](references/05-testing-setup.md).
-8. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) and [08-doc-updates.md](references/08-doc-updates.md) for the D1-specific additions: stack entry, directory structure, data model link, data-access convention seeding from `data-access-architecture.md`, testing convention seeding from `testing-conventions.md`, README and AGENTS.md additions.
+8. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) and [08-doc-updates.md](references/08-doc-updates.md): stack entry, directory structure, data model link, data-access convention, testing convention, README and AGENTS.md additions.
 9. Write `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"` to `docs/context.json`.
-10. Run formatting, typecheck, lint, test, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
-11. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+10. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm db:local:migrate`. Fix any failures before committing.
+11. Commit using the repository's Conventional Commits format.
 
-## Validation checklist
+## References
 
-- [ ] `drizzle-orm`, `drizzle-zod`, and `drizzle-kit` are installed.
+- **Drizzle setup**: [references/01-drizzle-setup.md](references/01-drizzle-setup.md)
+- **Cloudflare D1**: [references/02-cloudflare-d1.md](references/02-cloudflare-d1.md)
+- **App integration**: [references/03-app-integration.md](references/03-app-integration.md)
+- **Migrations and validation**: [references/04-migrations-validation.md](references/04-migrations-validation.md)
+- **Integration testing**: [references/05-testing-setup.md](references/05-testing-setup.md)
+- **D1 doc updates**: [references/08-doc-updates.md](references/08-doc-updates.md)
+- **Documentation updates**: [documentation-updates.md](../../shared/references/documentation-updates.md)
+- **Data access architecture**: [data-access-architecture.md](../../shared/references/data-access-architecture.md)
+- **Worker architecture**: [worker-architecture.md](../../shared/references/worker-architecture.md)
+
+## Review Checklist
+
+- [ ] `docs/context.json` guard passed (`project.name` present).
+- [ ] `drizzle-orm`, `drizzle-zod`, and `drizzle-kit` installed.
 - [ ] `package.json` includes `db:generate`, `db:migrate`, and `db:local:migrate`.
 - [ ] `drizzle.config.ts` reads Cloudflare credentials from `.env`.
 - [ ] `.env.example` documents `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN`.
-- [ ] `.env` uses the account ID from `pnpm wrangler whoami`, the database ID from `pnpm wrangler d1 create`, and the D1 token from the macOS Keychain or the user.
-- [ ] `wrangler.jsonc` includes a D1 binding with `migrations_table` and `migrations_dir`.
+- [ ] `wrangler.jsonc` includes D1 binding with `migrations_table` and `migrations_dir`.
 - [ ] `app/db/schema.ts` exports `schema`.
 - [ ] `app/context.ts` exposes `db: DrizzleD1Database<typeof schema>`.
-- [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` and sets it in router context.
-- [ ] `@cloudflare/vitest-pool-workers` is installed.
-- [ ] `tests/integration/vitest.config.ts` uses `defineWorkersConfig` with `wrangler.jsonc`, `APP_DB`, and `MIGRATIONS` binding.
-- [ ] `tests/integration/db-test-utils.ts` exports `getTestDb()` and `applyMigrations()`.
-- [ ] `tests/integration/env.d.ts` augments `Cloudflare.Env` with the `MIGRATIONS` binding.
-- [ ] `tsconfig.integration.json` exists with Cloudflare vitest types.
-- [ ] `tsconfig.cloudflare.json` has only `"types": ["vite/client"]`.
-- [ ] Root `vitest.config.ts` lists both `tests/unit` and `tests/integration` projects.
+- [ ] `workers/app.ts` creates `drizzle(env.APP_DB, { schema })` inline.
+- [ ] `@cloudflare/vitest-pool-workers` installed; integration test config and utils exist.
 - [ ] `pnpm test` passes integration tests against Miniflare D1.
-- [ ] `data-access-architecture.md` was followed for any tables, DAOs, queries, services, transactions, or data access workflows.
-- [ ] `react-router-patterns` was loaded and followed for any React Router context or Worker request-handling changes.
-- [ ] `docs/architecture.md` includes Drizzle ORM / D1 in stack, db/ directories in structure, data model link, and data-access convention link.
-- [ ] `docs/data-model.md` was created and reflects `app/db/schema.ts`.
-- [ ] `docs/conventions/data-access.md` was created with seed patterns from `data-access-architecture.md`.
-- [ ] `docs/conventions/testing.md` was created with seed patterns from `testing-conventions.md`.
-- [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.
-- [ ] `AGENTS.md` documents database-specific instructions, references `docs/data-model.md` in the Project Documentation section, and lists `pnpm test` in verification commands.
-- [ ] `docs/context.json` guards passed (`project.name` present).
-- [ ] `docs/context.json` was updated with `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"`.
-- [ ] Generated and updated files were committed with a Conventional Commit message.
+- [ ] `docs/data-model.md` created and reflects `app/db/schema.ts`.
+- [ ] `docs/conventions/data-access.md` and `docs/conventions/testing.md` created.
+- [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm db:local:migrate` pass.
+- [ ] `docs/context.json` updated with `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"`.
+- [ ] Changes committed with Conventional Commit message.

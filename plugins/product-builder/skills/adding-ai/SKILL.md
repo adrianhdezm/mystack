@@ -7,8 +7,6 @@ description: Adds Vercel AI SDK with OpenAI provider to an existing Product Buil
 
 ## Context
 
-Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
-
 **Guard** — stop before changing any files if `context.project.name` is missing from `docs/context.json`. Stop with:
 
 ```text
