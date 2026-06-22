@@ -6,9 +6,19 @@
   "description": "Personal development plugins and skills.",
   "plugins": [
     {
+      "name": "project-bootstrapper",
+      "source": "./plugins/project-bootstrapper",
+      "description": "Bootstrap a new project infrastructure from an idea and capability selections.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Adrian Hernandez-Mendez"
+      },
+      "skills": "./skills/"
+    },
+    {
       "name": "product-builder",
       "source": "./plugins/product-builder",
-      "description": "Turn product ideas into working product foundations.",
+      "description": "Turn a bootstrapped project into a working product by writing the PRD and building features.",
       "version": "0.1.27",
       "author": {
         "name": "Adrian Hernandez-Mendez"

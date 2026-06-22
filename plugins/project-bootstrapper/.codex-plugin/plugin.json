@@ -1,0 +1,38 @@
+{
+  "name": "project-bootstrapper",
+  "version": "0.1.0",
+  "description": "Bootstrap a new project from an idea: select capabilities and deployment target, scaffold the infrastructure, and commit a runnable foundation.",
+  "author": {
+    "name": "Adrian Hernandez-Mendez"
+  },
+  "repository": "https://github.com/adrianhdezm/mystack",
+  "keywords": [
+    "bootstrap",
+    "scaffold",
+    "cloudflare",
+    "docker",
+    "postgres",
+    "database",
+    "authentication",
+    "infrastructure"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Project Bootstrapper",
+    "shortDescription": "Scaffold a project infrastructure from an idea.",
+    "longDescription": "Takes a product idea and a set of capability selections — deployment target (Cloudflare Workers or Docker/Postgres), database, authentication, file storage, AI, landing page, legal pages — and scaffolds a committed, runnable project foundation. Supports Cloudflare Workers + D1 + R2 and Docker Compose + Postgres targets. Run this before Product Builder.",
+    "developerName": "Adrian Hernandez-Mendez",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "brandColor": "#1a1a2e",
+    "screenshots": [],
+    "defaultPrompt": [
+      "Bootstrap a new project from my idea.",
+      "Scaffold the project infrastructure and select capabilities."
+    ]
+  }
+}

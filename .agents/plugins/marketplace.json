@@ -5,6 +5,20 @@
   },
   "plugins": [
     {
+      "name": "project-bootstrapper",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/adrianhdezm/mystack.git",
+        "path": "./plugins/project-bootstrapper",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
       "name": "product-builder",
       "source": {
         "source": "git-subdir",

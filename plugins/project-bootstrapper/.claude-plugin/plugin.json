@@ -1,0 +1,20 @@
+{
+  "name": "project-bootstrapper",
+  "version": "0.1.0",
+  "description": "Bootstrap a new project from an idea: select capabilities and deployment target, scaffold the infrastructure, and commit a runnable foundation.",
+  "author": {
+    "name": "Adrian Hernandez-Mendez"
+  },
+  "repository": "https://github.com/adrianhdezm/mystack",
+  "keywords": [
+    "bootstrap",
+    "scaffold",
+    "cloudflare",
+    "docker",
+    "postgres",
+    "database",
+    "authentication",
+    "infrastructure"
+  ],
+  "skills": "./skills/"
+}
