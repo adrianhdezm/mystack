@@ -29,7 +29,7 @@ pnpm init
 <project-description>
 ```
 
-4. Create `.gitignore` with these entries:
+4. Create `.gitignore`. Start with these common entries, then add the target-specific section below:
 
 ```gitignore
 .DS_Store
@@ -40,7 +40,11 @@ pnpm init
 # React Router
 /.react-router/
 /build/
+```
 
+For `cloudflare` target, also add:
+
+```gitignore
 # Cloudflare
 .mf
 .wrangler
@@ -48,14 +52,23 @@ pnpm init
 worker-configuration.d.ts
 ```
 
-5. Create `AGENTS.md` with these instructions:
+For `docker-postgres` target, also add:
+
+```gitignore
+# Docker
+.docker-data/
+```
+
+5. Create `AGENTS.md` with these instructions. Replace `<deployment-context>` based on the target:
+   - `cloudflare` → `a React Router v7 application deployed to Cloudflare Workers`
+   - `docker-postgres` → `a React Router v7 application running on Node.js, deployed via Docker Compose with Postgres`
 
 ````markdown
 # Agent Instructions
 
 ## Project Context
 
-This project is a React Router v7 application deployed to Cloudflare Workers.
+This project is <deployment-context>.
 
 ## Package Management
 
@@ -97,6 +110,6 @@ ln -s AGENTS.md CLAUDE.md
 
 - `package.json` exists and contains the project name, description, `private: true`, `type: "module"`, and `packageManager: "pnpm@<pnpm-version>"`.
 - `README.md` exists with the project name as the heading and the project description below it.
-- `.gitignore` exists with macOS, environment, dependency, TypeScript build info, React Router, and Cloudflare generated-file entries.
-- `AGENTS.md` exists and tells future agents this is a React Router v7 project deployed to Cloudflare Workers, packages are managed with pnpm, and commit messages use the project Conventional Commits format.
+- `.gitignore` exists with common entries plus the target-specific section (Cloudflare or Docker).
+- `AGENTS.md` exists and tells future agents the deployment target, packages are managed with pnpm, and commit messages use the project Conventional Commits format.
 - `CLAUDE.md` is a symlink to `AGENTS.md`.

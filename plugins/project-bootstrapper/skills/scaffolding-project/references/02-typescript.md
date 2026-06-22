@@ -20,14 +20,16 @@ pnpm view @types/node version
 pnpm add -D typescript@latest @types/node@latest
 ```
 
-3. Create `tsconfig.json` for shared strict compiler settings and project references.
+3. Create `tsconfig.json` for shared strict compiler settings and project references. The second reference depends on the deployment target:
+   - `cloudflare` → `tsconfig.cloudflare.json`
+   - `docker-postgres` → `tsconfig.app.json`
 
 ```json
 {
   "files": [],
   "references": [
     { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.cloudflare.json" }
+    { "path": "./tsconfig.<cloudflare|app>.json" }
   ],
   "compilerOptions": {
     "checkJs": true,
@@ -60,7 +62,9 @@ pnpm add -D typescript@latest @types/node@latest
 }
 ```
 
-5. Create `tsconfig.cloudflare.json` for Cloudflare Worker/client runtime settings.
+5. Create the app runtime tsconfig. The name and includes differ by target:
+
+**Cloudflare target** — create `tsconfig.cloudflare.json`:
 
 ```json
 {
@@ -92,6 +96,37 @@ pnpm add -D typescript@latest @types/node@latest
 }
 ```
 
+**Docker/Postgres target** — create `tsconfig.app.json`:
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    ".react-router/types/**/*",
+    "app/**/*",
+    "app/**/.server/**/*",
+    "app/**/.client/**/*",
+    "server/**/*"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "strict": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "types": ["vite/client", "node"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "rootDirs": [".", "./.react-router/types"],
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  }
+}
+```
+
 6. Add the `typecheck` script to `package.json`.
 
 ```json
@@ -105,7 +140,7 @@ pnpm add -D typescript@latest @types/node@latest
 ## Expected Results
 
 - `typescript` and `@types/node` are installed as development dependencies.
-- `tsconfig.json` exists with strict shared compiler settings and references to the Node and Cloudflare configs.
+- `tsconfig.json` exists with strict shared compiler settings and references to the Node and app-runtime configs.
 - `tsconfig.node.json` exists with Node, Vite, and tooling compiler settings.
-- `tsconfig.cloudflare.json` exists with React Router, Cloudflare Worker, Vite client, and app source includes.
+- `tsconfig.cloudflare.json` (Cloudflare) or `tsconfig.app.json` (Docker/Postgres) exists with React Router, app source, and target-specific includes.
 - `package.json` includes `"typecheck": "tsc --build"`.
