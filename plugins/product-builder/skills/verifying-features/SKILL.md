@@ -5,6 +5,26 @@ description: Verifies a Product Builder feature implementation against its spec 
 
 # Verify Feature
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before proceeding if `context.skills.implementing-features` is not `"done"` in `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing skills.implementing-features = "done". Run implementing-features first, then re-run this skill.
+```
+
+Set `skills.verifying-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
+
+**Writes:**
+
+```json
+{
+  "skills": { "verifying-features": "done" }
+}
+```
+
 ## Input
 
 A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.md`). If the user does not specify which spec, list available `docs/features/*.spec.md` files and ask.
@@ -83,7 +103,11 @@ Do not modify code — this skill is read-only.
 
 If `docs/features/manifest.json` exists and verification passes (Pass or Pass with notes), set the feature's status to `verified`.
 
-### 7) Result
+### 7) Update Context
+
+Write `skills.verifying-features = "done"` to `docs/context.json`.
+
+### 8) Result
 
 Present the verification report to the user with a verdict:
 
@@ -106,3 +130,5 @@ Present the verification report to the user with a verdict:
 - [ ] Report was presented with clear status for each criterion.
 - [ ] Verdict was presented (Pass, Pass with notes, or Fail).
 - [ ] No code was modified during verification.
+- [ ] `docs/context.json` guards passed (`skills.implementing-features = "done"`).
+- [ ] `docs/context.json` was updated with `skills.verifying-features = "done"`.

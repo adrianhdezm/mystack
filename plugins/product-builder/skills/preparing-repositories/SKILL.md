@@ -75,6 +75,27 @@ Validate the final `REPOSITORY` as exactly `<owner>/<repo>`, with no branch, spa
 
 10. Return the output contract below with `REPOSITORY_STATUS: cloned | created-and-cloned`.
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+Set `skills.preparing-repositories` to `in-progress` at the start of the workflow. On successful completion, write the following fields and set the status to `done`. If `docs/context.json` does not exist yet, create it using the default template from [context-schema.md](../../shared/references/context-schema.md) before writing.
+
+**Writes:**
+
+```json
+{
+  "repository": {
+    "local_path": "<LOCAL_REPOSITORY_PATH>",
+    "status": "<REPOSITORY_STATUS>",
+    "github_slug": "<REPOSITORY>"
+  },
+  "skills": {
+    "preparing-repositories": "done"
+  }
+}
+```
+
 ## Output contract
 
 Always end with these values when successful:
@@ -84,7 +105,7 @@ LOCAL_REPOSITORY_PATH: <absolute path>
 REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
 ```
 
-Downstream skills, especially `scaffolding-project`, should use `LOCAL_REPOSITORY_PATH` as their working directory and preserve `REPOSITORY_STATUS` in their context.
+These values are also written to `docs/context.json` so downstream skills can read them without relying on conversation history.
 
 ## Stop message
 
@@ -118,3 +139,4 @@ Include the local or remote files found when available.
 - [ ] Remote exists or was created with `gh repo create`.
 - [ ] Remote has zero tracked files before clone.
 - [ ] Output contract includes `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.
+- [ ] `docs/context.json` was created or updated with `repository.*` fields and `skills.preparing-repositories = "done"`.

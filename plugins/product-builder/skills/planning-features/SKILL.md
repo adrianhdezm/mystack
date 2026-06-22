@@ -5,6 +5,26 @@ description: Plans a Product Builder feature end-to-end — database changes, pa
 
 # Plan Feature
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before proceeding if `context.skills.scaffolding-project` is not `"done"` in `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing skills.scaffolding-project = "done". Run scaffolding-project first, then re-run this skill.
+```
+
+Set `skills.planning-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
+
+**Writes:**
+
+```json
+{
+  "skills": { "planning-features": "done" }
+}
+```
+
 ## Input
 
 A product feature described in user terms. Examples:
@@ -55,6 +75,10 @@ Name files as `NN-short-name.spec.md` continuing the existing numbering sequence
 
 If `docs/features/manifest.json` exists, update the status of each spec written in this run from `listed` to `ready`.
 
+### 6) Update Context
+
+Write `skills.planning-features = "done"` to `docs/context.json`.
+
 ## Validation Checklist
 
 - [ ] Clarifying questions were asked when the feature description was ambiguous.
@@ -68,3 +92,5 @@ If `docs/features/manifest.json` exists, update the status of each spec written 
 - [ ] No spec depends on a feature with a higher id number.
 - [ ] Specs align with project conventions in `docs/conventions/`.
 - [ ] User approved the spec list before files were written.
+- [ ] `docs/context.json` guards passed (`skills.scaffolding-project = "done"`).
+- [ ] `docs/context.json` was updated with `skills.planning-features = "done"`.

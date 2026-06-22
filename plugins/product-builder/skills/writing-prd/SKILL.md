@@ -5,6 +5,22 @@ description: Interviews the user, determines foundation capabilities, and writes
 
 # Writing PRD
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+Set `skills.writing-prd` to `in-progress` at the start of the workflow. On successful completion, set it to `done`. If `docs/context.json` does not exist, create it using the default template from [context-schema.md](../../shared/references/context-schema.md) before writing.
+
+**Writes:**
+
+```json
+{
+  "skills": {
+    "writing-prd": "done"
+  }
+}
+```
+
 ## Input
 
 A product idea, problem description, or feature brief from the user. If none is provided, ask for one before proceeding.
@@ -79,3 +95,4 @@ Once the interview is complete and the capabilities are approved, write `docs/pr
 - [ ] Out of Scope section has at least one entry.
 - [ ] Capabilities block was presented and explicitly approved by the user before writing the file.
 - [ ] User approved the full PRD before `docs/prd.md` was written.
+- [ ] `docs/context.json` was updated with `skills.writing-prd = "done"`.

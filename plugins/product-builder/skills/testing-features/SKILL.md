@@ -5,6 +5,26 @@ description: Generates a happy-path E2E test plan from all feature specs in docs
 
 # Test Features
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before proceeding if `context.skills.planning-features` is not `"done"` in `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing skills.planning-features = "done". Run planning-features first, then re-run this skill.
+```
+
+Set `skills.testing-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
+
+**Writes:**
+
+```json
+{
+  "skills": { "testing-features": "done" }
+}
+```
+
 ## Input
 
 All feature specs from `docs/features/*.spec.md`. If none exist, stop and tell the user to run `planning-features` first.
@@ -12,6 +32,7 @@ All feature specs from `docs/features/*.spec.md`. If none exist, stop and tell t
 ## Hard Rules
 
 - Require Chrome DevTools MCP to be available before starting. Check that `navigate_page`, `click`, `fill`, and `screenshot` tools are available. If any are missing, stop immediately and tell the user to connect Chrome DevTools MCP before running this skill.
+- Require `context.skills.planning-features = "done"` in `docs/context.json`. If missing, stop and direct the user to run `planning-features` first.
 - Do not start the dev server until the test plan is approved by the user.
 
 ## Test User (default)
@@ -123,6 +144,10 @@ Overall: X/Y features passed, A/B total steps passed.
 
 Present the report to the user.
 
+### 8) Update Context
+
+Write `skills.testing-features = "done"` to `docs/context.json`.
+
 ## Validation Checklist
 
 - [ ] All `docs/features/*.spec.md` files were read.
@@ -133,3 +158,5 @@ Present the report to the user.
 - [ ] Screenshots were saved to `docs/e2e/screenshots/`.
 - [ ] Dev server was stopped after execution.
 - [ ] Test report was presented with per-step pass/fail status.
+- [ ] `docs/context.json` guards passed (`skills.planning-features = "done"`).
+- [ ] `docs/context.json` was updated with `skills.testing-features = "done"`.

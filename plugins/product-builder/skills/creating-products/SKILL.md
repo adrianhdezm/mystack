@@ -7,6 +7,14 @@ description: Orchestrates Product Builder from a product idea into an approved i
 
 This is the Product Builder entry point. It drives seven sequential phases that take a product idea from an empty repository through working, verified features. Each phase is a single self-contained goal — it defines the end-state, the approach, and the stop condition in one block.
 
+## Context and Resume
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema.
+
+At the start of each phase, read `docs/context.json` and check `skills.*` for the relevant skill statuses. **Skip any skill where `skills.<name> = "done"`** — this allows `creating-products` to resume an interrupted run from where it left off without re-executing completed steps.
+
+If `docs/context.json` does not exist yet, treat all skill statuses as `pending` and proceed from Phase 0.
+
 ## Workflow
 
 Each phase is a single goal. Set the goal and work until it is met before advancing to the next phase.
@@ -20,6 +28,9 @@ Acceptance criteria:
 - [ ] REPOSITORY and LOCAL_FOLDER are resolved
 - [ ] preparing-repositories completed successfully
 - [ ] LOCAL_REPOSITORY_PATH is established and the repo is empty
+- [ ] docs/context.json exists with skills.preparing-repositories = "done"
+
+Skip this phase if docs/context.json shows skills.preparing-repositories = "done".
 
 Run preparing-repositories. It will derive REPOSITORY and LOCAL_FOLDER from the user's prompt or ask for only the missing value. Do not create fallback folders. Stop and report if preparing-repositories cannot be completed.
 ```
@@ -33,6 +44,9 @@ Acceptance criteria:
 - [ ] writing-prd completed successfully
 - [ ] docs/prd.md exists in the repository
 - [ ] docs/prd.md contains a Foundation Capabilities table with Value and Rationale filled in for every capability
+- [ ] docs/context.json shows skills.writing-prd = "done"
+
+Skip this phase if docs/context.json shows skills.writing-prd = "done".
 
 Run writing-prd. It will interview the user, determine foundation capabilities, present them for approval, and write docs/prd.md. Stop and report if writing-prd cannot be completed.
 ```
@@ -51,9 +65,9 @@ Acceptance criteria:
 - [ ] docs/conventions/ contains entries from each foundation skill
 - [ ] AGENTS.md is updated
 
-Read docs/prd.md and extract the Foundation Capabilities table. Run scaffolding-project for scaffolding. Confirm pnpm dev starts without errors before proceeding.
+Read `docs/prd.md` and extract the Foundation Capabilities table. Run `scaffolding-project` (skip if `skills.scaffolding-project = "done"` in context). Confirm `pnpm dev` starts without errors before proceeding.
 
-Then run the foundation skill for each capability where `Value=yes`, in dependency order derived from the `Depends On` column:
+Then run the foundation skill for each capability where `Value=yes`, in dependency order derived from the `Depends On` column. Skip any skill where `skills.<name> = "done"` in `docs/context.json`:
 
 | Capability | Skill | Depends On |
 | --- | --- | --- |
@@ -64,7 +78,7 @@ Then run the foundation skill for each capability where `Value=yes`, in dependen
 | `landing_page` | `adding-landing-page` | — |
 | `legal_pages` | `adding-legal-pages` | `landing_page` |
 
-Run each skill only after all its dependencies have completed. Verify each skill's doc updates before running the next.
+Run each skill only after all its dependencies have completed and their `capabilities.*` flags are `true` in `docs/context.json`. Verify each skill's doc updates before running the next.
 
 If bootstrapping fails and cannot be resolved, or a foundation skill fails repeatedly and cannot be resolved without user input, stop and report what is blocking.
 ```
@@ -81,6 +95,9 @@ Acceptance criteria:
 - [ ] Each feature spec was approved by the user
 - [ ] Every feature in manifest.json has status "ready" or "blocked" with a documented reason
 - [ ] No feature has status "listed"
+- [ ] docs/context.json shows skills.planning-features = "done"
+
+Skip this phase if docs/context.json shows skills.planning-features = "done".
 
 Read references/feature-manifest.md for the manifest schema, field definitions, and status lifecycle. Derive the feature list from the primary workflow and must-have pages in docs/prd.md. Each feature should be an end-to-end deliverable of one step in that workflow. Propose short title and one-line description each, ordered by dependency. Get user approval before creating the manifest. Create docs/features/manifest.json with all approved features as "listed", then run planning-features for each feature in id order. Each spec follows the planning-features approval flow before moving to "ready".
 
@@ -97,6 +114,9 @@ Acceptance criteria:
 - [ ] Each implemented feature was committed
 - [ ] Every feature in manifest.json has status "implemented" or "blocked" with a documented reason
 - [ ] No feature has status "ready"
+- [ ] docs/context.json shows skills.implementing-features = "done"
+
+Skip this phase if docs/context.json shows skills.implementing-features = "done".
 
 For each "ready" feature in manifest id order respecting depends_on, run implementing-features. Commit after each implemented feature.
 
@@ -111,6 +131,9 @@ Use implementing-features only. Between iterations, if a feature requires user i
 Acceptance criteria:
 - [ ] verifying-features ran for each "implemented" feature
 - [ ] Every feature in manifest.json has status "verified" or "blocked" with a documented reason
+- [ ] docs/context.json shows skills.verifying-features = "done"
+
+Skip this phase if docs/context.json shows skills.verifying-features = "done".
 
 For each "implemented" feature in manifest id order, run verifying-features. If verification fails, re-run implementing-features targeting the failed acceptance criteria then re-verify.
 
@@ -128,6 +151,9 @@ Acceptance criteria:
 - [ ] pnpm typecheck exits 0
 - [ ] pnpm lint exits 0
 - [ ] pnpm build exits 0
+- [ ] docs/context.json shows skills.testing-features = "done"
+
+Skip this phase if docs/context.json shows skills.testing-features = "done".
 
 Run testing-features for a comprehensive E2E pass across all verified features. If E2E tests fail, fix the issues with implementing-features and re-run testing-features. Then run pnpm typecheck, pnpm lint, and pnpm build — fix any failures and re-run until all pass.
 

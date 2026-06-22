@@ -5,14 +5,33 @@ description: Adds a Cloudflare D1 database to an existing Product Builder projec
 
 # Adding D1 Database
 
-## Required inputs
+## Context
 
-Work in the target project repository. If the project path is unclear, ask for only the path before changing files.
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
 
-Derive these values from the project or user prompt when possible:
+**Guard** — stop before changing any files if `context.project.name` is missing from `docs/context.json`. This means `scaffolding-project` has not completed. Stop with:
 
 ```text
-PROJECT_PATH: <absolute path>
+Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
+```
+
+Set `skills.adding-database` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
+
+**Writes:**
+
+```json
+{
+  "project": { "d1_database_name": "<D1_DATABASE_NAME>" },
+  "capabilities": { "database": true },
+  "skills": { "adding-database": "done" }
+}
+```
+
+## Required inputs
+
+Work in the target project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask for only the path before changing files.
+
+```text
 D1_DATABASE_NAME: <cloudflare-d1-database-name>
 D1_BINDING: APP_DB
 ```
@@ -49,8 +68,9 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 6. Generate and apply migrations using [04-migrations-validation.md](references/04-migrations-validation.md).
 7. Set up integration testing with Miniflare using [05-testing-setup.md](references/05-testing-setup.md).
 8. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) and [08-doc-updates.md](references/08-doc-updates.md) for the D1-specific additions: stack entry, directory structure, data model link, data-access convention seeding from `data-access-architecture.md`, testing convention seeding from `testing-conventions.md`, README and AGENTS.md additions.
-9. Run formatting, typecheck, lint, test, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
-10. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+9. Write `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"` to `docs/context.json`.
+10. Run formatting, typecheck, lint, test, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
+11. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -79,5 +99,6 @@ Use `APP_DB` as the default binding unless the existing project already uses a d
 - [ ] `docs/conventions/testing.md` was created with seed patterns from `testing-conventions.md`.
 - [ ] `README.md` documents the D1 setup, required environment variables, and migration commands.
 - [ ] `AGENTS.md` documents database-specific instructions, references `docs/data-model.md` in the Project Documentation section, and lists `pnpm test` in verification commands.
-- [ ] `pnpm db:generate`, `pnpm db:migrate`, and `pnpm db:local:migrate` work or failures are explained.
+- [ ] `docs/context.json` guards passed (`project.name` present).
+- [ ] `docs/context.json` was updated with `project.d1_database_name`, `capabilities.database = true`, and `skills.adding-database = "done"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.

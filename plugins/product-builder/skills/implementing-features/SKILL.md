@@ -5,6 +5,26 @@ description: Implements a Product Builder feature spec from docs/features/ end-t
 
 # Implement Feature
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before proceeding if `context.skills.planning-features` is not `"done"` in `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing skills.planning-features = "done". Run planning-features first, then re-run this skill.
+```
+
+Set `skills.implementing-features` to `in-progress` at the start of the workflow. On successful completion, set it to `done`.
+
+**Writes:**
+
+```json
+{
+  "skills": { "implementing-features": "done" }
+}
+```
+
 ## Input
 
 A feature spec from `docs/features/` (e.g., `docs/features/02-color-upload.spec.md`). If the user does not specify which spec, list available `docs/features/*.spec.md` files and ask.
@@ -93,7 +113,11 @@ Omit empty subsections in the Implementation Log.
 
 If `docs/features/manifest.json` exists, set the feature's status to `implemented`.
 
-### 7) Summary
+### 7) Update Context
+
+Write `skills.implementing-features = "done"` to `docs/context.json`.
+
+### 8) Summary
 
 - State what was built and where.
 - Highlight open questions or deviations that need user input.
@@ -118,3 +142,5 @@ If `docs/features/manifest.json` exists, set the feature's status to `implemente
 - [ ] `pnpm test` passes.
 - [ ] Each acceptance criterion was verified or logged as an open question.
 - [ ] `docs/architecture.md` was updated with decisions, deviations, and tradeoffs.
+- [ ] `docs/context.json` guards passed (`skills.planning-features = "done"`).
+- [ ] `docs/context.json` was updated with `skills.implementing-features = "done"`.

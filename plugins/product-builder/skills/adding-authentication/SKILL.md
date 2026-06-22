@@ -5,11 +5,30 @@ description: Adds Better Auth email-and-password authentication to an existing P
 
 # Adding Authentication
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before changing any files if `context.capabilities.database` is not `true` in `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing capabilities.database = true. Run adding-database first, then re-run this skill.
+```
+
+Set `skills.adding-authentication` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
+
+**Writes:**
+
+```json
+{
+  "capabilities": { "authentication": true },
+  "skills": { "adding-authentication": "done" }
+}
+```
+
 ## Required inputs
 
-Work in the target Product Builder project repository. If the project path is unclear, ask only for the path before changing files.
-
-Require an existing Product Builder-style project that already has D1 and Drizzle configured. If D1 is missing, run the `adding-database` skill first.
+Work in the target Product Builder project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask only for the path before changing files.
 
 Derive these values from the project or user prompt when possible:
 
@@ -54,8 +73,9 @@ AUTH_COOKIE_PREFIX: App
    - **Convention update**: `docs/conventions/routes.md` — add auth-related route patterns: protected route loader check, login/signup form action with Better Auth API, logout action, safe redirect after auth.
    - **README additions**: auth setup, `AUTH_SECRET`, `pnpm wrangler secret put AUTH_SECRET` for remote deploys, migration commands.
    - **AGENTS.md additions**: auth instructions (environment variables, migration commands).
-8. Run formatting, typecheck, lint, build, and unit tests. If any command fails, fix the issue and re-run until it passes before committing.
-9. Commit the generated and updated files using the repository's Conventional Commits format.
+8. Write `capabilities.authentication = true` and `skills.adding-authentication = "done"` to `docs/context.json`.
+9. Run formatting, typecheck, lint, build, and unit tests. If any command fails, fix the issue and re-run until it passes before committing.
+10. Commit the generated and updated files using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -81,4 +101,6 @@ AUTH_COOKIE_PREFIX: App
 - [ ] `tests/unit/routes/login.test.tsx` exists and all tests pass.
 - [ ] `tests/unit/routes/signup.test.tsx` exists and all tests pass.
 - [ ] `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test:unit` pass after fixes.
+- [ ] `docs/context.json` guards passed (`capabilities.database = true`).
+- [ ] `docs/context.json` was updated with `capabilities.authentication = true` and `skills.adding-authentication = "done"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.

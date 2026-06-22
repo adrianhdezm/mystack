@@ -5,9 +5,30 @@ description: Adds Vercel AI SDK with OpenAI provider to an existing Product Buil
 
 # Adding AI
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before changing any files if `context.project.name` is missing from `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
+```
+
+Set `skills.adding-ai` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
+
+**Writes:**
+
+```json
+{
+  "capabilities": { "ai": true },
+  "skills": { "adding-ai": "done" }
+}
+```
+
 ## Required inputs
 
-Work in the target project repository. If the project path is unclear, ask for only the path before changing files.
+Work in the target project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask for only the path before changing files.
 
 ```text
 PROJECT_PATH: <absolute path>
@@ -44,8 +65,9 @@ PROJECT_PATH: <absolute path>
    - **New convention**: `docs/conventions/ai-service.md` — seed with key patterns from [03-ai-service.md](references/03-ai-service.md): AI SDK imports (`generateText`, `streamText`, `generateImage`, `Output`) stay inside `ai.service.ts` only, routes call service methods never the SDK directly, feature implementations extend the service with domain-specific methods, the service owns provider configuration and model selection.
    - **README additions**: OpenAI API key setup, required environment variables, AI SDK usage examples.
    - **AGENTS.md additions**: AI service instructions, available capabilities (text generation, structured output, image generation, streaming), `docs/conventions/ai-service.md` reference.
-7. Run formatting, typecheck, lint, and build. If any command fails, fix the issue and re-run until it passes before committing.
-8. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+7. Write `capabilities.ai = true` and `skills.adding-ai = "done"` to `docs/context.json`.
+8. Run formatting, typecheck, lint, and build. If any command fails, fix the issue and re-run until it passes before committing.
+9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -62,4 +84,6 @@ PROJECT_PATH: <absolute path>
 - [ ] `docs/architecture.md` includes Vercel AI SDK / OpenAI in the Stack section.
 - [ ] `README.md` and `AGENTS.md` document AI setup, environment variables, and capabilities.
 - [ ] Project verification commands pass or failures are explained.
+- [ ] `docs/context.json` guards passed (`project.name` present).
+- [ ] `docs/context.json` was updated with `capabilities.ai = true` and `skills.adding-ai = "done"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.

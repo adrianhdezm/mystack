@@ -5,9 +5,30 @@ description: Adds a public-facing landing page to an existing Product Builder pr
 
 # Adding Landing Page
 
+## Context
+
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
+
+**Guard** — stop before changing any files if `context.project.name` is missing from `docs/context.json`. Stop with:
+
+```text
+Stop — docs/context.json is missing project.name. Run scaffolding-project first, then re-run this skill.
+```
+
+Set `skills.adding-landing-page` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
+
+**Writes:**
+
+```json
+{
+  "capabilities": { "landing_page": true },
+  "skills": { "adding-landing-page": "done" }
+}
+```
+
 ## Required inputs
 
-Work in the target project repository. If the project path is unclear, ask for only the path before changing files.
+Work in the target project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask for only the path before changing files.
 
 ```text
 PROJECT_PATH: <absolute path>
@@ -36,7 +57,8 @@ PROJECT_PATH: <absolute path>
    - **README additions**: note that `/` is the public landing page and describe how to update copy.
    - **AGENTS.md additions**: landing page instructions — location of section components, how to update copy, how the public layout is separated from the authenticated layout.
 7. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. If any command fails, fix the issue and re-run until it passes before committing.
-8. Commit the generated and updated files using the repository's Conventional Commits format.
+8. Write `capabilities.landing_page = true` and `skills.adding-landing-page = "done"` to `docs/context.json`.
+9. Commit the generated and updated files using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -52,4 +74,6 @@ PROJECT_PATH: <absolute path>
 - [ ] `docs/conventions/landing-page.md` exists and documents the public/authenticated layout split.
 - [ ] `README.md` and `AGENTS.md` document the landing page location and how to update copy.
 - [ ] Project verification commands pass or failures are explained.
+- [ ] `docs/context.json` guards passed (`project.name` present).
+- [ ] `docs/context.json` was updated with `capabilities.landing_page = true` and `skills.adding-landing-page = "done"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.

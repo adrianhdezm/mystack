@@ -7,23 +7,38 @@ description: Scaffolds a prepared local repository into a pnpm TypeScript, Vite,
 
 ## Required inputs
 
-Require the successful output from `preparing-repositories` before taking action:
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
 
-```text
-LOCAL_REPOSITORY_PATH: <absolute path>
-REPOSITORY_STATUS: existing-local | cloned | created-and-cloned
+**Guards** — stop before bootstrapping if either field is missing from `docs/context.json`:
+
+- `context.repository.local_path` must be present
+- `context.skills.preparing-repositories` must be `"done"`
+
+Set `skills.scaffolding-project` to `in-progress` at the start of the workflow. On successful completion, write the following fields and set the status to `done`.
+
+**Writes:**
+
+```json
+{
+  "project": {
+    "name": "<repo name derived from local_path>",
+    "worker_name": "<worker name from wrangler.jsonc>",
+    "cloudflare_account_id": "<account ID from wrangler whoami>"
+  },
+  "skills": {
+    "scaffolding-project": "done"
+  }
+}
 ```
 
-If those values are missing, stop before bootstrapping and prepare the repository first. Do not choose a fallback directory yourself.
-
-Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
+Use `context.repository.local_path` as the working directory and `context.repository.status` for scaffolding decisions. Do not choose a fallback directory.
 
 ## Hard rules
 
 - Use `pnpm` for package initialization, package version checks, and package installation.
 - Do not trust remembered package versions. Check latest versions with `pnpm view <package> version` before installing, then install with `@latest`.
 - Load `react-router-patterns` before adding or changing React Router code. Any generated React Router code must follow those patterns.
-- Stop before bootstrapping if `preparing-repositories` has not completed successfully.
+- Stop before bootstrapping if `context.repository.local_path` is missing from `docs/context.json` or `skills.preparing-repositories` is not `"done"`.
 - Stop before bootstrapping if the repository or local destination was missing from the user's request and `preparing-repositories` has not resolved it.
 - Stop before bootstrapping if `LOCAL_REPOSITORY_PATH` already contains files other than repository metadata.
 - After bootstrap starts, treat files created by the bootstrap as project source and reuse or update them in later steps.
@@ -41,9 +56,9 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
 
 ## Workflow
 
-1. Confirm `preparing-repositories` returned `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS`.
-2. If `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS` are missing, stop before bootstrapping and prepare the repository first.
-3. Validate `LOCAL_REPOSITORY_PATH` exists, is a git repository, and contains no pre-existing files other than repository metadata.
+1. Read `docs/context.json`. Confirm `repository.local_path` is present and `skills.preparing-repositories` is `"done"`. Stop if either check fails.
+2. Set `skills.scaffolding-project` to `in-progress` in `docs/context.json`.
+3. Validate `context.repository.local_path` exists, is a git repository, and contains no pre-existing files other than repository metadata.
 4. Initialize pnpm and base files using [01-initialize-pnpm-and-base-files.md](references/01-initialize-pnpm-and-base-files.md).
 5. Add TypeScript using [02-typescript.md](references/02-typescript.md).
 6. Add Vite, linting, and formatting using [03-vite-linting-formatting.md](references/03-vite-linting-formatting.md).
@@ -64,15 +79,16 @@ Use the returned `LOCAL_REPOSITORY_PATH` as the working directory.
       - `docs/features/` — feature specs (added during planning).
       - `docs/e2e/` — E2E test plans and browser screenshots (added during testing).
     - React Router guidance: route filenames describe role, not URL syntax; use middleware only for cross-cutting request work such as auth, logging, shared context, and headers; keep mutations in actions and ownership checks in the route/action that owns the resource param.
-15. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
-16. Summarize what was created, include the commit hash, and list any command that failed.
+15. Write `project.*` and `skills.scaffolding-project = "done"` to `docs/context.json`.
+16. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+17. Summarize what was created, include the commit hash, and list any command that failed.
 
 ## Stop message
 
-When stopping because repository preparation has not provided the required inputs, say this directly:
+When stopping because context guards are not satisfied, say this directly:
 
 ```text
-I need a prepared GitHub repository and explicit local destination before I can bootstrap the Product Builder project.
+I need docs/context.json to contain repository.local_path and skills.preparing-repositories = "done" before I can bootstrap the Product Builder project.
 ```
 
 When stopping because the local repository has pre-existing files, say this directly:
@@ -85,9 +101,7 @@ Include the files found when available.
 
 ## Validation checklist
 
-- [ ] `preparing-repositories` completed successfully.
-- [ ] `LOCAL_REPOSITORY_PATH` and `REPOSITORY_STATUS` are available.
-- [ ] Local repository has no pre-existing files beyond repository metadata.
+- [ ] `docs/context.json` was read and guards passed (`repository.local_path` present, `skills.preparing-repositories = "done"`).
 - [ ] `pnpm view` was used for latest package checks.
 - [ ] `react-router-patterns` was loaded before React Router code was generated, and the generated code follows those patterns.
 - [ ] Cloudflare types are generated with `wrangler types`.
@@ -98,4 +112,5 @@ Include the files found when available.
 - [ ] `docs/conventions/routes.md` was created with seed React Router patterns.
 - [ ] `README.md` gives a very basic overview of the bootstrapped app, commands, and Cloudflare target.
 - [ ] `AGENTS.md` includes basic agent instructions, the bootstrapped project structure, a Project Documentation section referencing `docs/`, and React Router guidance.
+- [ ] `docs/context.json` was updated with `project.*` fields and `skills.scaffolding-project = "done"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.

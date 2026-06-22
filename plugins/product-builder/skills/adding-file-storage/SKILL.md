@@ -5,14 +5,33 @@ description: Adds Cloudflare R2 file storage to an existing Product Builder proj
 
 # Adding File Storage
 
-## Required inputs
+## Context
 
-Work in the target project repository. If the project path is unclear, ask for only the path before changing files.
+Read [context-schema.md](../../shared/references/context-schema.md) for the full `docs/context.json` schema, field reference, and guard pattern.
 
-Derive these values from the project or user prompt when possible:
+**Guard** — stop before changing any files if `context.capabilities.database` is not `true` in `docs/context.json`. Stop with:
 
 ```text
-PROJECT_PATH: <absolute path>
+Stop — docs/context.json is missing capabilities.database = true. Run adding-database first, then re-run this skill.
+```
+
+Set `skills.adding-file-storage` to `in-progress` at the start of the workflow. On successful completion, write the following and set the status to `done`.
+
+**Writes:**
+
+```json
+{
+  "project": { "r2_bucket_name": "<R2_BUCKET_NAME>" },
+  "capabilities": { "file_storage": true },
+  "skills": { "adding-file-storage": "done" }
+}
+```
+
+## Required inputs
+
+Work in the target project repository. Derive `PROJECT_PATH` from `context.repository.local_path`. If the context file is missing, ask for only the path before changing files.
+
+```text
 R2_BUCKET_NAME: <project-name>-files
 R2_BINDING: APP_FILES
 D1_BINDING: APP_DB
@@ -23,7 +42,7 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 ## Hard rules
 
 - Load `react-router-patterns` before changing React Router context, Worker request handling, route modules, loaders, actions, upload forms, or resource routes. Any React Router code must follow those patterns.
-- Require an existing D1 and Drizzle setup for file metadata; if missing, run the `adding-database` skill first.
+- Require `context.capabilities.database = true` in `docs/context.json`; if missing, run the `adding-database` skill first.
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for file metadata service boundaries, transaction ownership, and any DAO or data access workflow changes.
 - Store file bytes in Cloudflare R2 and file metadata in the D1 `files` table.
 - Do not store raw file contents, Cloudflare account IDs, or API tokens in D1.
@@ -52,8 +71,9 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
    - **Data model addition**: `files` entity with columns, types, and relationships matching `app/db/schema.ts`.
    - **README additions**: R2 bucket setup, file metadata table, upload/delete behavior.
    - **AGENTS.md additions**: file storage instructions.
-8. Run formatting, typecheck, lint, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
-9. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
+8. Write `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"` to `docs/context.json`.
+9. Run formatting, typecheck, lint, build, and the migration commands available for the current environment. If any command fails, fix the issue and re-run until it passes before committing.
+10. Commit the generated and updated files in the repository using the repository's Conventional Commits format.
 
 ## Validation checklist
 
@@ -72,4 +92,6 @@ Use `APP_FILES` as the default R2 binding and `APP_DB` as the default D1 binding
 - [ ] `docs/data-model.md` includes the `files` entity matching `app/db/schema.ts`.
 - [ ] `README.md` and `AGENTS.md` document file storage setup and behavior, and `AGENTS.md` references `docs/`.
 - [ ] Migrations and project verification commands work or failures are explained.
+- [ ] `docs/context.json` guards passed (`capabilities.database = true`).
+- [ ] `docs/context.json` was updated with `project.r2_bucket_name`, `capabilities.file_storage = true`, and `skills.adding-file-storage = "done"`.
 - [ ] Generated and updated files were committed with a Conventional Commit message.
