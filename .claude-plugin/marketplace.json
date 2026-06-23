@@ -9,7 +9,7 @@
       "name": "project-bootstrapper",
       "source": "./plugins/project-bootstrapper",
       "description": "Bootstrap a new project infrastructure from an idea and capability selections.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "Adrian Hernandez-Mendez"
       },
