@@ -60,8 +60,10 @@ For `docker-postgres` target, also add:
 ```
 
 5. Create `AGENTS.md` with these instructions. Replace `<deployment-context>` based on the target:
-   - `cloudflare` → `a React Router v7 application deployed to Cloudflare Workers`
-   - `docker-postgres` → `a React Router v7 application running on Node.js, deployed via Docker Compose with Postgres`
+   - `cloudflare` → `a React Router application deployed to Cloudflare Workers`
+   - `docker-postgres` → `a React Router application running on Node.js, deployed via Docker Compose with Postgres`
+
+> **Minimum versions:** React Router v8 requires Node.js 22.22+, React 19.2.7+, and Vite 7+. Verify before bootstrapping.
 
 ````markdown
 # Agent Instructions

@@ -9,7 +9,7 @@ Before adding or changing these files, load `react-router-patterns` and follow i
 
 ## Steps
 
-1. Check the latest React and React Router package versions. Pin `react-router` and `@react-router/dev` to `^7` — do not install v8 or higher.
+1. Check the latest React and React Router package versions.
 
 ```sh
 pnpm view react version
@@ -22,8 +22,8 @@ pnpm view @react-router/dev version
 2. Install React, React Router, and Hono dependencies.
 
 ```sh
-pnpm add react@latest react-dom@latest react-router@^7 isbot@latest hono@latest
-pnpm add -D @react-router/dev@^7
+pnpm add react@latest react-dom@latest react-router@latest isbot@latest hono@latest
+pnpm add -D @react-router/dev@latest
 ```
 
 3. Create `react-router.config.ts`.
@@ -33,13 +33,6 @@ import type { Config } from "@react-router/dev/config";
 
 export default {
   ssr: true,
-  future: {
-    v8_middleware: true,
-    v8_passThroughRequests: true,
-    v8_splitRouteModules: true,
-    v8_trailingSlashAwareDataRequests: true,
-    v8_viteEnvironmentApi: true,
-  },
 } satisfies Config;
 ```
 
@@ -280,9 +273,9 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 
 ## Expected Results
 
-- `react`, `react-dom`, `react-router` (v7), `isbot`, and `hono` are installed as dependencies.
-- `@react-router/dev` (v7) is installed as a development dependency.
-- `react-router.config.ts` exists with SSR enabled and the React Router v7 future flags for v8 configured.
+- `react`, `react-dom`, `react-router`, `isbot`, and `hono` are installed as dependencies.
+- `@react-router/dev` is installed as a development dependency.
+- `react-router.config.ts` exists with SSR enabled. No `future` flags — all v8 behaviors are defaults.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx` exists with the layout, outlet, and route error boundary.
 - `app/entry.server.tsx`, `app/routes.ts`, `app/context.ts`, and `app/routes/home.tsx` exist.

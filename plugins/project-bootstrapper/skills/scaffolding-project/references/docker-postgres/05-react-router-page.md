@@ -1,12 +1,12 @@
 # 05 - React Router Page (docker-postgres target)
 
-Wires React Router v7 into the Docker/Postgres Node.js project using a Node.js-compatible context. The difference from the Cloudflare variant is that the server entry is `server/app.ts` (Hono) and the context contains Node.js environment variables, not Cloudflare bindings.
+Wires React Router into the Docker/Postgres Node.js project using a Node.js-compatible context. The difference from the Cloudflare variant is that the server entry is `server/app.ts` (Hono) and the context contains Node.js environment variables, not Cloudflare bindings.
 
 ## Steps
 
 Before adding or changing these files, load `react-router-patterns` and follow its app-level file, route config, route module, loader, error boundary, and context patterns.
 
-1. Check the latest React and React Router package versions. Pin `react-router` and `@react-router/dev` to `^7` — do not install v8 or higher.
+1. Check the latest React and React Router package versions.
 
 ```sh
 pnpm view react version
@@ -19,8 +19,8 @@ pnpm view @react-router/dev version
 2. Install React and React Router dependencies.
 
 ```sh
-pnpm add react@latest react-dom@latest react-router@^7 isbot@latest
-pnpm add -D @react-router/dev@^7
+pnpm add react@latest react-dom@latest react-router@latest isbot@latest
+pnpm add -D @react-router/dev@latest
 ```
 
 3. Create `react-router.config.ts`.
@@ -30,13 +30,6 @@ import type { Config } from '@react-router/dev/config';
 
 export default {
   ssr: true,
-  future: {
-    v8_middleware: true,
-    v8_passThroughRequests: true,
-    v8_splitRouteModules: true,
-    v8_trailingSlashAwareDataRequests: true,
-    v8_viteEnvironmentApi: true,
-  },
 } satisfies Config;
 ```
 
@@ -261,9 +254,9 @@ export default defineConfig({
 
 ## Expected Results
 
-- `react`, `react-dom`, `react-router` (v7), and `isbot` are installed as dependencies.
-- `@react-router/dev` (v7) is installed as a development dependency.
-- `react-router.config.ts` exists with SSR enabled and the React Router v7 future flags for v8 configured.
+- `react`, `react-dom`, `react-router`, and `isbot` are installed as dependencies.
+- `@react-router/dev` is installed as a development dependency.
+- `react-router.config.ts` exists with SSR enabled. No `future` flags — all v8 behaviors are defaults.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx`, `app/entry.server.tsx`, `app/routes.ts`, `app/context.ts`, and `app/routes/home.tsx` exist.
 - `app/context.ts` exports `appContext` with `env: { APP_NAME: string }`.
