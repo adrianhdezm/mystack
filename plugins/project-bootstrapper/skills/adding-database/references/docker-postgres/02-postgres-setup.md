@@ -4,21 +4,27 @@ Configures the Postgres connection using `node-postgres` (`pg`) and `drizzle-kit
 
 ## Steps
 
-1. Verify Docker Compose is running with a Postgres service. If `docker-compose.yml` does not have a `postgres` service, add it:
+1. Verify Docker Compose is running with a Postgres service. If `docker-compose.yml` does not have a `postgres` service, add it along with the init script that creates the project database:
 
 ```yaml
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: app
-      POSTGRES_DB: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-s3cr3t}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - .docker-data/postgres:/var/lib/postgresql/data
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+```
+
+Create `db/scripts/init.sql` if not already present:
+
+```sql
+CREATE DATABASE <project_name>_db;
+GRANT ALL PRIVILEGES ON DATABASE <project_name>_db TO postgres;
 ```
 
 2. Check the latest `pg` package version.
@@ -37,16 +43,16 @@ pnpm add -D @types/pg@latest
 
 If `@types/pg` is in the lockfile but TypeScript can't resolve `pg`, run `pnpm install` again — pnpm occasionally skips symlinking on the first install.
 
-4. Add `DATABASE_URL` to `.env` with the local development connection string.
+4. Add `DATABASE_URL` to `.env` with the local development connection string pointing to the project database created by the init script.
 
 ```env
-DATABASE_URL=postgres://app:app@localhost:5432/app
+DATABASE_URL=postgres://postgres:s3cr3t@localhost:5432/<project_name>_db
 ```
 
 5. Add `DATABASE_URL` placeholder to `.env.example`:
 
 ```env
-DATABASE_URL=postgres://user:password@localhost:5432/dbname
+DATABASE_URL=postgres://postgres:s3cr3t@localhost:5432/<project_name>_db
 ```
 
 6. Create `drizzle.config.ts` reading `DATABASE_URL` from the environment.
@@ -64,13 +70,13 @@ export default defineConfig({
 });
 ```
 
-7. Add database scripts to `package.json`. For Postgres, there is only one migration target (no local/remote split):
+7. Add database scripts to `package.json`. On Node ≥ 24 the `drizzle-kit` shell shim fails — invoke the CJS binary directly via `node` to avoid this:
 
 ```json
 {
   "scripts": {
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:generate": "node --env-file=.env ./node_modules/drizzle-kit/bin.cjs generate",
+    "db:migrate": "node --env-file=.env ./node_modules/drizzle-kit/bin.cjs migrate"
   }
 }
 ```
@@ -85,7 +91,9 @@ docker compose up -d
 
 - `pg` and `@types/pg` are installed.
 - `drizzle.config.ts` exists reading `DATABASE_URL` from the environment with `dialect: "postgresql"`.
-- `.env` contains `DATABASE_URL` pointing to the Docker Postgres instance.
+- `.env` contains `DATABASE_URL` pointing to the project-specific database.
 - `.env.example` documents `DATABASE_URL`.
-- `package.json` includes `db:generate` and `db:migrate` scripts.
+- `db/scripts/init.sql` creates the project database and grants privileges.
+- `docker-compose.yml` includes a Postgres 17 service with the init script and `db/data/` volume.
+- `package.json` includes `db:generate` and `db:migrate` scripts using `node` to invoke drizzle-kit directly.
 - `docker-compose.yml` includes a Postgres service.

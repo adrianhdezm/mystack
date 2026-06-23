@@ -29,38 +29,56 @@ const app = new Hono();
 export default app;
 ```
 
-4. Create `docker-compose.yml` for local development.
+4. Create `db/scripts/init.sql`. This script runs once when the container is first started and creates a dedicated project database.
+
+```sql
+CREATE DATABASE <project_name>_db;
+GRANT ALL PRIVILEGES ON DATABASE <project_name>_db TO postgres;
+```
+
+Replace `<project_name>` with the lowercase snake-case project name.
+
+5. Create `docker-compose.yml` for local development.
 
 ```yaml
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: app
-      POSTGRES_DB: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-s3cr3t}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - .docker-data/postgres:/var/lib/postgresql/data
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 ```
 
-5. Create `.env.example` with required environment variables (no secrets).
+6. Add `db/data/` to `.gitignore` — it holds the Postgres data volume and must not be committed.
+
+```gitignore
+# Docker
+.docker-data/
+db/data/
+```
+
+7. Create `.env.example` with required environment variables (no secrets).
 
 ```env
-DATABASE_URL=postgres://app:app@localhost:5432/app
+DATABASE_URL=postgres://postgres:s3cr3t@localhost:5432/<project_name>_db
+POSTGRES_PASSWORD=s3cr3t
+POSTGRES_PORT=5432
 PORT=3000
 APP_NAME=<project-name>
 ```
 
-6. Create `.env` from the template. This file is gitignored and holds local secrets.
+8. Create `.env` from the template. This file is gitignored and holds local secrets.
 
 ```sh
 cp .env.example .env
 ```
 
-7. Update `vite.config.ts` to wire `@hono/vite-dev-server` into the Vite plugin pipeline. The `exclude` patterns ensure that Vite-owned requests (static assets, HMR, React Router data routes) are not intercepted by Hono.
+9. Update `vite.config.ts` to wire `@hono/vite-dev-server` into the Vite plugin pipeline. The `exclude` patterns ensure that Vite-owned requests (static assets, HMR, React Router data routes) are not intercepted by Hono.
 
 ```ts
 import devServer, { defaultOptions } from '@hono/vite-dev-server';
@@ -81,7 +99,7 @@ export default defineConfig({
 });
 ```
 
-8. Add server scripts to `package.json`.
+10. Add server scripts to `package.json`.
 
 ```json
 {
@@ -100,8 +118,9 @@ export default defineConfig({
 - `@hono/vite-dev-server` is installed as a development dependency.
 - `server/app.ts` exports a minimal Hono app.
 - `vite.config.ts` includes `devServer` with `entry: 'server/app.ts'` and React Router data route exclusion.
-- `docker-compose.yml` exists with a Postgres 16 service.
-- `.docker-data/` is in `.gitignore`.
-- `.env.example` exists with `DATABASE_URL`, `PORT`, and `APP_NAME`.
+- `db/scripts/init.sql` exists and creates a dedicated project database.
+- `docker-compose.yml` exists with a Postgres 17 service, init script volume, and `db/data/` data volume.
+- `db/data/` is in `.gitignore`.
+- `.env.example` exists with `DATABASE_URL`, `POSTGRES_PASSWORD`, `POSTGRES_PORT`, `PORT`, and `APP_NAME`.
 - `.env` exists (gitignored) with local development values.
 - `package.json` includes `dev`, `build`, `start`, and `preview` scripts.
