@@ -49,7 +49,7 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 - Local D1 (`pnpm db:local:migrate`) and remote D1 (`pnpm db:migrate`) use separate tracking — always run both.
 
 **Docker/Postgres target only:**
-- Use the Postgres dialect and `postgres-js` driver.
+- Use the Postgres dialect and `node-postgres` (`pg`) driver.
 - `DATABASE_URL` in `.env` — format: `postgres://user:pass@localhost:5432/dbname`.
 - Docker Compose must be running before running migrations or integration tests.
 
