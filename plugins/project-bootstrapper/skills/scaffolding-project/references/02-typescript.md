@@ -24,6 +24,8 @@ pnpm add -D typescript@latest @types/node@latest
    - `cloudflare` → `tsconfig.cloudflare.json`
    - `docker-postgres` → `tsconfig.app.json`
 
+The `tsconfig.unit.json` reference is added in step 5 of `07-vitest-setup.md` once that file exists. For docker-postgres, `tsconfig.integration.json` is added later in `adding-database/05-testing-setup.md`.
+
 ```json
 {
   "files": [],
@@ -109,6 +111,7 @@ pnpm add -D typescript@latest @types/node@latest
     "workers/**/*",
     "server.ts"
   ],
+  "exclude": ["build/**/*", "node_modules"],
   "compilerOptions": {
     "composite": true,
     "strict": true,
@@ -144,4 +147,5 @@ pnpm add -D typescript@latest @types/node@latest
 - `tsconfig.json` exists with strict shared compiler settings and references to the Node and app-runtime configs.
 - `tsconfig.node.json` exists with Node, Vite, and tooling compiler settings.
 - `tsconfig.cloudflare.json` (Cloudflare) or `tsconfig.app.json` (Docker/Postgres) exists with React Router, app source, and target-specific includes.
+- `tsconfig.app.json` (Docker/Postgres) includes `"exclude": ["build/**/*", "node_modules"]` so compiled output is never type-checked.
 - `package.json` includes `"typecheck": "tsc --build"`.

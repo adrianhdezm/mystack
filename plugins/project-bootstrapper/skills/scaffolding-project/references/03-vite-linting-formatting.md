@@ -158,6 +158,14 @@ export default defineConfig([
       "jsx-a11y/label-has-associated-control": "off",
     },
   },
+  // createRoutesStub and other test utilities return loosely typed values that trigger
+  // no-unsafe-assignment. Disable it blanket for all test files.
+  {
+    files: ["tests/**/*.ts", "tests/**/*.tsx"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+    },
+  },
   {
     rules: {
       curly: "error",
@@ -198,5 +206,5 @@ export default defineConfig([
 - `vite.config.ts` exists with an empty plugin list and `resolve.tsconfigPaths` enabled.
 - `@eslint/js` (v9), `eslint` (v9), `eslint-config-prettier`, `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `globals`, `typescript-eslint`, and `@types/eslint-plugin-jsx-a11y` are installed as development dependencies.
 - `eslint.config.js` exists with React, React Hooks, JSX accessibility, TypeScript, and Prettier recommended configuration.
-- `eslint.config.js` disables `@typescript-eslint/only-throw-error` for `app/routes/**/*.tsx` and `jsx-a11y/label-has-associated-control` for `app/components/ui/**/*.tsx`.
+- `eslint.config.js` disables `@typescript-eslint/only-throw-error` for `app/routes/**/*.tsx`, `jsx-a11y/label-has-associated-control` for `app/components/ui/**/*.tsx`, and `@typescript-eslint/no-unsafe-assignment` for `tests/**/*.{ts,tsx}`.
 - `package.json` includes `format` and `lint` scripts.

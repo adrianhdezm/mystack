@@ -114,19 +114,47 @@ export default defineConfig({
 
 The `include` array **replaces** (does not merge with) the parent's `include`. Always re-list `app/**/*` so test utilities that import from `~/db/schema`, `~/context`, etc. can resolve types.
 
+TypeScript 5.0+ allows `composite: true` and `noEmit: true` together — include both so this config can participate in project references.
+
 ```json
 {
   "extends": "./tsconfig.app.json",
   "include": [".react-router/types/**/*", "app/**/*", "tests/integration/**/*"],
   "compilerOptions": {
+    "composite": true,
     "noEmit": true
   }
 }
 ```
 
-## Test conventions
+9. Add `tsconfig.integration.json` to the root `tsconfig.json` references array so `projectService` discovers integration test files without needing `allowDefaultProject` entries.
 
-Each test file owns its full container lifecycle:
+```json
+{
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.unit.json" },
+    { "path": "./tsconfig.integration.json" }
+  ]
+}
+```
+
+10. Create `tests/integration/db/schema.test.ts`. Adding the integration project to root `vitest.config.ts` before any test files exist causes `vitest run` to exit with code 1 ("No test files found"). This smoke test also validates that the Drizzle schema import path resolves correctly.
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import { schema } from "~/db/schema";
+
+describe("schema", () => {
+  it("is defined", () => {
+    expect(schema).toBeDefined();
+  });
+});
+```
+
+## Test conventions
 
 ```ts
 import { afterAll, beforeAll } from "vitest";
@@ -153,6 +181,8 @@ afterAll(async () => {
 - `pnpm-workspace.yaml` approves `cpu-features`, `protobufjs`, and `ssh2` builds.
 - `tests/integration/vitest.config.ts` exists with the node environment using `resolve.tsconfigPaths: true` (no `vite-tsconfig-paths` plugin).
 - `tests/integration/db-test-utils.ts` exports `setupTestDb()` returning `{ db, teardown }`.
+- `tests/integration/db/schema.test.ts` exists as a smoke test so `vitest run` does not exit with code 1 before real test files are added.
 - Root `vitest.config.ts` includes both `tests/unit` and `tests/integration` projects.
-- `tsconfig.integration.json` extends `tsconfig.app.json`, includes `.react-router/types/**/*`, `app/**/*`, and `tests/integration/**/*`, and has no explicit `types` override.
+- `tsconfig.integration.json` extends `tsconfig.app.json`, includes `.react-router/types/**/*`, `app/**/*`, and `tests/integration/**/*`, has `composite: true` and `noEmit: true`, and no explicit `types` override.
+- Root `tsconfig.json` references array includes `tsconfig.integration.json`.
 - Running `pnpm test:integration` passes without any external Docker Compose setup.

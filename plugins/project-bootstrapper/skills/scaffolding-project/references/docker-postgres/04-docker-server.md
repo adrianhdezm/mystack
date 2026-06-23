@@ -61,7 +61,11 @@ if (DEV) {
     });
   }).listen(PORT, () => console.log(`Dev server at http://localhost:${PORT}`));
 } else {
-  const { default: app } = (await import("./build/server/index.js")) as {
+  // TypeScript resolves this import statically and will fail with "Cannot find module"
+  // before the first build. Using a string variable stops static module resolution while
+  // keeping runtime behaviour identical.
+  const buildPath = "./build/server/index.js";
+  const { default: app } = (await import(buildPath)) as {
     default: Hono;
   };
 
@@ -163,12 +167,12 @@ export default defineConfig({
 });
 ```
 
-11. Add server scripts to `package.json`. Both dev and prod use the same `server.ts` entry point — `NODE_ENV` in `.env` controls which branch runs.
+11. Add server scripts to `package.json`. `dev` loads `.env` via `--env-file` so `DATABASE_URL`, `AUTH_SECRET`, `PORT`, and other vars are available without manual shell exports. `start` intentionally omits `--env-file` — in production, environment variables are injected by the deployment platform, not read from a committed file. `--env-file` is available from Node.js 20.6 and silently skips the file if it does not exist.
 
 ```json
 {
   "scripts": {
-    "dev": "node server.ts",
+    "dev": "node --env-file=.env server.ts",
     "build": "react-router build",
     "start": "node server.ts"
   }
@@ -179,11 +183,11 @@ export default defineConfig({
 
 - `hono` and `@hono/node-server` are installed as dependencies.
 - `workers/app.ts` exports a minimal Hono app with no `serve()` call.
-- `server.ts` exists at the project root with a dev/prod branch on `NODE_ENV`.
+- `server.ts` exists at the project root with a dev/prod branch on `NODE_ENV`. The prod branch uses a string variable for the `build/server/index.js` import path to avoid a pre-build `tsc -b` failure.
 - `vite.config.ts` uses `reactRouter()` with `environments.ssr` pointing to `workers/app.ts`. No `@hono/vite-dev-server` plugin.
 - `db/scripts/init.sql` exists and creates a dedicated project database.
 - `docker-compose.yml` exists with a Postgres 17 service, init script volume, and `db/data/` data volume.
 - `db/data/` is in `.gitignore`.
 - `.env.example` exists with `DATABASE_URL`, `POSTGRES_PASSWORD`, `POSTGRES_PORT`, `PORT`, `NODE_ENV`, and `APP_NAME`.
 - `.env` exists (gitignored) with `NODE_ENV=development`.
-- `package.json` includes `dev`, `build`, and `start` scripts.
+- `package.json` `dev` script uses `node --env-file=.env server.ts`; `start` uses `node server.ts` (no `--env-file`).

@@ -56,20 +56,33 @@ export default defineConfig({
 });
 ```
 
-5. Create `tsconfig.unit.json` — a non-composite tsconfig for unit tests that extends the app's config. The `app` config name differs by target: `tsconfig.cloudflare.json` (Cloudflare) or `tsconfig.app.json` (docker-postgres). Include `.react-router/types/**/*` so the `+future.ts` augmentation (e.g. `v8_middleware`) is in scope for test files that import route components.
+5. Create `tsconfig.unit.json` — extends the app tsconfig for unit tests. The `app` config name differs by target: `tsconfig.cloudflare.json` (Cloudflare) or `tsconfig.app.json` (docker-postgres). Include `.react-router/types/**/*` so the `+future.ts` augmentation (e.g. `v8_middleware`) is in scope for test files that import route components.
+
+TypeScript 5.0+ allows `composite: true` and `noEmit: true` together, so do not set `composite: false` — doing so would prevent this config from participating in project references.
 
 ```json
 {
   "extends": "./tsconfig.<cloudflare|app>.json",
   "compilerOptions": {
-    "composite": false,
     "noEmit": true
   },
   "include": [".react-router/types/**/*", "tests/unit/**/*"]
 }
 ```
 
-6. Add `vitest.config.ts` to the `include` array in `tsconfig.node.json`. This mirrors the pattern used for other tooling configs like `drizzle.config.ts`.
+6. Add `tsconfig.unit.json` to the root `tsconfig.json` references array so `projectService` discovers unit test files automatically without needing entries in `allowDefaultProject`.
+
+```json
+{
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.<cloudflare|app>.json" },
+    { "path": "./tsconfig.unit.json" }
+  ]
+}
+```
+
+7. Add `vitest.config.ts` to the `include` array in `tsconfig.node.json`. This mirrors the pattern used for other tooling configs like `drizzle.config.ts`.
 
 ```jsonc
 {
@@ -82,7 +95,7 @@ export default defineConfig({
 }
 ```
 
-7. Add test scripts to `package.json`.
+8. Add test scripts to `package.json`. Because `tsconfig.unit.json` is now a project reference, `tsc -b` covers it — no separate `tsc -p tsconfig.unit.json` pass needed.
 
 ```json
 {
@@ -91,12 +104,12 @@ export default defineConfig({
     "test:unit": "vitest run --project unit",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "typecheck": "tsc -b && tsc -p tsconfig.unit.json"
+    "typecheck": "tsc -b"
   }
 }
 ```
 
-Update the existing `typecheck` script to include the unit tsconfig pass. For the Cloudflare target, prepend `wrangler types &&` before `tsc -b` so generated Worker types are up to date before typechecking.
+For the Cloudflare target, prepend `wrangler types &&` before `tsc -b` so generated Worker types are up to date before typechecking.
 
 8. Update `.gitignore` to use `node_modules/` (any depth) instead of `/node_modules/` (root-only). Vitest browser mode creates a `node_modules/.vite` cache directory inside `tests/unit/` at runtime — the leading-slash pattern doesn't cover it.
 
@@ -137,8 +150,9 @@ If any test fails, fix the configuration and rerun until it passes.
 - Playwright chromium browser is installed locally.
 - `vitest.config.ts` exists at the project root with `projects: ["tests/unit"]`.
 - `tests/unit/vitest.config.ts` exists with Playwright browser mode using `provider: playwright()` (function form, not string).
-- `tsconfig.unit.json` exists at the project root extending the app tsconfig, with `.react-router/types/**/*` and `tests/unit/**/*` in its `include` array.
-- `package.json` includes `test`, `test:unit`, `test:watch`, and `test:ui` scripts.
+- `tsconfig.unit.json` exists at the project root extending the app tsconfig, with `.react-router/types/**/*` and `tests/unit/**/*` in its `include` array. No `composite: false`.
+- Root `tsconfig.json` references array includes `tsconfig.unit.json` so `projectService` discovers unit tests without `allowDefaultProject` entries.
+- `package.json` includes `test`, `test:unit`, `test:watch`, and `test:ui` scripts. The `typecheck` script is `tsc -b` only (no separate `tsc -p tsconfig.unit.json` pass).
 - `tsconfig.node.json` includes `vitest.config.ts`.
 - `.gitignore` uses `node_modules/` (any depth).
 - `tests/unit/lib/utils.test.ts` exists and passes.

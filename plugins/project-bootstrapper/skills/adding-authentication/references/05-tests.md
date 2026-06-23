@@ -83,10 +83,14 @@ pnpm test --project unit
 ## Implementation Notes
 
 - `render()` from `vitest-browser-react` returns a `Promise<RenderResult>`. Use `void render(...)` in non-async render helpers when the result is not needed — this satisfies `@typescript-eslint/no-floating-promises` without making the helper async.
-- `createRoutesStub` returns a loosely typed `StubRouteObject[]` that triggers `@typescript-eslint/no-unsafe-assignment`. Add a per-directory ESLint override for `tests/**` disabling this rule, or use `// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment` at the call site.
+- `createRoutesStub` returns a loosely typed value. The `tests/**` ESLint override added in `03-vite-linting-formatting.md` disables `@typescript-eslint/no-unsafe-assignment` for all test files — no per-site suppression needed.
 - **shadcn/ui `CardTitle` is not a semantic heading.** The `base-nova` style renders `CardTitle` as a `<div data-slot="card-title">`, not `<h2>`. Use `page.getByText('Welcome back')` instead of `page.getByRole('heading', { name: 'Welcome back' })`.
 - When the signup form has both "Password" and "Confirm Password" labels, use `page.getByLabelText('Password', { exact: true })` to avoid Playwright strict-mode errors from ambiguous matches.
-- Use `page` from `vitest/browser` for element queries — Playwright locators, strict by default. Do not use `@vitest/browser/context`, which is deprecated in Vitest 4.x.
+- Use `page` from `vitest/browser` for element queries — Playwright locators, strict by default. The `@vitest/browser/context` path is deprecated in Vitest 4.x and will print a warning; always use the new path:
+
+  ```ts
+  import { page } from "vitest/browser";
+  ```
 - Use `expect.element()` (not `expect()`) for DOM assertions — it retries until the DOM settles.
 - Import route components via the `~/` path alias, not a relative path.
 - Always wrap components that contain `<Link>` or `<Form>` in a `createRoutesStub` — they require a router context and throw without one.
