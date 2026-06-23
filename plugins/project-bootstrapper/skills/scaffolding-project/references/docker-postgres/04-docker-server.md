@@ -78,7 +78,9 @@ APP_NAME=<project-name>
 cp .env.example .env
 ```
 
-9. Update `vite.config.ts` to wire `@hono/vite-dev-server` into the Vite plugin pipeline. The `exclude` patterns ensure that Vite-owned requests (static assets, HMR, React Router data routes) are not intercepted by Hono.
+9. Update `vite.config.ts` to wire `@hono/vite-dev-server` into the Vite plugin pipeline.
+
+The `exclude` array controls which requests Vite handles instead of Hono. The first pattern uses a negative lookahead to pass `.data` route URLs to React Router while blocking all other `/app/**` source file requests from reaching Hono.
 
 ```ts
 import devServer, { defaultOptions } from '@hono/vite-dev-server';
@@ -89,7 +91,13 @@ export default defineConfig({
   plugins: [
     devServer({
       entry: 'server/app.ts',
-      exclude: [/\.data(\?.*)?$/, ...defaultOptions.exclude],
+      exclude: [
+        /^\/app\/(?!.*\.data(\?|$)).*\..*(\?.*)?$/,
+        /\?import(\?.*)?$/,
+        /^\/@.+$/,
+        /^\/node_modules\/.*/,
+        ...defaultOptions.exclude,
+      ],
     }),
     reactRouter(),
   ],

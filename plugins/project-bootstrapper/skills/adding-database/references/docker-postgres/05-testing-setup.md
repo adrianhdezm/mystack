@@ -11,13 +11,21 @@ pnpm view @vitejs/plugin-react version
 pnpm add -D @vitejs/plugin-react@latest
 ```
 
-2. Install `vite-tsconfig-paths` if not already present. If the package appears in the lockfile but isn't found by TypeScript after install, run `pnpm install` again — pnpm occasionally skips symlinking on the first install.
+2. Remove `vite-tsconfig-paths` if previously installed — Vite 6+ supports tsconfig path resolution natively via `resolve.tsconfigPaths: true`.
 
-```sh
-pnpm add -D vite-tsconfig-paths@latest
+3. Install Testcontainers and the PostgreSQL module. Testcontainers pulls in `ssh2` and `cpu-features` which run native build scripts — add them to `pnpm-workspace.yaml` before installing to avoid a blocked-build error.
+
+Add to `pnpm-workspace.yaml`:
+
+```yaml
+allowBuilds:
+  cpu-features: true
+  esbuild: true
+  protobufjs: true
+  ssh2: true
 ```
 
-3. Install Testcontainers and the PostgreSQL module.
+Then install:
 
 ```sh
 pnpm view testcontainers version
@@ -25,14 +33,15 @@ pnpm view @testcontainers/postgresql version
 pnpm add -D testcontainers@latest @testcontainers/postgresql@latest
 ```
 
-4. Create `tests/integration/vitest.config.ts` — standard Vitest node runner.
+4. Create `tests/integration/vitest.config.ts` — standard Vitest node runner. Use `resolve.tsconfigPaths: true` instead of the `vite-tsconfig-paths` plugin.
 
 ```ts
 import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     name: 'integration',
     environment: 'node',
@@ -96,12 +105,14 @@ export default defineConfig({
 }
 ```
 
-8. Update `tsconfig.integration.json` (or create if missing) to extend `tsconfig.app.json` and include integration tests. Do not add an explicit `types` array — let TypeScript use automatic type discovery so `vite-tsconfig-paths` and other tooling types resolve correctly.
+8. Update `tsconfig.integration.json` (or create if missing) to extend `tsconfig.app.json` and include integration tests. Do not add an explicit `types` array — let TypeScript use automatic type discovery.
+
+The `include` array **replaces** (does not merge with) the parent's `include`. Always re-list `app/**/*` so test utilities that import from `~/db/schema`, `~/context`, etc. can resolve types.
 
 ```json
 {
   "extends": "./tsconfig.app.json",
-  "include": [".react-router/types/**/*", "tests/integration/**/*"],
+  "include": [".react-router/types/**/*", "app/**/*", "tests/integration/**/*"],
   "compilerOptions": {
     "noEmit": true
   }
@@ -134,8 +145,9 @@ afterAll(async () => {
 ## Expected Results
 
 - `testcontainers` and `@testcontainers/postgresql` are installed as development dependencies.
-- `tests/integration/vitest.config.ts` exists with the node environment (no `setupFiles` — each test file manages its own lifecycle).
+- `pnpm-workspace.yaml` approves `cpu-features`, `protobufjs`, and `ssh2` builds.
+- `tests/integration/vitest.config.ts` exists with the node environment using `resolve.tsconfigPaths: true` (no `vite-tsconfig-paths` plugin).
 - `tests/integration/db-test-utils.ts` exports `setupTestDb()` returning `{ db, teardown }`.
 - Root `vitest.config.ts` includes both `tests/unit` and `tests/integration` projects.
-- `tsconfig.integration.json` extends `tsconfig.app.json`, includes `.react-router/types/**/*` and `tests/integration/**/*`, and has no explicit `types` override.
+- `tsconfig.integration.json` extends `tsconfig.app.json`, includes `.react-router/types/**/*`, `app/**/*`, and `tests/integration/**/*`, and has no explicit `types` override.
 - Running `pnpm test:integration` passes without any external Docker Compose setup.

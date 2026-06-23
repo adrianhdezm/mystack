@@ -120,7 +120,8 @@ describe("cn", () => {
   });
 
   it("handles conditional classes", () => {
-    expect(cn("a", false && "b", "c")).toBe("a c");
+    const condition = false;
+    expect(cn("a", condition && "b", "c")).toBe("a c");
   });
 });
 ```

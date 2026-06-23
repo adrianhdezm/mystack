@@ -7,9 +7,9 @@ Update `app/context.ts` to include Better Auth alongside the Node.js environment
 ```ts
 import { createContext } from 'react-router';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { betterAuth } from 'better-auth';
+import type { betterAuth } from 'better-auth';
 
-import { schema } from './db/schema';
+import type { schema } from './db/schema';
 
 export const appContext = createContext<{
   env: {
@@ -66,6 +66,9 @@ const auth = betterAuth({
   },
   advanced: {
     cookiePrefix: 'App',
+    database: {
+      generateId: 'uuid',
+    },
   },
 }) as ReturnType<typeof betterAuth>;
 

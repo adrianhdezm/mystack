@@ -319,3 +319,13 @@ export async function action({ context, request }: Route.ActionArgs) {
 ```
 
 Build the JSX fields for `name`, `email`, `password`, and `confirmPassword` using the login route's Conform and shadcn/ui pattern.
+
+## Type generation
+
+After creating the route files, run React Router's type generator so `+types/*.ts` files are available before typecheck runs:
+
+```sh
+pnpm exec react-router typegen
+```
+
+Without this, `tsc` will fail to resolve `./+types/login`, `./+types/signup`, etc.

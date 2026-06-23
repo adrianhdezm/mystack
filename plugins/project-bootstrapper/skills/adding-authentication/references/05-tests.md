@@ -84,6 +84,7 @@ pnpm test --project unit
 
 - `render()` from `vitest-browser-react` returns a `Promise<RenderResult>`. Use `void render(...)` in non-async render helpers when the result is not needed — this satisfies `@typescript-eslint/no-floating-promises` without making the helper async.
 - `createRoutesStub` returns a loosely typed `StubRouteObject[]` that triggers `@typescript-eslint/no-unsafe-assignment`. Add a per-directory ESLint override for `tests/**` disabling this rule, or use `// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment` at the call site.
+- **shadcn/ui `CardTitle` is not a semantic heading.** The `base-nova` style renders `CardTitle` as a `<div data-slot="card-title">`, not `<h2>`. Use `page.getByText('Welcome back')` instead of `page.getByRole('heading', { name: 'Welcome back' })`.
 - When the signup form has both "Password" and "Confirm Password" labels, use `page.getByLabelText('Password', { exact: true })` to avoid Playwright strict-mode errors from ambiguous matches.
 - Use `page` from `vitest/browser` for element queries — Playwright locators, strict by default. Do not use `@vitest/browser/context`, which is deprecated in Vitest 4.x.
 - Use `expect.element()` (not `expect()`) for DOM assertions — it retries until the DOM settles.

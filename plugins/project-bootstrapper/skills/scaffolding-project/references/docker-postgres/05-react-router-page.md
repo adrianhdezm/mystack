@@ -16,11 +16,11 @@ pnpm view isbot version
 pnpm view @react-router/dev version
 ```
 
-2. Install React and React Router dependencies.
+2. Install React and React Router dependencies. React does not bundle its own TypeScript types — install `@types/react` and `@types/react-dom` as dev dependencies.
 
 ```sh
 pnpm add react@latest react-dom@latest react-router@latest isbot@latest
-pnpm add -D @react-router/dev@latest
+pnpm add -D @react-router/dev@latest @types/react@latest @types/react-dom@latest
 ```
 
 3. Create `react-router.config.ts`.
