@@ -35,7 +35,7 @@ Use `context.repository.local_path` as the working directory for all commands.
 **Cloudflare target only:**
 - Read [worker-architecture.md](../../shared/references/worker-architecture.md) before creating `workers/app.ts`. All binding initialization, auth setup, and `RouterContextProvider` wiring must be inline in `fetch` — no helper files under `workers/`.
 - Re-run `pnpm wrangler types` after any change to `wrangler.jsonc` bindings — the generated `Env` interface goes stale otherwise.
-- `cloudflareDevProxy()` must come before `reactRouter()` in the Vite plugins array — wrong order serves raw source in dev.
+- The `cloudflare()` plugin from `@cloudflare/vite-plugin` must come before `reactRouter()` in the Vite plugins array — wrong order serves raw source in dev.
 - Keep "Cloudflare" spelled correctly in all generated files and output.
 
 ## Workflow
