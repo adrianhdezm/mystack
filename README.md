@@ -151,19 +151,3 @@ codex plugin update product-builder@mystack
 ```sh
 ./scripts/release-plugin.sh product-builder 0.2.1
 ```
-
----
-
-## Release script
-
-Both plugins share a single release script. It validates the version bump, updates the VERSION file and all plugin manifests, commits, and creates a scoped git tag.
-
-```sh
-./scripts/release-plugin.sh <plugin> <version>
-
-# Examples:
-./scripts/release-plugin.sh product-builder 0.2.1
-./scripts/release-plugin.sh project-bootstrapper 0.1.1
-```
-
-Tags are scoped per plugin (`product-builder-v0.2.1`, `project-bootstrapper-v0.1.1`).
