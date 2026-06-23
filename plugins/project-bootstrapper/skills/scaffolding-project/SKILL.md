@@ -5,7 +5,7 @@ description: Scaffolds a prepared local repository into a full-stack project. Di
 
 # Scaffolding Project
 
-Installs and wires the full base stack — pnpm, TypeScript, Vite, React Router v7, Tailwind, shadcn/ui, and Vitest — into an empty cloned repository. Installs deployment-target infrastructure (Cloudflare Workers or Docker/Postgres server), and seeds the initial `docs/` documentation.
+Installs and wires the full base stack — pnpm, TypeScript, Vite, React Router, Tailwind, shadcn/ui, and Vitest — into an empty cloned repository. Installs deployment-target infrastructure (Cloudflare Workers or Docker/Postgres server), and seeds the initial `docs/` documentation.
 
 ## Context
 
