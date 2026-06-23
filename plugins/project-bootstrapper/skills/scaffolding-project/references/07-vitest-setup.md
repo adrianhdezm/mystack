@@ -94,12 +94,12 @@ export default defineConfig({
     "test:unit": "vitest run --project unit",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "typecheck": "wrangler types && tsc -b && tsc -p tsconfig.unit.json"
+    "typecheck": "tsc -b && tsc -p tsconfig.unit.json"
   }
 }
 ```
 
-Update the existing `typecheck` script to include the unit tsconfig pass.
+Update the existing `typecheck` script to include the unit tsconfig pass. For the Cloudflare target, prepend `wrangler types &&` before `tsc -b` so generated Worker types are up to date before typechecking.
 
 8. Update `.gitignore` to use `node_modules/` (any depth) instead of `/node_modules/` (root-only). Vitest browser mode creates a `node_modules/.vite` cache directory inside `tests/unit/` at runtime — the leading-slash pattern doesn't cover it.
 
