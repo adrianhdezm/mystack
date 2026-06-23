@@ -40,9 +40,9 @@ Default DB binding: `APP_DB`. Default auth cookie prefix: `App`.
 - The cookie prefix in the Better Auth config must match what the client sends — mismatch causes sessions to silently return null.
 - Better Auth tables must exist before the server starts — unapplied migrations produce a "no such table" error on the first request.
 - `AUTH_SECRET` must be the same across dev and deployed environments — a new secret invalidates all existing sessions.
+- Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire capabilities inline — no helper files under `workers/`.
 
 **Cloudflare target only:**
-- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
 - Use the SQLite provider with Better Auth's Drizzle adapter.
 - Better Auth must be constructed per request (inside `fetch`) — Cloudflare Workers only expose `env` bindings inside the `fetch` handler.
 - Generate and apply migration to both local and remote D1.
@@ -75,11 +75,11 @@ Default DB binding: `APP_DB`. Default auth cookie prefix: `App`.
 - [references/04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md)
 - [references/05-tests.md](references/05-tests.md)
 - [shared/references/documentation-updates.md](../../shared/references/documentation-updates.md)
+- [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
 - [references/cloudflare/01-dependencies-and-env.md](references/cloudflare/01-dependencies-and-env.md)
 - [references/cloudflare/03-server-integration.md](references/cloudflare/03-server-integration.md)
-- [shared/references/worker-architecture.md](../../shared/references/worker-architecture.md)
 
 **Docker/Postgres target:**
 - [references/docker-postgres/01-dependencies-and-env.md](references/docker-postgres/01-dependencies-and-env.md)

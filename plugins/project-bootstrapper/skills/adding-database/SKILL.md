@@ -42,7 +42,7 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 **Cloudflare target only:**
 - Use the SQLite dialect and Cloudflare D1 driver.
 - Preserve existing `wrangler.jsonc` settings — merge D1 configuration in, never overwrite.
-- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
+- Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
 - `pnpm wrangler d1 create` outputs the database ID — capture it immediately.
 - D1 is SQLite: no `ALTER COLUMN`. Changing a column type requires a new table + data copy.
 - `drizzle-kit generate` needs `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, and `CLOUDFLARE_D1_TOKEN` in `.env`.
@@ -78,11 +78,11 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 - [references/04-migrations-validation.md](references/04-migrations-validation.md)
 - [references/08-doc-updates.md](references/08-doc-updates.md)
 - [shared/references/data-access-architecture.md](../../shared/references/data-access-architecture.md)
+- [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
 - [references/cloudflare/02-cloudflare-d1.md](references/cloudflare/02-cloudflare-d1.md)
 - [references/cloudflare/05-testing-setup.md](references/cloudflare/05-testing-setup.md)
-- [shared/references/worker-architecture.md](../../shared/references/worker-architecture.md)
 
 **Docker/Postgres target:**
 - [references/docker-postgres/02-postgres-setup.md](references/docker-postgres/02-postgres-setup.md)

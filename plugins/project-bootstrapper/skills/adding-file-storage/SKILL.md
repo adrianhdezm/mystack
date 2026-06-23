@@ -32,13 +32,13 @@ On success write to `docs/context.json`:
 - Roll back uploaded objects if inserting file metadata fails — always delete the object in the catch path.
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for service boundaries and transaction ownership.
 - Load `react-router-patterns` before changing React Router context or any route.
+- Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire capabilities inline — no helper files under `workers/`.
 
 **Cloudflare target only:**
 - Use `r2_buckets` (plural) in `wrangler.jsonc` — the singular `r2_bucket` silently ignores the binding.
 - `env.APP_FILES.put()` accepts `ReadableStream`, `ArrayBuffer`, or `string` — not `File` or `Blob` directly.
 - R2 bucket names are globally unique across all Cloudflare accounts.
 - Preserve existing `wrangler.jsonc` settings — merge R2 configuration in, never overwrite.
-- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before modifying `workers/app.ts`.
 - Default R2 binding: `APP_FILES`.
 
 **Docker/Postgres target only:**
@@ -70,11 +70,11 @@ On success write to `docs/context.json`:
 - [references/04-migrations-validation.md](references/04-migrations-validation.md)
 - [shared/references/data-access-architecture.md](../../shared/references/data-access-architecture.md)
 - [shared/references/documentation-updates.md](../../shared/references/documentation-updates.md)
+- [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
 - [references/cloudflare/01-cloudflare-r2.md](references/cloudflare/01-cloudflare-r2.md)
 - [references/cloudflare/03-app-integration.md](references/cloudflare/03-app-integration.md)
-- [shared/references/worker-architecture.md](../../shared/references/worker-architecture.md)
 
 **Docker/Postgres target:**
 - [references/docker-postgres/01-rustfs-setup.md](references/docker-postgres/01-rustfs-setup.md)

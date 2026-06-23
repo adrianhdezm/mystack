@@ -33,7 +33,7 @@ Use `context.repository.local_path` as the working directory for all commands.
 - shadcn/ui `init` modifies `tailwind.config.ts` and `app/styles/globals.css` — check the diff after running it if those files were already customized.
 
 **Cloudflare target only:**
-- Read [worker-architecture.md](../../shared/references/worker-architecture.md) before creating `workers/app.ts`. All binding initialization, auth setup, and `RouterContextProvider` wiring must be inline in `fetch` — no helper files under `workers/`.
+- Read [app-architecture.md](../../shared/references/app-architecture.md) before creating `workers/app.ts`. All binding initialization, auth setup, and `RouterContextProvider` wiring must be inline in `fetch` — no helper files under `workers/`.
 - Re-run `pnpm wrangler types` after any change to `wrangler.jsonc` bindings — the generated `Env` interface goes stale otherwise.
 - The `cloudflare()` plugin from `@cloudflare/vite-plugin` must come before `reactRouter()` in the Vite plugins array — wrong order serves raw source in dev.
 - Keep "Cloudflare" spelled correctly in all generated files and output.
@@ -79,11 +79,11 @@ Use `context.repository.local_path` as the working directory for all commands.
 - [references/06-tailwind-and-shadcn-ui.md](references/06-tailwind-and-shadcn-ui.md)
 - [references/07-vitest-setup.md](references/07-vitest-setup.md)
 - [references/08-final-verification.md](references/08-final-verification.md)
+- [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
 - [references/cloudflare/04-cloudflare.md](references/cloudflare/04-cloudflare.md)
 - [references/05-react-router-page.md](references/05-react-router-page.md)
-- [shared/references/worker-architecture.md](../../shared/references/worker-architecture.md)
 
 **Docker/Postgres target:**
 - [references/docker-postgres/04-docker-server.md](references/docker-postgres/04-docker-server.md)
