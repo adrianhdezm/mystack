@@ -32,10 +32,13 @@ export const files = sqliteTable("files", {
 **Docker/Postgres target:**
 
 ```ts
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, sql, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer } from "drizzle-orm/pg-core";
 
 export const files = pgTable("files", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid("id")
+    .default(sql`pg_catalog.gen_random_uuid()`)
+    .primaryKey(),
   key: text("key").notNull().unique(),
   filename: text("filename").notNull(),
   contentType: text("content_type").notNull(),
@@ -140,7 +143,7 @@ export class FilesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const [file] = await this.db.select().from(files).where(eq(files.id, id));
     if (!file) return;
     await this.db.delete(files).where(eq(files.id, id));
