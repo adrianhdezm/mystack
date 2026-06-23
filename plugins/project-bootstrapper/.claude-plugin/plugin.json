@@ -1,6 +1,6 @@
 {
   "name": "project-bootstrapper",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Bootstrap a new project from an idea: select capabilities and deployment target, scaffold the infrastructure, and commit a runnable foundation.",
   "author": {
     "name": "Adrian Hernandez-Mendez"
