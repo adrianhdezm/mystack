@@ -230,7 +230,7 @@ export default app;
 ```
 
 Context checklist:
-- Treat `v8_middleware: true` as always enabled for this project.
+- Treat the middleware context API as always enabled — React Router v8 default.
 - Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
 - Include Node.js environment values under `appContext` as `env: { ... }`.
 - Create a `RouterContextProvider` for each request in `server/app.ts`.

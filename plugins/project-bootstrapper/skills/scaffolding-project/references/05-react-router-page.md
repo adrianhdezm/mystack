@@ -205,7 +205,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 11. Update the previously created `workers/app.ts` to use Hono and the React Router request handler.
 
-This project always enables React Router's `v8_middleware` future flag, so pass request-scoped server dependencies with `RouterContextProvider`. Do not use `AppLoadContext` or a plain object context in this setup.
+This project uses React Router's middleware context API (`v8_middleware`), now the default in React Router v8, so pass request-scoped server dependencies with `RouterContextProvider`. Do not use `AppLoadContext` or a plain object context in this setup.
 
 ```ts
 import { Hono } from "hono";
@@ -232,7 +232,7 @@ export default app;
 
 Context checklist:
 
-- Treat `v8_middleware: true` as always enabled for this project.
+- Treat the middleware context API as always enabled — React Router v8 default.
 - Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
 - Include Cloudflare bindings under `appContext` as `cloudflare: { env, ctx }`.
 - Create a `RouterContextProvider` for each request in the Hono handler.
