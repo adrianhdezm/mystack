@@ -35,6 +35,7 @@ On success write to `docs/context.json`:
 - Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire capabilities inline — no helper files under `workers/`.
 
 **Cloudflare target only:**
+
 - Use `r2_buckets` (plural) in `wrangler.jsonc` — the singular `r2_bucket` silently ignores the binding.
 - `env.APP_FILES.put()` accepts `ReadableStream`, `ArrayBuffer`, or `string` — not `File` or `Blob` directly.
 - R2 bucket names are globally unique across all Cloudflare accounts.
@@ -42,6 +43,7 @@ On success write to `docs/context.json`:
 - Default R2 binding: `APP_FILES`.
 
 **Docker/Postgres target only:**
+
 - Use RustFS (S3-compatible) running in Docker Compose for local development.
 - Use the AWS SDK v3 (`@aws-sdk/client-s3`) with the S3-compatible RustFS endpoint.
 - Add RustFS service to `docker-compose.yml`.
@@ -66,6 +68,7 @@ On success write to `docs/context.json`:
 ## References
 
 **Shared (both targets):**
+
 - [references/02-file-schema-and-service.md](references/02-file-schema-and-service.md)
 - [references/04-migrations-validation.md](references/04-migrations-validation.md)
 - [shared/references/data-access-architecture.md](../../shared/references/data-access-architecture.md)
@@ -73,10 +76,12 @@ On success write to `docs/context.json`:
 - [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
+
 - [references/cloudflare/01-cloudflare-r2.md](references/cloudflare/01-cloudflare-r2.md)
 - [references/cloudflare/03-app-integration.md](references/cloudflare/03-app-integration.md)
 
 **Docker/Postgres target:**
+
 - [references/docker-postgres/01-rustfs-setup.md](references/docker-postgres/01-rustfs-setup.md)
 - [references/docker-postgres/03-app-integration.md](references/docker-postgres/03-app-integration.md)
 

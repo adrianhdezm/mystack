@@ -36,16 +36,16 @@ pnpm add -D testcontainers@latest @testcontainers/postgresql@latest
 4. Create `tests/integration/vitest.config.ts` — standard Vitest node runner. Use `resolve.tsconfigPaths: true` instead of the `vite-tsconfig-paths` plugin.
 
 ```ts
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
   test: {
-    name: 'integration',
-    environment: 'node',
-    include: ['**/*.test.ts'],
+    name: "integration",
+    environment: "node",
+    include: ["**/*.test.ts"],
   },
 });
 ```
@@ -53,12 +53,15 @@ export default defineConfig({
 5. Create `tests/integration/db-test-utils.ts`. Each test file calls `setupTestDb()` in `beforeAll` and `teardownTestDb()` in `afterAll` — every suite gets its own container and migrated database.
 
 ```ts
-import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { Pool } from 'pg';
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { Pool } from "pg";
 
-import { schema } from '~/db/schema';
+import { schema } from "~/db/schema";
 
 export interface TestDb {
   db: NodePgDatabase<typeof schema>;
@@ -66,10 +69,12 @@ export interface TestDb {
 }
 
 export async function setupTestDb(): Promise<TestDb> {
-  const container: StartedPostgreSqlContainer = await new PostgreSqlContainer('postgres:17-alpine').start();
+  const container: StartedPostgreSqlContainer = await new PostgreSqlContainer(
+    "postgres:17-alpine",
+  ).start();
   const pool = new Pool({ connectionString: container.getConnectionUri() });
   const migrationDb = drizzle(pool);
-  await migrate(migrationDb, { migrationsFolder: 'db/migrations' });
+  await migrate(migrationDb, { migrationsFolder: "db/migrations" });
   const db = drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
 
   return {
@@ -85,11 +90,11 @@ export async function setupTestDb(): Promise<TestDb> {
 6. Update the root `vitest.config.ts` to include the integration project.
 
 ```ts
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    projects: ['tests/unit', 'tests/integration'],
+    projects: ["tests/unit", "tests/integration"],
   },
 });
 ```
@@ -124,8 +129,8 @@ The `include` array **replaces** (does not merge with) the parent's `include`. A
 Each test file owns its full container lifecycle:
 
 ```ts
-import { afterAll, beforeAll } from 'vitest';
-import { setupTestDb, type TestDb } from '../db-test-utils';
+import { afterAll, beforeAll } from "vitest";
+import { setupTestDb, type TestDb } from "../db-test-utils";
 
 let testDb: TestDb;
 

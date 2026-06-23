@@ -16,6 +16,7 @@ The marketplace registries make this stack's plugins available for installation:
 Project Bootstrapper sets up a new project from scratch. It collects the product idea and deployment target, selects infrastructure capabilities, scaffolds the codebase, and runs all foundation skills — committing a runnable project ready for product development.
 
 Supports two deployment targets:
+
 - **Cloudflare** — Workers + D1 + R2 + React Router
 - **Docker/Postgres** — Node.js (Hono) + Postgres + RustFS + React Router
 

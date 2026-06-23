@@ -16,8 +16,7 @@ Use this reference when adding or changing application tables, DAOs, queries, se
 
 The data access architecture is designed for React Router v7 applications using Drizzle ORM and `drizzle-zod`. The patterns are consistent across deployment targets; the key differences are noted in the **Query Execution** and **Atomic Writes** sections below.
 
-**D1 (Cloudflare target):** SQLite-based, single connection, no interactive transactions — use `db.batch()` for atomic writes; do not use `Promise.all` for queries.
-**Postgres (Docker/Postgres target):** Full Postgres with connection pool — use `db.transaction()` for atomic writes; `Promise.all` is fine for independent queries.
+**D1 (Cloudflare target):** SQLite-based, single connection, no interactive transactions — use `db.batch()` for atomic writes; do not use `Promise.all` for queries. **Postgres (Docker/Postgres target):** Full Postgres with connection pool — use `db.transaction()` for atomic writes; `Promise.all` is fine for independent queries.
 
 The goals are:
 
@@ -94,6 +93,7 @@ projects      -> project.dao.ts
 ### DAO Constructor
 
 Each DAO accepts a typed Drizzle database instance. The exact type depends on the deployment target:
+
 - **D1 (Cloudflare):** `DrizzleD1Database<typeof schema>`
 - **Postgres (Docker/Postgres):** `NodePgDatabase<typeof schema>` (from `drizzle-orm/node-postgres`)
 

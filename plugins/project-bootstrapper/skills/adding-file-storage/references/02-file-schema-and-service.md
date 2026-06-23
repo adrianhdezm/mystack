@@ -105,7 +105,11 @@ export class FilesService {
 ```ts
 import { desc, eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { DeleteObjectCommand, PutObjectCommand, type S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  type S3Client,
+} from "@aws-sdk/client-s3";
 
 import { files, type schema } from "~/db/schema";
 
@@ -124,12 +128,14 @@ export class FilesService {
     const key = `${Date.now()}-${file.name}`;
     const contentType = file.type || "application/octet-stream";
 
-    await this.s3.send(new PutObjectCommand({
-      Bucket: this.bucket,
-      Key: key,
-      Body: Buffer.from(await file.arrayBuffer()),
-      ContentType: contentType,
-    }));
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: Buffer.from(await file.arrayBuffer()),
+        ContentType: contentType,
+      }),
+    );
 
     try {
       const [record] = await this.db
@@ -138,7 +144,9 @@ export class FilesService {
         .returning();
       return record;
     } catch (error) {
-      await this.s3.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+      await this.s3.send(
+        new DeleteObjectCommand({ Bucket: this.bucket, Key: key }),
+      );
       throw error;
     }
   }
@@ -147,7 +155,9 @@ export class FilesService {
     const [file] = await this.db.select().from(files).where(eq(files.id, id));
     if (!file) return;
     await this.db.delete(files).where(eq(files.id, id));
-    await this.s3.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: file.key }));
+    await this.s3.send(
+      new DeleteObjectCommand({ Bucket: this.bucket, Key: file.key }),
+    );
   }
 }
 ```

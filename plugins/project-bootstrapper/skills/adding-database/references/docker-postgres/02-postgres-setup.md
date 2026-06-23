@@ -58,23 +58,23 @@ DATABASE_URL=postgres://postgres:s3cr3t@localhost:5432/<project_name>_db
 6. Create `drizzle.config.ts` reading `DATABASE_URL` from the environment.
 
 ```ts
-import { type Config, defineConfig } from 'drizzle-kit';
+import { type Config, defineConfig } from "drizzle-kit";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is required');
+  throw new Error("DATABASE_URL is required");
 }
 
 export default defineConfig({
-  schema: './app/db/schema.ts',
-  out: './db/migrations',
-  dialect: 'postgresql',
+  schema: "./app/db/schema.ts",
+  out: "./db/migrations",
+  dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,
   },
   migrations: {
-    prefix: 'timestamp',
-    table: '__migrations__',
-    schema: 'public',
+    prefix: "timestamp",
+    table: "__migrations__",
+    schema: "public",
   },
 }) satisfies Config;
 ```

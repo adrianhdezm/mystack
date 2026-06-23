@@ -65,10 +65,7 @@ export default defineConfig({
     "composite": false,
     "noEmit": true
   },
-  "include": [
-    ".react-router/types/**/*",
-    "tests/unit/**/*"
-  ]
+  "include": [".react-router/types/**/*", "tests/unit/**/*"]
 }
 ```
 

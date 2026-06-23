@@ -42,23 +42,25 @@ Do not proceed until the user selects a target.
 From the product idea and deployment target, propose infrastructure capability selections. Prefer inference — only ask when an answer materially changes the project.
 
 Inference signals:
+
 - `database` — persistent state, relational data, or user-owned records.
 - `authentication` — accounts, login, protected pages, or per-user data. **Requires `database`**.
 - `file_storage` — uploads, attachments, or durable binary assets. **Requires `database`**.
 - `ai` — text/image generation, structured AI output, or LLM integration.
 
 Enforce dependencies before presenting:
+
 - If `authentication=yes` → set `database=yes`
 - If `file_storage=yes` → set `database=yes`
 
 Present the table for user approval. Re-enforce dependencies and re-present if the user changes any value. Do not proceed until explicitly approved.
 
-| Capability | Value | Rationale |
-| --- | --- | --- |
-| `database` | yes / no | … |
-| `authentication` | yes / no | … |
-| `file_storage` | yes / no | … |
-| `ai` | yes / no | … |
+| Capability       | Value    | Rationale |
+| ---------------- | -------- | --------- |
+| `database`       | yes / no | …         |
+| `authentication` | yes / no | …         |
+| `file_storage`   | yes / no | …         |
+| `ai`             | yes / no | …         |
 
 ### 4) Write to Context
 

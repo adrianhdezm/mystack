@@ -9,6 +9,7 @@ Both deployment targets use the same structural pattern for `workers/app.ts`:
 - `export default app` — no `serve()` call, no lifecycle management
 
 The server lifecycle (dev server, production listener, static asset serving) is handled externally:
+
 - **Cloudflare**: the Worker runtime drives `app.fetch`
 - **Docker/Postgres**: `server.ts` at the project root drives dev (Vite middleware mode) and production (`@hono/node-server`)
 
@@ -33,18 +34,18 @@ Every `workers/app.ts` follows this structure:
 2. Inside `app.all('*', ...)`: initialize per-request dependencies, build `RouterContextProvider`, call `requestHandler`
 
 ```ts
-import { Hono } from 'hono';
-import { createRequestHandler, RouterContextProvider } from 'react-router';
-import { appContext } from '~/context';
+import { Hono } from "hono";
+import { createRequestHandler, RouterContextProvider } from "react-router";
+import { appContext } from "~/context";
 
 const app = new Hono(); // <{ Bindings: Env }> for Cloudflare
 
 const requestHandler = createRequestHandler(
-  () => import('virtual:react-router/server-build'),
+  () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
 );
 
-app.all('*', async (c) => {
+app.all("*", async (c) => {
   // Initialize per-request or per-runtime dependencies
   const routerContext = new RouterContextProvider();
   routerContext.set(appContext, {
@@ -59,7 +60,7 @@ export default app;
 ## Target differences inside the handler
 
 | Concern | Cloudflare | Docker/Postgres |
-|---|---|---|
+| --- | --- | --- |
 | Hono type | `new Hono<{ Bindings: Env }>()` | `new Hono()` |
 | Env/config | `c.env.*` | `process.env.*` |
 | DB client | Per-request: `drizzle(c.env.APP_DB, { schema })` | Module scope: `new Pool(...)` + `drizzle(pool, { schema })` |

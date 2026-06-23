@@ -10,6 +10,7 @@ Installs Drizzle ORM, creates and binds the database (D1 or Postgres), generates
 ## Context
 
 **Guard** — stop before changing any files if either field is missing from `docs/context.json`:
+
 - `project.name`
 - `project.deployment_target`
 
@@ -40,6 +41,7 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) before adding tables, DAOs, queries, services, or transactions.
 
 **Cloudflare target only:**
+
 - Use the SQLite dialect and Cloudflare D1 driver.
 - Preserve existing `wrangler.jsonc` settings — merge D1 configuration in, never overwrite.
 - Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire bindings inline — no helper files under `workers/`.
@@ -49,6 +51,7 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 - Local D1 (`pnpm db:local:migrate`) and remote D1 (`pnpm db:migrate`) use separate tracking — always run both.
 
 **Docker/Postgres target only:**
+
 - Use the Postgres dialect and `node-postgres` (`pg`) driver.
 - `DATABASE_URL` in `.env` — format: `postgres://user:pass@localhost:5432/dbname`.
 - Docker Compose must be running before running migrations or integration tests.
@@ -73,6 +76,7 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 ## References
 
 **Shared (both targets):**
+
 - [references/01-drizzle-setup.md](references/01-drizzle-setup.md)
 - [references/03-app-integration.md](references/03-app-integration.md)
 - [references/04-migrations-validation.md](references/04-migrations-validation.md)
@@ -81,10 +85,12 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
 - [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
+
 - [references/cloudflare/02-cloudflare-d1.md](references/cloudflare/02-cloudflare-d1.md)
 - [references/cloudflare/05-testing-setup.md](references/cloudflare/05-testing-setup.md)
 
 **Docker/Postgres target:**
+
 - [references/docker-postgres/02-postgres-setup.md](references/docker-postgres/02-postgres-setup.md)
 - [references/docker-postgres/05-testing-setup.md](references/docker-postgres/05-testing-setup.md)
 

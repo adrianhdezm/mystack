@@ -26,7 +26,7 @@ pnpm add -D @react-router/dev@latest @types/react@latest @types/react-dom@latest
 3. Create `react-router.config.ts`.
 
 ```ts
-import type { Config } from '@react-router/dev/config';
+import type { Config } from "@react-router/dev/config";
 
 export default {
   ssr: true,
@@ -44,7 +44,7 @@ export default {
 5. Create `app/root.tsx` (identical to the Cloudflare variant).
 
 ```tsx
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 import {
   Links,
   Meta,
@@ -52,8 +52,8 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
-} from 'react-router';
-import type { Route } from './+types/root';
+} from "react-router";
+import type { Route } from "./+types/root";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -78,15 +78,15 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = 'Oops!';
-  let details = 'An unexpected error occurred.';
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? '404' : 'Error';
+    message = error.status === 404 ? "404" : "Error";
     details =
       error.status === 404
-        ? 'The requested page could not be found.'
+        ? "The requested page could not be found."
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
@@ -110,19 +110,19 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 6. Create `app/entry.server.tsx` (identical to the Cloudflare variant).
 
 ```tsx
-import type { EntryContext } from 'react-router';
-import { ServerRouter } from 'react-router';
-import { isbot } from 'isbot';
-import { renderToReadableStream } from 'react-dom/server';
+import type { EntryContext } from "react-router";
+import { ServerRouter } from "react-router";
+import { isbot } from "isbot";
+import { renderToReadableStream } from "react-dom/server";
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  routerContext: EntryContext
+  routerContext: EntryContext,
 ) {
   let shellRendered = false;
-  const userAgent = request.headers.get('user-agent');
+  const userAgent = request.headers.get("user-agent");
 
   const body = await renderToReadableStream(
     <ServerRouter context={routerContext} url={request.url} />,
@@ -133,7 +133,7 @@ export default async function handleRequest(
           console.error(error);
         }
       },
-    }
+    },
   );
   shellRendered = true;
 
@@ -141,7 +141,7 @@ export default async function handleRequest(
     await body.allReady;
   }
 
-  responseHeaders.set('Content-Type', 'text/html');
+  responseHeaders.set("Content-Type", "text/html");
   return new Response(body, {
     headers: responseHeaders,
     status: responseStatusCode,
@@ -152,15 +152,15 @@ export default async function handleRequest(
 7. Create `app/routes.ts`.
 
 ```ts
-import { index, type RouteConfig } from '@react-router/dev/routes';
+import { index, type RouteConfig } from "@react-router/dev/routes";
 
-export default [index('routes/home.tsx')] satisfies RouteConfig;
+export default [index("routes/home.tsx")] satisfies RouteConfig;
 ```
 
 8. Create `app/context.ts`. For the Docker/Postgres target the context holds Node.js process environment, not Cloudflare bindings.
 
 ```ts
-import { createContext } from 'react-router';
+import { createContext } from "react-router";
 
 export const appContext = createContext<{
   env: {
@@ -172,13 +172,13 @@ export const appContext = createContext<{
 9. Create `app/routes/home.tsx`.
 
 ```tsx
-import { appContext } from '../context';
-import type { Route } from './+types/home';
+import { appContext } from "../context";
+import type { Route } from "./+types/home";
 
 export function meta() {
   return [
-    { title: '<project-name>' },
-    { name: 'description', content: '<project-description>' },
+    { title: "<project-name>" },
+    { name: "description", content: "<project-description>" },
   ];
 }
 
@@ -197,23 +197,23 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 11. Update `workers/app.ts` to wire the React Router request handler. No `serve()` call — that lives in `server.ts` at the root.
 
 ```ts
-import { Hono } from 'hono';
-import { createRequestHandler, RouterContextProvider } from 'react-router';
+import { Hono } from "hono";
+import { createRequestHandler, RouterContextProvider } from "react-router";
 
-import { appContext } from '../app/context';
+import { appContext } from "../app/context";
 
 const app = new Hono();
 
 const requestHandler = createRequestHandler(
-  () => import('virtual:react-router/server-build'),
+  () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
 );
 
-app.all('*', async (c) => {
+app.all("*", async (c) => {
   const routerContext = new RouterContextProvider();
   routerContext.set(appContext, {
     env: {
-      APP_NAME: process.env.APP_NAME ?? '<project-name>',
+      APP_NAME: process.env.APP_NAME ?? "<project-name>",
     },
   });
   return requestHandler(c.req.raw, routerContext);
@@ -223,6 +223,7 @@ export default app;
 ```
 
 Context checklist:
+
 - Treat the middleware context API as always enabled — React Router v8 default.
 - Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
 - Include Node.js environment values under `appContext` as `env: { ... }`.
@@ -234,8 +235,8 @@ Context checklist:
 12. Update `vite.config.ts` to use the React Router Vite plugin. The `environments.ssr` block tells `react-router build` to compile `workers/app.ts` into `build/server/index.js` for production.
 
 ```ts
-import { reactRouter } from '@react-router/dev/vite';
-import { defineConfig } from 'vite';
+import { reactRouter } from "@react-router/dev/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [reactRouter()],
@@ -246,7 +247,7 @@ export default defineConfig({
     ssr: {
       build: {
         rollupOptions: {
-          input: './workers/app.ts',
+          input: "./workers/app.ts",
         },
       },
     },

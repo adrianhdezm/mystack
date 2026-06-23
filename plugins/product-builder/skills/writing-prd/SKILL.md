@@ -10,6 +10,7 @@ Interviews the user to reach shared product understanding and writes `docs/prd.m
 ## Context
 
 **Guards** — stop before proceeding if any of these are missing from `docs/context.json`:
+
 - `repository.local_path` — working directory
 - `project.deployment_target` — needed to understand what's wired
 - `capabilities.*` — all set to `"planned"`, `"skipped"`, or `"ready"` by `project-bootstrapper`
@@ -37,6 +38,7 @@ Read `docs/prd.md` before doing anything else.
 ### 1) Read the Committed Project
 
 Before interviewing, read:
+
 - `docs/context.json` — `project.idea`, `project.deployment_target`, `capabilities.*`
 - `docs/architecture.md` — understand what's already scaffolded
 - `README.md` and `AGENTS.md` — existing project documentation

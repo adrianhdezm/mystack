@@ -5,11 +5,11 @@
 Update `app/context.ts` to include `AIService` alongside existing context values.
 
 ```ts
-import { createContext } from 'react-router';
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { AIService } from '~/services/ai.service';
+import { createContext } from "react-router";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type { AIService } from "~/services/ai.service";
 
-import type { schema } from './db/schema';
+import type { schema } from "./db/schema";
 
 export const appContext = createContext<{
   env: {
@@ -28,12 +28,12 @@ Preserve any additional context values already used by the app.
 Update `workers/app.ts` to construct `AIService` once at module scope — `process.env` is available at startup in Node.js.
 
 ```ts
-import { AIService } from '../app/services/ai.service';
+import { AIService } from "../app/services/ai.service";
 
 const ai = new AIService(
   process.env.OPENAI_API_KEY!,
-  process.env.OPENAI_MODEL_ID ?? 'gpt-4o',
-  process.env.OPENAI_IMAGE_MODEL_ID ?? 'dall-e-3'
+  process.env.OPENAI_MODEL_ID ?? "gpt-4o",
+  process.env.OPENAI_IMAGE_MODEL_ID ?? "dall-e-3",
 );
 ```
 
@@ -41,7 +41,7 @@ Wire `ai` into the `RouterContextProvider` in the Hono request handler:
 
 ```ts
 routerContext.set(appContext, {
-  env: { APP_NAME: process.env.APP_NAME ?? '' },
+  env: { APP_NAME: process.env.APP_NAME ?? "" },
   db,
   ai,
   // auth, files if present

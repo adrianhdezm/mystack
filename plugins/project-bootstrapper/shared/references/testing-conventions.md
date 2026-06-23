@@ -39,6 +39,7 @@ Test type is determined by directory. All test files use `.test.ts` or `.test.ts
 | `tests/unit/routes/**` | Unit | Playwright browser | Route component behavior with stubbed loaders/actions |
 
 Integration runner depends on the deployment target:
+
 - **Cloudflare:** `@cloudflare/vitest-pool-workers` (Miniflare D1)
 - **Docker/Postgres:** standard Vitest node runner against a Docker Postgres instance
 
@@ -63,6 +64,7 @@ export default defineConfig({
 | `tests/integration/vitest.config.ts` | Target-specific (see below) | `**/*.test.ts` |
 
 **Integration environment by deployment target:**
+
 - `cloudflare` → `@cloudflare/vitest-pool-workers` (Miniflare D1)
 - `docker-postgres` → Vitest node runner; Docker Compose Postgres must be running
 
@@ -87,6 +89,7 @@ Projects start with a root `vitest.config.ts` and `tests/unit/vitest.config.ts` 
 ## TypeScript Configuration
 
 Two standalone test tsconfigs — one per test type. The base tsconfig name depends on the deployment target:
+
 - **Cloudflare:** `tsconfig.cloudflare.json`
 - **Docker/Postgres:** `tsconfig.app.json`
 
@@ -146,10 +149,10 @@ Integration tests — **Cloudflare target:**
 
 Integration tests — **Docker/Postgres target:**
 
-| Package           | Role                                          |
-| ----------------- | --------------------------------------------- |
-| `postgres` (js)   | Postgres client for integration tests         |
-| `drizzle-orm`     | Already installed; used with the Postgres driver |
+| Package         | Role                                             |
+| --------------- | ------------------------------------------------ |
+| `postgres` (js) | Postgres client for integration tests            |
+| `drizzle-orm`   | Already installed; used with the Postgres driver |
 
 ## Integration Test Setup Files
 
@@ -204,11 +207,11 @@ Integration tests connect to the Docker Compose Postgres instance. The `DATABASE
 
 ```ts
 // tests/integration/db-test-utils.ts
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { Pool } from 'pg';
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { Pool } from "pg";
 
-import * as schema from '~/db/schema';
+import * as schema from "~/db/schema";
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -220,7 +223,7 @@ export function getTestDb() {
 export async function applyMigrations() {
   const pool = new Pool({ connectionString, max: 1 });
   const db = drizzle(pool);
-  await migrate(db, { migrationsFolder: 'db/migrations' });
+  await migrate(db, { migrationsFolder: "db/migrations" });
   await pool.end();
 }
 ```

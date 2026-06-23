@@ -20,7 +20,7 @@ pnpm add hono@latest @hono/node-server@latest
 3. Create `workers/app.ts` — the Hono app. No `serve()` call here; the root `server.ts` handles process lifecycle.
 
 ```ts
-import { Hono } from 'hono';
+import { Hono } from "hono";
 
 const app = new Hono();
 
@@ -30,23 +30,25 @@ export default app;
 4. Create `server.ts` at the project root. In development it starts a Vite dev server and delegates to `workers/app.ts` via SSR module loading. In production it serves the built output from `build/`.
 
 ```ts
-import { getRequestListener, serve } from '@hono/node-server';
-import { serveStatic } from '@hono/node-server/serve-static';
-import type { Hono } from 'hono';
-import { Hono as HonoApp } from 'hono';
-import { createServer } from 'node:http';
+import { getRequestListener, serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
+import type { Hono } from "hono";
+import { Hono as HonoApp } from "hono";
+import { createServer } from "node:http";
 
-const DEV = process.env.NODE_ENV === 'development';
+const DEV = process.env.NODE_ENV === "development";
 const PORT = Number(process.env.PORT) || 3000;
 
 if (DEV) {
-  const vite = await import('vite');
-  const viteServer = await vite.createServer({ server: { middlewareMode: true } });
+  const vite = await import("vite");
+  const viteServer = await vite.createServer({
+    server: { middlewareMode: true },
+  });
 
   createServer((req, res) => {
     viteServer.middlewares(req, res, () => {
       viteServer
-        .ssrLoadModule('./workers/app.ts')
+        .ssrLoadModule("./workers/app.ts")
         .then(async (mod) => {
           const devApp = mod.default as Hono;
           await getRequestListener(devApp.fetch.bind(devApp))(req, res);
@@ -59,22 +61,32 @@ if (DEV) {
     });
   }).listen(PORT, () => console.log(`Dev server at http://localhost:${PORT}`));
 } else {
-  const { default: app } = (await import('./build/server/index.js')) as { default: Hono };
+  const { default: app } = (await import("./build/server/index.js")) as {
+    default: Hono;
+  };
 
   const wrapper = new HonoApp();
 
-  wrapper.use('/assets/*', serveStatic({ root: './build/client' }), async (c, next) => {
-    c.header('Cache-Control', 'public, max-age=31536000, immutable');
-    await next();
-  });
-  wrapper.use('/*', serveStatic({ root: './build/client' }), async (c, next) => {
-    c.header('Cache-Control', 'public, max-age=3600');
-    await next();
-  });
-  wrapper.all('*', (c) => app.fetch(c.req.raw));
+  wrapper.use(
+    "/assets/*",
+    serveStatic({ root: "./build/client" }),
+    async (c, next) => {
+      c.header("Cache-Control", "public, max-age=31536000, immutable");
+      await next();
+    },
+  );
+  wrapper.use(
+    "/*",
+    serveStatic({ root: "./build/client" }),
+    async (c, next) => {
+      c.header("Cache-Control", "public, max-age=3600");
+      await next();
+    },
+  );
+  wrapper.all("*", (c) => app.fetch(c.req.raw));
 
   serve({ fetch: wrapper.fetch, port: PORT }, () =>
-    console.log(`Server running at http://localhost:${PORT}`)
+    console.log(`Server running at http://localhost:${PORT}`),
   );
 }
 ```
@@ -131,8 +143,8 @@ cp .env.example .env
 10. Update `vite.config.ts`. No dev server plugin needed — `server.ts` handles dev via Vite middleware mode. The `environments.ssr` block tells `react-router build` to compile `workers/app.ts` into `build/server/index.js`.
 
 ```ts
-import { reactRouter } from '@react-router/dev/vite';
-import { defineConfig } from 'vite';
+import { reactRouter } from "@react-router/dev/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [reactRouter()],
@@ -143,7 +155,7 @@ export default defineConfig({
     ssr: {
       build: {
         rollupOptions: {
-          input: './workers/app.ts',
+          input: "./workers/app.ts",
         },
       },
     },

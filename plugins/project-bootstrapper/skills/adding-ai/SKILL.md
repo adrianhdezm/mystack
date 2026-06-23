@@ -37,12 +37,14 @@ On success write:
 - Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire capabilities inline — no helper files under `workers/`.
 
 **Cloudflare target only:**
+
 - Cloudflare Workers do not have `process.env`. The OpenAI API key must come from the Worker `env` object, not `process.env`.
 - `OPENAI_API_KEY` is a Wrangler secret — set via `wrangler secret put` for remote deployments.
 - Model IDs go in `wrangler.jsonc` vars (not secrets).
 - The default OpenAI provider (`import { openai } from "@ai-sdk/openai"`) reads from `process.env` — always use `createOpenAI({ apiKey })` instead.
 
 **Docker/Postgres target only:**
+
 - API key and model IDs go in `.env` and are read via `process.env`.
 - `AIService` can be constructed once at module scope in `workers/app.ts`.
 
@@ -64,16 +66,19 @@ On success write:
 ## References
 
 **Shared (both targets):**
+
 - [references/01-ai-sdk-setup.md](references/01-ai-sdk-setup.md)
 - [references/03-ai-service.md](references/03-ai-service.md)
 - [shared/references/documentation-updates.md](../../shared/references/documentation-updates.md)
 - [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
+
 - [references/cloudflare/02-env-and-secret.md](references/cloudflare/02-env-and-secret.md)
 - [references/cloudflare/04-app-integration.md](references/cloudflare/04-app-integration.md)
 
 **Docker/Postgres target:**
+
 - [references/docker-postgres/02-env-and-secret.md](references/docker-postgres/02-env-and-secret.md)
 - [references/docker-postgres/04-app-integration.md](references/docker-postgres/04-app-integration.md)
 

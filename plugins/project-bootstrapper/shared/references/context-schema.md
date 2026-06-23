@@ -64,15 +64,15 @@ Written by `preparing-repositories`. Read by `scaffolding-project`.
 
 `idea` and `deployment_target` written by `selecting-capabilities`. `name` and target-specific fields written by `scaffolding-project`. Read by all foundation and feature skills.
 
-| Field                   | Description                                                             |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `idea`                  | One-sentence product description — written by `selecting-capabilities`  |
-| `deployment_target`     | `cloudflare` or `docker-postgres` — written by `selecting-capabilities` |
-| `name`                  | Project name derived from the repository slug                           |
-| `worker_name`           | **Cloudflare only** — Worker name from `wrangler.jsonc`                 |
-| `cloudflare_account_id` | **Cloudflare only** — account ID from `wrangler whoami`                 |
-| `database_name`         | Database name — written by `adding-database`                            |
-| `r2_bucket_name`        | **Cloudflare only** — R2 bucket name — written by `adding-file-storage` |
+| Field | Description |
+| --- | --- |
+| `idea` | One-sentence product description — written by `selecting-capabilities` |
+| `deployment_target` | `cloudflare` or `docker-postgres` — written by `selecting-capabilities` |
+| `name` | Project name derived from the repository slug |
+| `worker_name` | **Cloudflare only** — Worker name from `wrangler.jsonc` |
+| `cloudflare_account_id` | **Cloudflare only** — account ID from `wrangler whoami` |
+| `database_name` | Database name — written by `adding-database` |
+| `r2_bucket_name` | **Cloudflare only** — R2 bucket name — written by `adding-file-storage` |
 
 ### `operator`
 
@@ -88,14 +88,14 @@ Written by `adding-legal-pages` (in `product-builder`). Read by `adding-legal-pa
 
 Written first by `selecting-capabilities` (sets `planned` or `skipped`), then by each foundation skill (sets `ready`). Read by `bootstrapping-projects` to determine which foundation skills to run. `landing_page` and `legal_pages` are managed by `product-builder` skills, not by the bootstrapper.
 
-| Field            | Set to `planned` by        | Set to `ready` by       |
-| ---------------- | -------------------------- | ----------------------- |
-| `database`       | `selecting-capabilities`   | `adding-database`       |
-| `authentication` | `selecting-capabilities`   | `adding-authentication` |
-| `file_storage`   | `selecting-capabilities`   | `adding-file-storage`   |
-| `ai`             | `selecting-capabilities`   | `adding-ai`             |
-| `landing_page`   | `writing-prd` (product-builder) | `adding-landing-page` (product-builder) |
-| `legal_pages`    | `writing-prd` (product-builder) | `adding-legal-pages` (product-builder) |
+| Field | Set to `planned` by | Set to `ready` by |
+| --- | --- | --- |
+| `database` | `selecting-capabilities` | `adding-database` |
+| `authentication` | `selecting-capabilities` | `adding-authentication` |
+| `file_storage` | `selecting-capabilities` | `adding-file-storage` |
+| `ai` | `selecting-capabilities` | `adding-ai` |
+| `landing_page` | `writing-prd` (product-builder) | `adding-landing-page` (product-builder) |
+| `legal_pages` | `writing-prd` (product-builder) | `adding-legal-pages` (product-builder) |
 
 ## Reading and Writing
 

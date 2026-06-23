@@ -33,6 +33,7 @@ Use `context.repository.local_path` as the working directory for all commands.
 - shadcn/ui `init` modifies `tailwind.config.ts` and `app/styles/globals.css` — check the diff after running it if those files were already customized.
 
 **Cloudflare target only:**
+
 - Read [app-architecture.md](../../shared/references/app-architecture.md) before creating `workers/app.ts`. All binding initialization, auth setup, and `RouterContextProvider` wiring must be inline in `fetch` — no helper files under `workers/`.
 - Re-run `pnpm wrangler types` after any change to `wrangler.jsonc` bindings — the generated `Env` interface goes stale otherwise.
 - The `cloudflare()` plugin from `@cloudflare/vite-plugin` must come before `reactRouter()` in the Vite plugins array — wrong order serves raw source in dev.
@@ -62,7 +63,13 @@ Use `context.repository.local_path` as the working directory for all commands.
 14. Write `project.*` to `docs/context.json` (preserve all existing fields, only add/overwrite these):
     - **Cloudflare:**
       ```json
-      { "project": { "name": "<repo name>", "worker_name": "<name from wrangler.jsonc>", "cloudflare_account_id": "<from wrangler whoami>" } }
+      {
+        "project": {
+          "name": "<repo name>",
+          "worker_name": "<name from wrangler.jsonc>",
+          "cloudflare_account_id": "<from wrangler whoami>"
+        }
+      }
       ```
     - **Docker/Postgres:**
       ```json
@@ -73,6 +80,7 @@ Use `context.repository.local_path` as the working directory for all commands.
 ## References
 
 **Shared (both targets):**
+
 - [references/01-initialize-pnpm-and-base-files.md](references/01-initialize-pnpm-and-base-files.md)
 - [references/02-typescript.md](references/02-typescript.md)
 - [references/03-vite-linting-formatting.md](references/03-vite-linting-formatting.md)
@@ -82,10 +90,12 @@ Use `context.repository.local_path` as the working directory for all commands.
 - [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
+
 - [references/cloudflare/04-cloudflare.md](references/cloudflare/04-cloudflare.md)
 - [references/05-react-router-page.md](references/05-react-router-page.md)
 
 **Docker/Postgres target:**
+
 - [references/docker-postgres/04-docker-server.md](references/docker-postgres/04-docker-server.md)
 - [references/docker-postgres/05-react-router-page.md](references/docker-postgres/05-react-router-page.md)
 
