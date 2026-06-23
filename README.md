@@ -16,8 +16,8 @@ The marketplace registries make this stack's plugins available for installation:
 Project Bootstrapper sets up a new project from scratch. It collects the product idea and deployment target, selects infrastructure capabilities, scaffolds the codebase, and runs all foundation skills — committing a runnable project ready for product development.
 
 Supports two deployment targets:
-- **Cloudflare** — Workers + D1 + R2 + React Router v7
-- **Docker/Postgres** — Node.js (Hono) + Postgres + RustFS + React Router v7
+- **Cloudflare** — Workers + D1 + R2 + React Router
+- **Docker/Postgres** — Node.js (Hono) + Postgres + RustFS + React Router
 
 ### Installation
 
@@ -48,7 +48,7 @@ codex plugin add project-bootstrapper@mystack
 
 #### Scaffold
 
-- `scaffolding-project` — scaffolds the base stack (pnpm, TypeScript, Vite, React Router v7, Tailwind CSS v4, shadcn/ui) and dispatches to the deployment-target-specific infrastructure (Cloudflare Workers or Docker/Postgres Node.js server).
+- `scaffolding-project` — scaffolds the base stack (pnpm, TypeScript, Vite, React Router, Tailwind CSS v4, shadcn/ui) and dispatches to the deployment-target-specific infrastructure (Cloudflare Workers or Docker/Postgres Node.js server).
 
 #### Infrastructure
 
@@ -56,6 +56,22 @@ codex plugin add project-bootstrapper@mystack
 - `adding-authentication` — adds Better Auth email/password login, signup, logout, and auth routes with Drizzle adapter.
 - `adding-file-storage` — adds object storage (Cloudflare R2 or RustFS/S3) with file metadata table and React Router context.
 - `adding-ai` — adds Vercel AI SDK with OpenAI provider for text generation, structured output, and image generation.
+
+### Updating the plugin
+
+After a new version is released, update the plugin in your agent:
+
+**Codex**
+
+```sh
+codex plugin update project-bootstrapper@mystack
+```
+
+**Claude Code**
+
+```text
+/plugin update project-bootstrapper@mystack
+```
 
 ### Releasing a new version
 
@@ -112,7 +128,23 @@ codex plugin add product-builder@mystack
 
 #### Patterns
 
-- `react-router-patterns` — defines React Router v7 route design and implementation patterns for consistent route, loader, action, and page creation.
+- `react-router-patterns` — defines React Router route design and implementation patterns for consistent route, loader, action, and page creation.
+
+### Updating the plugin
+
+After a new version is released, update the plugin in your agent:
+
+**Codex**
+
+```sh
+codex plugin update product-builder@mystack
+```
+
+**Claude Code**
+
+```text
+/plugin update product-builder@mystack
+```
 
 ### Releasing a new version
 
