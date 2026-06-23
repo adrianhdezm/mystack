@@ -104,7 +104,7 @@ GRANT ALL PRIVILEGES ON DATABASE <project_name>_db TO postgres;
 
 Replace `<project_name>` with the lowercase snake-case project name.
 
-6. Create `docker-compose.yml` for local development.
+6. Create `docker-compose.yml` for local development. Include a `pg_isready` healthcheck so `docker compose up -d --wait` blocks until Postgres accepts connections — without it a fast `pnpm db:migrate` after startup can fail with connection-refused on a cold machine.
 
 ```yaml
 services:
@@ -116,15 +116,20 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - ./db/data:/var/lib/postgresql/data
+      - ./.docker-data/pg:/var/lib/postgresql/data
       - ./db/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 ```
 
-7. Add `db/data/` to `.gitignore` — it holds the Postgres data volume and must not be committed.
+7. Confirm `.docker-data/` is in `.gitignore` — it holds all Docker volume data and must not be committed. The base `.gitignore` from `01-initialize-pnpm-and-base-files.md` already includes it; verify the entry is present.
 
 ```gitignore
 # Docker
-db/data/
+.docker-data/
 ```
 
 8. Create `.env.example` with required environment variables (no secrets).
@@ -186,8 +191,8 @@ export default defineConfig({
 - `server.ts` exists at the project root with a dev/prod branch on `NODE_ENV`. The prod branch uses a string variable for the `build/server/index.js` import path to avoid a pre-build `tsc -b` failure.
 - `vite.config.ts` uses `reactRouter()` with `environments.ssr` pointing to `workers/app.ts`. No `@hono/vite-dev-server` plugin.
 - `db/scripts/init.sql` exists and creates a dedicated project database.
-- `docker-compose.yml` exists with a Postgres 17 service, init script volume, and `db/data/` data volume.
-- `db/data/` is in `.gitignore`.
+- `docker-compose.yml` exists with a Postgres 17 service, init script volume, `.docker-data/pg` data volume, and a `pg_isready` healthcheck.
+- `.docker-data/` is in `.gitignore`.
 - `.env.example` exists with `DATABASE_URL`, `POSTGRES_PASSWORD`, `POSTGRES_PORT`, `PORT`, `NODE_ENV`, and `APP_NAME`.
 - `.env` exists (gitignored) with `NODE_ENV=development`.
 - `package.json` `dev` script uses `node --env-file=.env server.ts`; `start` uses `node server.ts` (no `--env-file`).

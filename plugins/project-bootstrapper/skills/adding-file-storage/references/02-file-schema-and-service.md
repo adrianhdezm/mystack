@@ -93,7 +93,9 @@ export class FilesService {
 
   async remove(id: number) {
     const [file] = await this.db.select().from(files).where(eq(files.id, id));
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     await this.db.delete(files).where(eq(files.id, id));
     await this.bucket.delete(file.key);
   }
@@ -153,7 +155,9 @@ export class FilesService {
 
   async remove(id: string) {
     const [file] = await this.db.select().from(files).where(eq(files.id, id));
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     await this.db.delete(files).where(eq(files.id, id));
     await this.s3.send(
       new DeleteObjectCommand({ Bucket: this.bucket, Key: file.key }),

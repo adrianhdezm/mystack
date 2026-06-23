@@ -70,8 +70,21 @@ Default binding/app name: `APP_DB`. Default migration directory: `db/migrations`
    - `cloudflare` → Miniflare D1 using [references/cloudflare/05-testing-setup.md](references/cloudflare/05-testing-setup.md)
    - `docker-postgres` → Postgres integration tests using [references/docker-postgres/05-testing-setup.md](references/docker-postgres/05-testing-setup.md)
 8. Update project documentation using [documentation-updates.md](../../shared/references/documentation-updates.md) and [references/08-doc-updates.md](references/08-doc-updates.md).
-9. Write `project.database_name` and `capabilities.database = "ready"` to `docs/context.json`.
-10. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. For Cloudflare also run `pnpm db:local:migrate`. Fix any failures before proceeding.
+9. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. For Cloudflare also run `pnpm db:local:migrate`. Fix any failures before proceeding.
+10. Write `project.database_name` and `capabilities.database = "ready"` to `docs/context.json`.
+
+## Rollback
+
+If this skill fails partway through, restore the project to its pre-skill state before retrying:
+
+1. Delete generated migration files in `db/migrations/`.
+2. Remove Drizzle additions from `app/db/schema.ts` (if modified).
+3. Revert `package.json` scripts (`db:generate`, `db:migrate`), `drizzle.config.ts`, and any `tsconfig.node.json` changes.
+4. Remove Drizzle and Testcontainers packages: `pnpm remove drizzle-orm drizzle-zod drizzle-kit tsx testcontainers @testcontainers/postgresql`.
+5. Revert `vitest.config.ts` to `projects: ["tests/unit"]` and remove `tests/integration/`.
+6. Reset `docs/context.json` — remove `project.database_name` and set `capabilities.database` back to `"planned"`.
+
+This skill checks for existing tables before generating migrations, so re-running after a partial apply may produce duplicate migrations. Prefer a clean rollback over a retry on a dirty state.
 
 ## References
 

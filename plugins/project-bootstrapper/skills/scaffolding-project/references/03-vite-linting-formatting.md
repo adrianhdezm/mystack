@@ -148,6 +148,18 @@ export default defineConfig([
     files: ["app/routes/**/*.tsx"],
     rules: {
       "@typescript-eslint/only-throw-error": "off",
+      // @conform-to/zod top-level is the v3 API — always use the /v4 subpath with Zod v4.
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@conform-to/zod",
+              message: "Use @conform-to/zod/v4 instead.",
+            },
+          ],
+        },
+      ],
     },
   },
   // shadcn/ui generated components render generic wrapper elements that cannot satisfy
@@ -206,5 +218,5 @@ export default defineConfig([
 - `vite.config.ts` exists with an empty plugin list and `resolve.tsconfigPaths` enabled.
 - `@eslint/js` (v9), `eslint` (v9), `eslint-config-prettier`, `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `globals`, `typescript-eslint`, and `@types/eslint-plugin-jsx-a11y` are installed as development dependencies.
 - `eslint.config.js` exists with React, React Hooks, JSX accessibility, TypeScript, and Prettier recommended configuration.
-- `eslint.config.js` disables `@typescript-eslint/only-throw-error` for `app/routes/**/*.tsx`, `jsx-a11y/label-has-associated-control` for `app/components/ui/**/*.tsx`, and `@typescript-eslint/no-unsafe-assignment` for `tests/**/*.{ts,tsx}`.
+- `eslint.config.js` disables `@typescript-eslint/only-throw-error` for `app/routes/**/*.tsx` and adds a `no-restricted-imports` rule blocking `@conform-to/zod` (top-level) in favour of `@conform-to/zod/v4`, `jsx-a11y/label-has-associated-control` for `app/components/ui/**/*.tsx`, and `@typescript-eslint/no-unsafe-assignment` for `tests/**/*.{ts,tsx}`.
 - `package.json` includes `format` and `lint` scripts.

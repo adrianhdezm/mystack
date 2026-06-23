@@ -16,7 +16,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - ./db/data:/var/lib/postgresql/data
+      - ./.docker-data/pg:/var/lib/postgresql/data
       - ./db/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -108,6 +108,6 @@ docker compose up -d --wait
 - `.env` contains `DATABASE_URL` pointing to the project-specific database.
 - `.env.example` documents `DATABASE_URL`.
 - `db/scripts/init.sql` creates the project database and grants privileges.
-- `docker-compose.yml` includes a Postgres 17 service with the init script, `db/data/` volume, and a `pg_isready` healthcheck.
+- `docker-compose.yml` includes a Postgres 17 service with the init script, `.docker-data/pg` volume, and a `pg_isready` healthcheck.
 - `package.json` includes `db:generate` and `db:migrate` scripts using `node` to invoke drizzle-kit directly.
 - `docker compose up -d --wait` is used to start Postgres and block until it is ready before running migrations.

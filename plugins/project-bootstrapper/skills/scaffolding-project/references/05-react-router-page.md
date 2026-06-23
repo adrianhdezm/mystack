@@ -205,6 +205,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 11. Update the previously created `workers/app.ts` to use Hono and the React Router request handler.
 
+Before updating `workers/app.ts`, add `app/env.d.ts` with a reference to the React Router virtual module types. Without this, `tsc -b` fails with "Cannot find module 'virtual:react-router/server-build'" on any fresh checkout before the first build:
+
+```ts
+/// <reference types="@react-router/dev/vite/env" />
+```
+
 This project uses React Router's middleware context API (`v8_middleware`), now the default in React Router v8, so pass request-scoped server dependencies with `RouterContextProvider`. Do not use `AppLoadContext` or a plain object context in this setup.
 
 ```ts
@@ -275,6 +281,7 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 
 - `react`, `react-dom`, `react-router`, `isbot`, and `hono` are installed as dependencies.
 - `@react-router/dev` is installed as a development dependency.
+- `app/env.d.ts` exists with `/// <reference types="@react-router/dev/vite/env" />` so `virtual:react-router/server-build` resolves before the first build.
 - `react-router.config.ts` exists with SSR enabled. No `future` flags — all v8 behaviors are defaults.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx` exists with the layout, outlet, and route error boundary.

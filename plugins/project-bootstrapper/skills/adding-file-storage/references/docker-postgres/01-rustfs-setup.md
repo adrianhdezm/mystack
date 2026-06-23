@@ -58,10 +58,21 @@ S3_BUCKET=app-files
 docker compose up -d
 ```
 
-7. Create the bucket using the AWS CLI (S3-compatible):
+7. Create the bucket using the AWS SDK v3 that was just installed — do not rely on the AWS CLI, which may not be present:
 
 ```sh
-AWS_ACCESS_KEY_ID=rustfsadmin AWS_SECRET_ACCESS_KEY=rustfsadmin aws s3 mb s3://app-files --endpoint-url http://localhost:9000
+node --env-file=.env -e "
+const { S3Client, CreateBucketCommand } = require('./node_modules/@aws-sdk/client-s3');
+const s3 = new S3Client({
+  endpoint: process.env.S3_ENDPOINT,
+  region: 'us-east-1',
+  credentials: { accessKeyId: process.env.S3_ACCESS_KEY, secretAccessKey: process.env.S3_SECRET_KEY },
+  forcePathStyle: true,
+});
+s3.send(new CreateBucketCommand({ Bucket: process.env.S3_BUCKET }))
+  .then(() => console.log('Bucket created: ' + process.env.S3_BUCKET))
+  .catch(e => { console.error(e.message); process.exit(1); });
+"
 ```
 
 ## Expected Results
@@ -71,3 +82,4 @@ AWS_ACCESS_KEY_ID=rustfsadmin AWS_SECRET_ACCESS_KEY=rustfsadmin aws s3 mb s3://a
 - `.env` contains `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, and `S3_BUCKET`.
 - `.env.example` documents S3 variables.
 - RustFS is accessible at `http://localhost:9000`.
+- The S3 bucket named in `S3_BUCKET` is created using the AWS SDK v3 (no AWS CLI required).

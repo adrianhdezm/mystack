@@ -1,5 +1,7 @@
 # 01 - Drizzle Setup
 
+> **Node ≥ 24 compatibility:** The `drizzle-kit` shell shim (`pnpm drizzle-kit` / `npx drizzle-kit`) does not work correctly on Node 24+ due to ESM/CJS resolution changes. Always invoke the CJS binary directly: `node --env-file=.env ./node_modules/drizzle-kit/bin.cjs <command>`. The `02-postgres-setup.md` and `02-cloudflare-d1.md` target references provide the correct script forms — the generic forms below are for reference only.
+
 ## Steps
 
 1. Check the latest Drizzle package versions before installing.

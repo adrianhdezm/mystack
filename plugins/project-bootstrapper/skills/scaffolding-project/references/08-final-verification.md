@@ -53,6 +53,19 @@ pnpm build
 
 If the build fails, fix the generated source or configuration errors and rerun `pnpm build` until it passes.
 
+6a. _(Docker/Postgres target only)_ Verify the dev server starts without errors. Docker Compose must be running and `.env` must exist before this step.
+
+```sh
+docker compose up -d --wait
+node --env-file=.env server.ts &
+SERVER_PID=$!
+sleep 5
+kill $SERVER_PID 2>/dev/null
+wait $SERVER_PID 2>/dev/null
+```
+
+If the server process exits within 5 seconds (non-zero exit), investigate the error output before continuing.
+
 7. Display the final project file structure, excluding dependency and generated output folders.
 
 ```sh

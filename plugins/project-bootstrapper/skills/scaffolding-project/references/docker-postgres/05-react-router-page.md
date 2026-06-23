@@ -196,6 +196,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 11. Update `workers/app.ts` to wire the React Router request handler. No `serve()` call — that lives in `server.ts` at the root.
 
+Before updating `workers/app.ts`, add `app/env.d.ts` with a reference to the React Router virtual module types. Without this, `tsc -b` fails with "Cannot find module 'virtual:react-router/server-build'" on any fresh checkout before the first build:
+
+```ts
+/// <reference types="@react-router/dev/vite/env" />
+```
+
+Then update `workers/app.ts`:
+
 ```ts
 import { Hono } from "hono";
 import { createRequestHandler, RouterContextProvider } from "react-router";
@@ -259,6 +267,7 @@ export default defineConfig({
 
 - `react`, `react-dom`, `react-router`, and `isbot` are installed as dependencies.
 - `@react-router/dev` is installed as a development dependency.
+- `app/env.d.ts` exists with `/// <reference types="@react-router/dev/vite/env" />` so `virtual:react-router/server-build` resolves before the first build.
 - `react-router.config.ts` exists with SSR enabled. No `future` flags — all v8 behaviors are defaults.
 - `tsconfig.node.json` includes `react-router.config.ts`.
 - `app/root.tsx`, `app/entry.server.tsx`, `app/routes.ts`, `app/context.ts`, and `app/routes/home.tsx` exist.

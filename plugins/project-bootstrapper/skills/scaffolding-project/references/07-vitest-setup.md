@@ -66,7 +66,7 @@ TypeScript 5.0+ allows `composite: true` and `noEmit: true` together, so do not 
   "compilerOptions": {
     "noEmit": true
   },
-  "include": [".react-router/types/**/*", "tests/unit/**/*"]
+  "include": [".react-router/types/**/*", "app/**/*", "tests/unit/**/*"]
 }
 ```
 
@@ -150,7 +150,7 @@ If any test fails, fix the configuration and rerun until it passes.
 - Playwright chromium browser is installed locally.
 - `vitest.config.ts` exists at the project root with `projects: ["tests/unit"]`.
 - `tests/unit/vitest.config.ts` exists with Playwright browser mode using `provider: playwright()` (function form, not string).
-- `tsconfig.unit.json` exists at the project root extending the app tsconfig, with `.react-router/types/**/*` and `tests/unit/**/*` in its `include` array. No `composite: false`.
+- `tsconfig.unit.json` exists at the project root extending the app tsconfig, with `.react-router/types/**/*`, `app/**/*`, and `tests/unit/**/*` in its `include` array. No `composite: false`.
 - Root `tsconfig.json` references array includes `tsconfig.unit.json` so `projectService` discovers unit tests without `allowDefaultProject` entries.
 - `package.json` includes `test`, `test:unit`, `test:watch`, and `test:ui` scripts. The `typecheck` script is `tsc -b` only (no separate `tsc -p tsconfig.unit.json` pass).
 - `tsconfig.node.json` includes `vitest.config.ts`.

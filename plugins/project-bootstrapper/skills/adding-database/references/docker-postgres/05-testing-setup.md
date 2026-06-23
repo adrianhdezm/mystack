@@ -13,7 +13,7 @@ pnpm add -D @vitejs/plugin-react@latest
 
 2. Remove `vite-tsconfig-paths` if previously installed — Vite 6+ supports tsconfig path resolution natively via `resolve.tsconfigPaths: true`.
 
-3. Install Testcontainers and the PostgreSQL module. Testcontainers pulls in `ssh2` and `cpu-features` which run native build scripts — add them to `pnpm-workspace.yaml` before installing to avoid a blocked-build error.
+3. Install Testcontainers and the PostgreSQL module. Testcontainers pulls in `ssh2` and `cpu-features` which run native build scripts — **update `pnpm-workspace.yaml` first, before running the install command**, or pnpm will block the build scripts.
 
 Add to `pnpm-workspace.yaml`:
 
@@ -25,7 +25,7 @@ allowBuilds:
   ssh2: true
 ```
 
-Then install:
+Save the file, then install:
 
 ```sh
 pnpm view testcontainers version
@@ -140,7 +140,7 @@ TypeScript 5.0+ allows `composite: true` and `noEmit: true` together — include
 }
 ```
 
-10. Create `tests/integration/db/schema.test.ts`. Adding the integration project to root `vitest.config.ts` before any test files exist causes `vitest run` to exit with code 1 ("No test files found"). This smoke test also validates that the Drizzle schema import path resolves correctly.
+10. Create `tests/integration/db/schema.test.ts`. Adding the integration project to root `vitest.config.ts` before any test files exist causes `vitest run` to exit with code 1 ("No test files found"). **This file is mandatory — do not skip it. Removing it later will break `pnpm test` until a real integration test file is added.**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -181,7 +181,7 @@ afterAll(async () => {
 - `pnpm-workspace.yaml` approves `cpu-features`, `protobufjs`, and `ssh2` builds.
 - `tests/integration/vitest.config.ts` exists with the node environment using `resolve.tsconfigPaths: true` (no `vite-tsconfig-paths` plugin).
 - `tests/integration/db-test-utils.ts` exports `setupTestDb()` returning `{ db, teardown }`.
-- `tests/integration/db/schema.test.ts` exists as a smoke test so `vitest run` does not exit with code 1 before real test files are added.
+- `tests/integration/db/schema.test.ts` exists as a mandatory smoke test — removing it breaks `pnpm test` until real integration tests are added.
 - Root `vitest.config.ts` includes both `tests/unit` and `tests/integration` projects.
 - `tsconfig.integration.json` extends `tsconfig.app.json`, includes `.react-router/types/**/*`, `app/**/*`, and `tests/integration/**/*`, has `composite: true` and `noEmit: true`, and no explicit `types` override.
 - Root `tsconfig.json` references array includes `tsconfig.integration.json`.

@@ -60,7 +60,8 @@ Use `context.repository.local_path` as the working directory for all commands.
     - `docs/conventions/routes.md` from [convention-template.md](../../shared/templates/convention-template.md): seed with — route filenames describe role not URL syntax; middleware only for cross-cutting request work; keep mutations in actions; ownership checks in the route/action that owns the resource param.
 12. Update `README.md` with a basic overview: stack, deployment target, local dev command, verification commands.
 13. Update `AGENTS.md` with agent instructions, bootstrapped project structure, a Project Documentation section referencing `docs/architecture.md`, and React Router guidance.
-14. Write `project.*` to `docs/context.json` (preserve all existing fields, only add/overwrite these):
+14. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. Fix any failures before proceeding.
+15. Write `project.*` to `docs/context.json` (preserve all existing fields, only add/overwrite these):
     - **Cloudflare:**
       ```json
       {
@@ -75,7 +76,6 @@ Use `context.repository.local_path` as the working directory for all commands.
       ```json
       { "project": { "name": "<repo name>" } }
       ```
-15. Run `pnpm format`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build`. Fix any failures before proceeding.
 
 ## References
 
