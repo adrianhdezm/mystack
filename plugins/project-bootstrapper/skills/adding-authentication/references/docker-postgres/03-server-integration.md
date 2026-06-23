@@ -24,11 +24,10 @@ Preserve any additional context values already used by the app.
 
 ## Server entrypoint
 
-Update `server/app.ts` to construct Better Auth once at module scope (Node.js has a stable connection pool, unlike Cloudflare Workers). The `Pool` and `db` are shared across requests.
+Update `workers/app.ts` to construct Better Auth once at module scope (Node.js has a stable connection pool, unlike Cloudflare Workers). The `Pool`, `db`, and `auth` instances are shared across requests. No `serve()` call — process lifecycle is owned by `server.ts` at the project root.
 
 ```ts
 import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
 import { createRequestHandler, RouterContextProvider } from 'react-router';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
@@ -86,11 +85,6 @@ app.all('*', async (c) => {
     auth,
   });
   return requestHandler(c.req.raw, routerContext);
-});
-
-const port = Number(process.env.PORT) || 3000;
-serve({ fetch: app.fetch, port }, () => {
-  console.log(`Server running at http://localhost:${port}`);
 });
 
 export default app;

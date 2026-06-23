@@ -106,7 +106,8 @@ pnpm add -D typescript@latest @types/node@latest
     "app/**/*",
     "app/**/.server/**/*",
     "app/**/.client/**/*",
-    "server/**/*"
+    "workers/**/*",
+    "server.ts"
   ],
   "compilerOptions": {
     "composite": true,

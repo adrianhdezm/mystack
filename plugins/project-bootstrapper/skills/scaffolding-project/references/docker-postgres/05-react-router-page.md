@@ -194,10 +194,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 10. Create a `public` folder with a `favicon.ico` placeholder.
 
-11. Update `server/app.ts` to wire React Router and add the production `serve()` call. In development, `@hono/vite-dev-server` handles requests via Vite; in production, `serve()` from `@hono/node-server` drives the server.
+11. Update `workers/app.ts` to wire the React Router request handler. No `serve()` call — that lives in `server.ts` at the root.
 
 ```ts
-import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { createRequestHandler, RouterContextProvider } from 'react-router';
 
@@ -220,12 +219,6 @@ app.all('*', async (c) => {
   return requestHandler(c.req.raw, routerContext);
 });
 
-const port = Number(process.env.PORT) || 3000;
-
-serve({ fetch: app.fetch, port }, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
-
 export default app;
 ```
 
@@ -233,12 +226,12 @@ Context checklist:
 - Treat the middleware context API as always enabled — React Router v8 default.
 - Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
 - Include Node.js environment values under `appContext` as `env: { ... }`.
-- Create a `RouterContextProvider` for each request in `server/app.ts`.
-- Pass `routerContext` as the second argument to `requestHandler(request, routerContext)`.
+- Create a `RouterContextProvider` for each request in `workers/app.ts`.
+- Pass `routerContext` as the second argument to `requestHandler(c.req.raw, routerContext)`.
 - Read dependencies in routes from `context.get(appContext)`.
 - Do not use `AppLoadContext` or plain object context.
 
-12. Update `vite.config.ts` to use the React Router Vite plugin.
+12. Update `vite.config.ts` to use the React Router Vite plugin. The `environments.ssr` block tells `react-router build` to compile `workers/app.ts` into `build/server/index.js` for production.
 
 ```ts
 import { reactRouter } from '@react-router/dev/vite';
@@ -248,6 +241,15 @@ export default defineConfig({
   plugins: [reactRouter()],
   resolve: {
     tsconfigPaths: true,
+  },
+  environments: {
+    ssr: {
+      build: {
+        rollupOptions: {
+          input: './workers/app.ts',
+        },
+      },
+    },
   },
 });
 ```
@@ -262,5 +264,7 @@ export default defineConfig({
 - `app/context.ts` exports `appContext` with `env: { APP_NAME: string }`.
 - `app/routes/home.tsx` reads `APP_NAME` from `context.get(appContext).env`.
 - `public/favicon.ico` exists.
+- `workers/app.ts` wires the React Router request handler with `RouterContextProvider` and exports `app` with no `serve()` call.
+- `vite.config.ts` uses `reactRouter()` with `environments.ssr.build.rollupOptions.input` pointing to `workers/app.ts`.
 - `server/app.ts` creates a per-request `RouterContextProvider`, sets `appContext`, and does not use `AppLoadContext`.
 - `vite.config.ts` uses `reactRouter()` (no Cloudflare plugin).

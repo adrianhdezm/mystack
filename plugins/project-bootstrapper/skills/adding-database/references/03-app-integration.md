@@ -73,11 +73,10 @@ app.all('*', async (c) => {
 export default app;
 ```
 
-**Docker/Postgres target** — update `server/app.ts`:
+**Docker/Postgres target** — update `workers/app.ts`:
 
 ```ts
 import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
 import { createRequestHandler, RouterContextProvider } from 'react-router';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -103,9 +102,6 @@ app.all('*', async (c) => {
   return requestHandler(c.req.raw, routerContext);
 });
 
-const port = Number(process.env.PORT) || 3000;
-serve({ fetch: app.fetch, port });
-
 export default app;
 ```
 
@@ -114,3 +110,4 @@ export default app;
 - `app/db/schema.ts` exports an empty `schema` object unless the user provided a data model.
 - `app/context.ts` exposes a typed Drizzle database (type matches the target).
 - The server entry creates a Drizzle client and passes it to React Router context per request.
+- The docker-postgres `workers/app.ts` does not call `serve()` — process lifecycle is owned by `server.ts` at the project root.
