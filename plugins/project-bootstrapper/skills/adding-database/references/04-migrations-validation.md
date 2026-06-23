@@ -1,4 +1,4 @@
-# 04 - Migrations And Validation
+# 04 - Migrations and Validation
 
 ## Steps
 
@@ -8,19 +8,28 @@
 pnpm db:generate
 ```
 
-2. Apply migrations to the remote D1 database.
+2. Apply migrations. The commands differ by deployment target:
+
+**Cloudflare target:**
+
+```sh
+pnpm db:migrate        # remote D1
+pnpm db:local:migrate  # local D1
+```
+
+**Docker/Postgres target:**
 
 ```sh
 pnpm db:migrate
 ```
 
-3. Apply migrations to the local D1 database.
+For Docker/Postgres, Docker Compose must be running before applying migrations. If not already running:
 
 ```sh
-pnpm db:local:migrate
+docker compose up -d
 ```
 
-4. Regenerate Cloudflare types after adding the D1 binding.
+3. Regenerate types (Cloudflare target only).
 
 ```sh
 pnpm cf-typegen
@@ -32,7 +41,7 @@ If the project does not have `cf-typegen`, run:
 pnpm wrangler types
 ```
 
-5. Run the project's normal verification commands when present.
+4. Run the project's normal verification commands.
 
 ```sh
 pnpm format
@@ -47,10 +56,10 @@ pnpm build
 - If `pnpm db:migrate` fails because `.env` is missing credentials, stop after confirming `.env.example` is correct and tell the user which variables are missing.
 - If `pnpm db:local:migrate` fails because migrations have not been generated, run `pnpm db:generate` first.
 - If Cloudflare type generation fails because Wrangler is not authenticated, report the exact command that failed and leave source changes in place.
+- If `pnpm db:migrate` fails for Docker/Postgres because the database does not exist, ensure Docker Compose is running and the init script created the project database.
 
 ## Expected Results
 
 - SQL migration files exist under `db/migrations`.
-- Remote migrations apply with `pnpm db:migrate` when Cloudflare credentials are present.
-- Local migrations apply with `pnpm db:local:migrate`.
-- Generated `Env` types include `APP_DB`.
+- **Cloudflare:** Remote migrations apply with `pnpm db:migrate`; local migrations apply with `pnpm db:local:migrate`; generated `Env` types include `APP_DB`.
+- **Docker/Postgres:** Migrations apply with `pnpm db:migrate` against the running Docker Compose Postgres instance.
