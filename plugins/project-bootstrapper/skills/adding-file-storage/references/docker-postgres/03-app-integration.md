@@ -10,7 +10,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { betterAuth } from 'better-auth';
 import type { FilesService } from '~/services/file.service';
 
-import { schema } from './db/schema';
+import type { schema } from './db/schema';
 
 export const appContext = createContext<{
   env: {
@@ -26,7 +26,7 @@ Omit context fields that are not yet present in the project (e.g. `auth` if `add
 
 ## Server entrypoint
 
-Update `server/app.ts` to construct `FilesService` once at module scope (the S3 client is reusable across requests).
+Update `workers/app.ts` to construct `FilesService` once at module scope (the S3 client is reusable across requests).
 
 ```ts
 import { S3Client } from '@aws-sdk/client-s3';
@@ -63,5 +63,5 @@ Add `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, and `S3_BUCKET` to `.env` i
 ## Expected Results
 
 - `app/context.ts` exposes `files: FilesService`.
-- `server/app.ts` constructs `new S3Client(...)` and `new FilesService(db, s3Client, bucketName)` at module scope.
+- `workers/app.ts` constructs `new S3Client(...)` and `new FilesService(db, s3Client, bucketName)` at module scope.
 - `FilesService` is passed into `RouterContextProvider` on every request.

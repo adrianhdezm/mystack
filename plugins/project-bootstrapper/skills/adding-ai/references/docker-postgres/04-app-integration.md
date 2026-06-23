@@ -9,7 +9,7 @@ import { createContext } from 'react-router';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { AIService } from '~/services/ai.service';
 
-import { schema } from './db/schema';
+import type { schema } from './db/schema';
 
 export const appContext = createContext<{
   env: {
@@ -25,7 +25,7 @@ Preserve any additional context values already used by the app.
 
 ## Server entrypoint
 
-Update `server/app.ts` to construct `AIService` once at module scope — `process.env` is available at startup in Node.js.
+Update `workers/app.ts` to construct `AIService` once at module scope — `process.env` is available at startup in Node.js.
 
 ```ts
 import { AIService } from '../app/services/ai.service';
@@ -51,5 +51,5 @@ routerContext.set(appContext, {
 ## Expected Results
 
 - `app/context.ts` exposes `ai: AIService`.
-- `server/app.ts` constructs `new AIService(...)` at module scope using `process.env`.
+- `workers/app.ts` constructs `new AIService(...)` at module scope using `process.env`.
 - `AIService` is passed into `RouterContextProvider` on every request.

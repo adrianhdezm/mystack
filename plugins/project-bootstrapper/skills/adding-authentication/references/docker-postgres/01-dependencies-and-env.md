@@ -8,7 +8,7 @@ Work from `PROJECT_PATH`. Confirm the project already has:
 - `app/db/schema.ts`.
 - `drizzle.config.ts`.
 - `docker-compose.yml` with a Postgres service.
-- `server/app.ts` — the Hono server entrypoint.
+- `workers/app.ts` — the Hono server entrypoint.
 
 If the database is absent, stop and run the `adding-database` skill first.
 
