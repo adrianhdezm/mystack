@@ -91,6 +91,7 @@ pnpm test --project unit
   ```ts
   import { page } from "vitest/browser";
   ```
+
 - Use `expect.element()` (not `expect()`) for DOM assertions — it retries until the DOM settles.
 - Import route components via the `~/` path alias, not a relative path.
 - Always wrap components that contain `<Link>` or `<Form>` in a `createRoutesStub` — they require a router context and throw without one.
