@@ -43,11 +43,13 @@ Default DB binding: `APP_DB`. Default auth cookie prefix: `App`.
 - Read [app-architecture.md](../../shared/references/app-architecture.md) before modifying `workers/app.ts`. Wire capabilities inline — no helper files under `workers/`.
 
 **Cloudflare target only:**
+
 - Use the SQLite provider with Better Auth's Drizzle adapter.
 - Better Auth must be constructed per request (inside `fetch`) — Cloudflare Workers only expose `env` bindings inside the `fetch` handler.
 - Generate and apply migration to both local and remote D1.
 
 **Docker/Postgres target only:**
+
 - Use the Postgres provider with Better Auth's Drizzle adapter.
 - Auth can be constructed once at module scope (Node.js has a stable connection pool).
 - Run `pnpm db:migrate` to apply the auth migration to Docker Postgres.
@@ -58,7 +60,9 @@ Default DB binding: `APP_DB`. Default auth cookie prefix: `App`.
 2. **Install dependencies and configure secrets:**
    - `cloudflare` → [references/cloudflare/01-dependencies-and-env.md](references/cloudflare/01-dependencies-and-env.md)
    - `docker-postgres` → [references/docker-postgres/01-dependencies-and-env.md](references/docker-postgres/01-dependencies-and-env.md)
-3. Extend the Drizzle schema with auth tables and generate the migration using [references/02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md).
+3. **Extend the Drizzle schema with auth tables and generate the migration:**
+   - `cloudflare` → [references/cloudflare/02-auth-schema-and-migrations.md](references/cloudflare/02-auth-schema-and-migrations.md)
+   - `docker-postgres` → [references/docker-postgres/02-auth-schema-and-migrations.md](references/docker-postgres/02-auth-schema-and-migrations.md)
 4. **Wire Better Auth into app context and the server:**
    - `cloudflare` → [references/cloudflare/03-server-integration.md](references/cloudflare/03-server-integration.md)
    - `docker-postgres` → [references/docker-postgres/03-server-integration.md](references/docker-postgres/03-server-integration.md)
@@ -71,18 +75,22 @@ Default DB binding: `APP_DB`. Default auth cookie prefix: `App`.
 ## References
 
 **Shared (both targets):**
-- [references/02-auth-schema-and-migrations.md](references/02-auth-schema-and-migrations.md)
+
 - [references/04-auth-routes-and-forms.md](references/04-auth-routes-and-forms.md)
 - [references/05-tests.md](references/05-tests.md)
 - [shared/references/documentation-updates.md](../../shared/references/documentation-updates.md)
 - [shared/references/app-architecture.md](../../shared/references/app-architecture.md)
 
 **Cloudflare target:**
+
 - [references/cloudflare/01-dependencies-and-env.md](references/cloudflare/01-dependencies-and-env.md)
+- [references/cloudflare/02-auth-schema-and-migrations.md](references/cloudflare/02-auth-schema-and-migrations.md)
 - [references/cloudflare/03-server-integration.md](references/cloudflare/03-server-integration.md)
 
 **Docker/Postgres target:**
+
 - [references/docker-postgres/01-dependencies-and-env.md](references/docker-postgres/01-dependencies-and-env.md)
+- [references/docker-postgres/02-auth-schema-and-migrations.md](references/docker-postgres/02-auth-schema-and-migrations.md)
 - [references/docker-postgres/03-server-integration.md](references/docker-postgres/03-server-integration.md)
 
 ## Review Checklist

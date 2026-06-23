@@ -1,17 +1,8 @@
-# Auth Schema and Migrations
-
-## Contents
-
-- Schema (Better Auth tables, relations, Drizzle adapter aliases)
-- Generate and apply migrations
+# 02 - Auth Schema and Migrations (Cloudflare target)
 
 ## Schema
 
-Update `app/db/schema.ts` to include the Better Auth tables below. Preserve unrelated existing project tables unless the user explicitly asks to replace them.
-
-The column types differ by deployment target.
-
-### Cloudflare (SQLite / D1) target
+Update `app/db/schema.ts` to include the Better Auth tables below. Preserve unrelated existing project tables.
 
 ```ts
 import { relations, sql } from "drizzle-orm";
@@ -104,102 +95,7 @@ export const verifications = sqliteTable(
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
-```
 
-### Docker/Postgres target
-
-```ts
-import { relations, sql } from 'drizzle-orm';
-import { boolean, index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-
-export const users = pgTable('users', {
-  id: uuid('id')
-    .default(sql`pg_catalog.gen_random_uuid()`)
-    .primaryKey(),
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
-  emailVerified: boolean('email_verified').default(false).notNull(),
-  image: text('image'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at')
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
-
-export const sessions = pgTable(
-  'sessions',
-  {
-    id: uuid('id')
-      .default(sql`pg_catalog.gen_random_uuid()`)
-      .primaryKey(),
-    expiresAt: timestamp('expires_at').notNull(),
-    token: text('token').notNull().unique(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-    ipAddress: text('ip_address'),
-    userAgent: text('user_agent'),
-    userId: uuid('user_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-  },
-  (table) => [index('session_userId_idx').on(table.userId)],
-);
-
-export const accounts = pgTable(
-  'accounts',
-  {
-    id: uuid('id')
-      .default(sql`pg_catalog.gen_random_uuid()`)
-      .primaryKey(),
-    accountId: text('account_id').notNull(),
-    providerId: text('provider_id').notNull(),
-    userId: uuid('user_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    accessToken: text('access_token'),
-    refreshToken: text('refresh_token'),
-    idToken: text('id_token'),
-    accessTokenExpiresAt: timestamp('access_token_expires_at'),
-    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
-    scope: text('scope'),
-    password: text('password'),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-  },
-  (table) => [index('account_userId_idx').on(table.userId)],
-);
-
-export const verifications = pgTable(
-  'verifications',
-  {
-    id: uuid('id')
-      .default(sql`pg_catalog.gen_random_uuid()`)
-      .primaryKey(),
-    identifier: text('identifier').notNull(),
-    value: text('value').notNull(),
-    expiresAt: timestamp('expires_at').notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-  },
-  (table) => [index('verification_identifier_idx').on(table.identifier)],
-);
-```
-
-### Relations and schema export (both targets)
-
-For the SQLite/Cloudflare target, add this after the table definitions. For the Postgres target, the `relations` import is already at the top of the file.
-
-```ts
 export const userRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
@@ -232,24 +128,15 @@ export const schema = {
 
 ## Generate and apply migrations
 
-Use the project's existing scripts when they exist:
-
 ```sh
 pnpm db:generate
 pnpm db:local:migrate
 pnpm db:migrate
 ```
 
-If script names differ, inspect `package.json` and use the equivalent Drizzle generate, local D1 migration, and remote D1 migration commands.
-
 Validate that the generated SQL creates:
 
-- `users`
-- `sessions`
-- `accounts`
-- `verifications`
-- `session_userId_idx`
-- `account_userId_idx`
-- `verification_identifier_idx`
+- `users`, `sessions`, `accounts`, `verifications`
+- `session_userId_idx`, `account_userId_idx`, `verification_identifier_idx`
 
 Keep generated migrations under `db/migrations`.
