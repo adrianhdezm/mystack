@@ -8,6 +8,7 @@ Use the repository's existing import style. Keep the service server-only; do not
 
 ```ts
 import { createOpenAI } from "@ai-sdk/openai";
+import type { ImageModel, LanguageModel } from "ai";
 
 export class AIService {
   private readonly openai: ReturnType<typeof createOpenAI>;
@@ -24,11 +25,11 @@ export class AIService {
     this.imageModelId = openaiImageModelId;
   }
 
-  get model() {
+  get model(): LanguageModel {
     return this.openai(this.modelId);
   }
 
-  get imageModel() {
+  get imageModel(): ImageModel {
     return this.openai.image(this.imageModelId);
   }
 }

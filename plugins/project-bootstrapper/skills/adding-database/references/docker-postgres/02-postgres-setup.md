@@ -35,6 +35,8 @@ pnpm add pg@latest
 pnpm add -D @types/pg@latest
 ```
 
+If `@types/pg` is in the lockfile but TypeScript can't resolve `pg`, run `pnpm install` again — pnpm occasionally skips symlinking on the first install.
+
 4. Add `DATABASE_URL` to `.env` with the local development connection string.
 
 ```env

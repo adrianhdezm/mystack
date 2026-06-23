@@ -33,12 +33,13 @@ import { createRequestHandler, RouterContextProvider } from 'react-router';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { appContext } from '../app/context';
 import { schema } from '../app/db/schema';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool, { schema });
+const db = drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
 
 const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -66,7 +67,7 @@ const auth = betterAuth({
   advanced: {
     cookiePrefix: 'App',
   },
-});
+}) as ReturnType<typeof betterAuth>;
 
 const app = new Hono();
 const requestHandler = createRequestHandler(

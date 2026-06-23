@@ -201,19 +201,20 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 10. Create a `public` folder with a `favicon.ico` placeholder.
 
-11. Update `server/app.ts` to wire the React Router `RouterContextProvider`.
+11. Update `server/app.ts` to wire React Router and add the production `serve()` call. In development, `@hono/vite-dev-server` handles requests via Vite; in production, `serve()` from `@hono/node-server` drives the server.
 
 ```ts
-import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
 import { createRequestHandler, RouterContextProvider } from 'react-router';
+
 import { appContext } from '../app/context';
 
 const app = new Hono();
 
 const requestHandler = createRequestHandler(
   () => import('virtual:react-router/server-build'),
-  import.meta.env.MODE
+  import.meta.env.MODE,
 );
 
 app.all('*', async (c) => {

@@ -82,8 +82,10 @@ pnpm test --project unit
 
 ## Implementation Notes
 
-- All test functions must be `async`.
-- Use `page` from `@vitest/browser/context` for element queries — Playwright locators, strict by default.
+- `render()` from `vitest-browser-react` returns a `Promise<RenderResult>`. Use `void render(...)` in non-async render helpers when the result is not needed — this satisfies `@typescript-eslint/no-floating-promises` without making the helper async.
+- `createRoutesStub` returns a loosely typed `StubRouteObject[]` that triggers `@typescript-eslint/no-unsafe-assignment`. Add a per-directory ESLint override for `tests/**` disabling this rule, or use `// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment` at the call site.
+- When the signup form has both "Password" and "Confirm Password" labels, use `page.getByLabelText('Password', { exact: true })` to avoid Playwright strict-mode errors from ambiguous matches.
+- Use `page` from `vitest/browser` for element queries — Playwright locators, strict by default. Do not use `@vitest/browser/context`, which is deprecated in Vitest 4.x.
 - Use `expect.element()` (not `expect()`) for DOM assertions — it retries until the DOM settles.
 - Import route components via the `~/` path alias, not a relative path.
 - Always wrap components that contain `<Link>` or `<Form>` in a `createRoutesStub` — they require a router context and throw without one.

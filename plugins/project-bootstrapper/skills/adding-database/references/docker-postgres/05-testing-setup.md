@@ -11,7 +11,13 @@ pnpm view @vitejs/plugin-react version
 pnpm add -D @vitejs/plugin-react@latest
 ```
 
-2. Create `tests/integration/vitest.config.ts` — standard Vitest node runner, connects to Docker Postgres.
+2. Install `vite-tsconfig-paths` if not already present. If the package appears in the lockfile but isn't found by TypeScript after install, run `pnpm install` again — pnpm occasionally skips symlinking on the first install.
+
+```sh
+pnpm add -D vite-tsconfig-paths@latest
+```
+
+3. Create `tests/integration/vitest.config.ts` — standard Vitest node runner, connects to Docker Postgres.
 
 ```ts
 import { defineConfig } from 'vitest/config';
@@ -28,7 +34,7 @@ export default defineConfig({
 });
 ```
 
-3. Create `tests/integration/db-test-utils.ts`.
+4. Create `tests/integration/db-test-utils.ts`.
 
 ```ts
 import { drizzle } from 'drizzle-orm/node-postgres';
@@ -52,7 +58,7 @@ export async function applyMigrations() {
 }
 ```
 
-4. Create `tests/integration/setup-tests.ts`.
+5. Create `tests/integration/setup-tests.ts`.
 
 ```ts
 import { beforeAll } from 'vitest';
@@ -61,7 +67,7 @@ import { applyMigrations } from './db-test-utils';
 beforeAll(applyMigrations);
 ```
 
-5. Update the root `vitest.config.ts` to include the integration project.
+6. Update the root `vitest.config.ts` to include the integration project.
 
 ```ts
 import { defineConfig } from 'vitest/config';
@@ -73,7 +79,7 @@ export default defineConfig({
 });
 ```
 
-6. Update `package.json` with integration test scripts.
+7. Update `package.json` with integration test scripts.
 
 ```json
 {
@@ -84,15 +90,14 @@ export default defineConfig({
 }
 ```
 
-7. Update `tsconfig.integration.json` (or create if missing) to extend `tsconfig.app.json` and include integration tests.
+8. Update `tsconfig.integration.json` (or create if missing) to extend `tsconfig.app.json` and include integration tests. Do not add an explicit `types` array — let TypeScript use automatic type discovery so `vite-tsconfig-paths` and other tooling types resolve correctly.
 
 ```json
 {
   "extends": "./tsconfig.app.json",
-  "include": ["tests/integration/**/*"],
+  "include": [".react-router/types/**/*", "tests/integration/**/*"],
   "compilerOptions": {
-    "noEmit": true,
-    "types": ["vite/client", "node"]
+    "noEmit": true
   }
 }
 ```
@@ -103,5 +108,5 @@ export default defineConfig({
 - `tests/integration/db-test-utils.ts` exports `getTestDb()` and `applyMigrations()`.
 - `tests/integration/setup-tests.ts` calls `applyMigrations()` in `beforeAll`.
 - Root `vitest.config.ts` includes both `tests/unit` and `tests/integration` projects.
-- `tsconfig.integration.json` extends `tsconfig.app.json` and includes `tests/integration/**/*`.
+- `tsconfig.integration.json` extends `tsconfig.app.json`, includes `.react-router/types/**/*` and `tests/integration/**/*`, and has no explicit `types` override.
 - Running `pnpm test:integration` with Docker Compose running passes.

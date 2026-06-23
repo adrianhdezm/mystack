@@ -100,7 +100,14 @@ fix(api): 🐛 Correct schema validation
 ```
 ````
 
-6. Create a `CLAUDE.md` symlink pointing to `AGENTS.md`.
+6. Create `pnpm-workspace.yaml`. pnpm 11 requires explicit approval for packages that run postinstall scripts — create this file before any installs to avoid blocked build errors.
+
+```yaml
+allowBuilds:
+  esbuild: true
+```
+
+7. Create a `CLAUDE.md` symlink pointing to `AGENTS.md`.
 
 ```sh
 ln -s AGENTS.md CLAUDE.md
@@ -112,4 +119,5 @@ ln -s AGENTS.md CLAUDE.md
 - `README.md` exists with the project name as the heading and the project description below it.
 - `.gitignore` exists with common entries plus the target-specific section (Cloudflare or Docker).
 - `AGENTS.md` exists and tells future agents the deployment target, packages are managed with pnpm, and commit messages use the project Conventional Commits format.
+- `pnpm-workspace.yaml` exists with `allowBuilds: { esbuild: true }`.
 - `CLAUDE.md` is a symlink to `AGENTS.md`.

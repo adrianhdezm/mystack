@@ -11,7 +11,7 @@
 
 ```sh
 pnpm view vitest version
-pnpm add -D vitest@latest vitest-browser-react@latest @vitest/browser-playwright@latest @vitejs/plugin-react@latest
+pnpm add -D vitest@latest @vitest/browser@latest vitest-browser-react@latest @vitest/browser-playwright@latest @vitejs/plugin-react@latest
 ```
 
 2. Install Playwright browsers. `@vitest/browser-playwright` requires a local browser binary.
@@ -32,10 +32,11 @@ export default defineConfig({
 });
 ```
 
-4. Create `tests/unit/vitest.config.ts` with Playwright browser mode.
+4. Create `tests/unit/vitest.config.ts` with Playwright browser mode. Vitest 4.x requires the `playwright()` function from `@vitest/browser-playwright` — the string-based `provider: 'playwright'` API is removed.
 
 ```ts
 import react from "@vitejs/plugin-react";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -48,23 +49,26 @@ export default defineConfig({
     include: ["**/*.test.ts", "**/*.test.tsx"],
     browser: {
       enabled: true,
-      provider: "playwright",
+      provider: playwright(),
       instances: [{ browser: "chromium" }],
     },
   },
 });
 ```
 
-5. Create `tsconfig.unit.json` — a non-composite tsconfig for unit tests that extends the app's cloudflare config.
+5. Create `tsconfig.unit.json` — a non-composite tsconfig for unit tests that extends the app's config. The `app` config name differs by target: `tsconfig.cloudflare.json` (Cloudflare) or `tsconfig.app.json` (docker-postgres). Include `.react-router/types/**/*` so the `+future.ts` augmentation (e.g. `v8_middleware`) is in scope for test files that import route components.
 
 ```json
 {
-  "extends": "./tsconfig.cloudflare.json",
+  "extends": "./tsconfig.<cloudflare|app>.json",
   "compilerOptions": {
     "composite": false,
     "noEmit": true
   },
-  "include": ["tests/unit/**/*"]
+  "include": [
+    ".react-router/types/**/*",
+    "tests/unit/**/*"
+  ]
 }
 ```
 
@@ -131,11 +135,11 @@ If any test fails, fix the configuration and rerun until it passes.
 
 ## Expected Results
 
-- `vitest`, `vitest-browser-react`, `@vitest/browser-playwright`, and `@vitejs/plugin-react` are installed as development dependencies.
+- `vitest`, `@vitest/browser`, `vitest-browser-react`, `@vitest/browser-playwright`, and `@vitejs/plugin-react` are installed as development dependencies.
 - Playwright chromium browser is installed locally.
 - `vitest.config.ts` exists at the project root with `projects: ["tests/unit"]`.
-- `tests/unit/vitest.config.ts` exists with Playwright browser mode enabled.
-- `tsconfig.unit.json` exists at the project root extending `tsconfig.cloudflare.json`.
+- `tests/unit/vitest.config.ts` exists with Playwright browser mode using `provider: playwright()` (function form, not string).
+- `tsconfig.unit.json` exists at the project root extending the app tsconfig, with `.react-router/types/**/*` and `tests/unit/**/*` in its `include` array.
 - `package.json` includes `test`, `test:unit`, `test:watch`, and `test:ui` scripts.
 - `tsconfig.node.json` includes `vitest.config.ts`.
 - `.gitignore` uses `node_modules/` (any depth).

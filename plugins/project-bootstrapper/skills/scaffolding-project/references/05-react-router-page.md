@@ -19,10 +19,10 @@ pnpm view isbot version
 pnpm view @react-router/dev version
 ```
 
-2. Install React and React Router dependencies.
+2. Install React, React Router, and Hono dependencies.
 
 ```sh
-pnpm add react@latest react-dom@latest react-router@^7 isbot@latest
+pnpm add react@latest react-dom@latest react-router@^7 isbot@latest hono@latest
 pnpm add -D @react-router/dev@^7
 ```
 
@@ -210,29 +210,31 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 10. Create a `public` folder with a `favicon.ico` file. Use an empty file as a placeholder since agents cannot generate binary content. The user can replace it with a real favicon later.
 
-11. Update the previously created `workers/app.ts` to use the React Router request handler.
+11. Update the previously created `workers/app.ts` to use Hono and the React Router request handler.
 
 This project always enables React Router's `v8_middleware` future flag, so pass request-scoped server dependencies with `RouterContextProvider`. Do not use `AppLoadContext` or a plain object context in this setup.
 
 ```ts
+import { Hono } from "hono";
 import { createRequestHandler, RouterContextProvider } from "react-router";
 import { appContext } from "../app/context";
+
+const app = new Hono<{ Bindings: Env }>();
 
 const requestHandler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
 );
 
-export default {
-  async fetch(request, env, ctx) {
-    const routerContext = new RouterContextProvider();
-    routerContext.set(appContext, {
-      cloudflare: { env, ctx },
-    });
+app.all("*", async (c) => {
+  const routerContext = new RouterContextProvider();
+  routerContext.set(appContext, {
+    cloudflare: { env: c.env, ctx: c.executionCtx },
+  });
+  return requestHandler(c.req.raw, routerContext);
+});
 
-    return requestHandler(request, routerContext);
-  },
-} satisfies ExportedHandler<Env>;
+export default app;
 ```
 
 Context checklist:
@@ -240,11 +242,11 @@ Context checklist:
 - Treat `v8_middleware: true` as always enabled for this project.
 - Define request-scoped dependencies with a typed `appContext` key from `createContext<T>()`.
 - Include Cloudflare bindings under `appContext` as `cloudflare: { env, ctx }`.
-- Create a `RouterContextProvider` for each request in `workers/app.ts`.
-- Set dependencies with `routerContext.set(appContext, { cloudflare: { env, ctx } })`.
-- Pass `routerContext` as the second argument to `requestHandler(request, routerContext)`.
+- Create a `RouterContextProvider` for each request in the Hono handler.
+- Set dependencies with `routerContext.set(appContext, { cloudflare: { env: c.env, ctx: c.executionCtx } })`.
+- Pass `routerContext` as the second argument to `requestHandler(c.req.raw, routerContext)`.
 - Read dependencies in routes from `context.get(appContext)`.
-- Do not use `AppLoadContext`, plain object context, or `context.cloudflare`.
+- Do not use `AppLoadContext`, plain object context, `ExportedHandler`, or `context.cloudflare`.
 
 12. Add React Router scripts to `package.json`.
 
@@ -278,7 +280,7 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 
 ## Expected Results
 
-- `react`, `react-dom`, `react-router` (v7), and `isbot` are installed as dependencies.
+- `react`, `react-dom`, `react-router` (v7), `isbot`, and `hono` are installed as dependencies.
 - `@react-router/dev` (v7) is installed as a development dependency.
 - `react-router.config.ts` exists with SSR enabled and the React Router v7 future flags for v8 configured.
 - `tsconfig.node.json` includes `react-router.config.ts`.
@@ -287,7 +289,7 @@ Keep the page simple and functional; avoid marketing copy unless requested.
 - `app/context.ts` exports `appContext` with `cloudflare: { env, ctx }`.
 - `app/routes/home.tsx` loads `APP_NAME` from `context.get(appContext).cloudflare.env`.
 - `public/favicon.ico` exists.
-- `workers/app.ts` is updated from the minimal Cloudflare handler to the React Router request handler.
-- `workers/app.ts` creates a per-request `RouterContextProvider`, sets `appContext`, and does not use `AppLoadContext`.
+- `workers/app.ts` uses a Hono app with `app.all('*', ...)` handler, creates a per-request `RouterContextProvider`, sets `appContext` with `c.env` and `c.executionCtx`, and exports `app` as the default export.
+- `workers/app.ts` does not use `ExportedHandler`, `AppLoadContext`, or plain object context.
 - `package.json` includes `dev`, `build`, `preview`, and `deploy` scripts for React Router and Wrangler.
 - `vite.config.ts` uses `reactRouter()` after `cloudflare({ viteEnvironment: { name: "ssr" } })`.

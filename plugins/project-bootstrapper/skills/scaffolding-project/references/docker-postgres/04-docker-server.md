@@ -1,45 +1,30 @@
 # 04 - Docker Server (docker-postgres target)
 
-Sets up the Node.js server entry point using Hono, and creates `docker-compose.yml` for local development with Postgres.
+Sets up the Node.js server entry point using Hono, creates `docker-compose.yml` for local development with Postgres, and wires `@hono/vite-dev-server` into Vite so Hono handles requests during development.
 
 ## Steps
 
-1. Check the latest Hono package version and install it.
+1. Check the latest Hono package versions.
 
 ```sh
 pnpm view hono version
 pnpm view @hono/node-server version
+pnpm view @hono/vite-dev-server version
 ```
 
-2. Install Hono and the Node.js server adapter.
+2. Install Hono and the Node.js server adapter. Install the Vite dev server plugin as a dev dependency.
 
 ```sh
 pnpm add hono@latest @hono/node-server@latest
+pnpm add -D @hono/vite-dev-server@latest
 ```
 
-3. Create `server/app.ts` — the Node.js server entry point.
+3. Create `server/app.ts` — the Hono app entry point. Keep it minimal at this stage; React Router context and the production `serve()` call are added in the next step.
 
 ```ts
 import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
-import { createRequestHandler } from 'react-router';
 
 const app = new Hono();
-
-const requestHandler = createRequestHandler(
-  () => import('virtual:react-router/server-build'),
-  import.meta.env.MODE
-);
-
-app.all('*', async (c) => {
-  return requestHandler(c.req.raw);
-});
-
-const port = Number(process.env.PORT) || 3000;
-
-serve({ fetch: app.fetch, port }, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
 
 export default app;
 ```
@@ -66,6 +51,7 @@ services:
 ```env
 DATABASE_URL=postgres://app:app@localhost:5432/app
 PORT=3000
+APP_NAME=<project-name>
 ```
 
 6. Create `.env` from the template. This file is gitignored and holds local secrets.
@@ -74,7 +60,28 @@ PORT=3000
 cp .env.example .env
 ```
 
-7. Add server scripts to `package.json`.
+7. Update `vite.config.ts` to wire `@hono/vite-dev-server` into the Vite plugin pipeline. The `exclude` patterns ensure that Vite-owned requests (static assets, HMR, React Router data routes) are not intercepted by Hono.
+
+```ts
+import devServer, { defaultOptions } from '@hono/vite-dev-server';
+import { reactRouter } from '@react-router/dev/vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [
+    devServer({
+      entry: 'server/app.ts',
+      exclude: [/\.data(\?.*)?$/, ...defaultOptions.exclude],
+    }),
+    reactRouter(),
+  ],
+  resolve: {
+    tsconfigPaths: true,
+  },
+});
+```
+
+8. Add server scripts to `package.json`.
 
 ```json
 {
@@ -89,10 +96,12 @@ cp .env.example .env
 
 ## Expected Results
 
-- `hono` and `@hono/node-server` are installed as dependencies.
-- `server/app.ts` exists with a Hono server that delegates all requests to the React Router request handler.
+- `hono`, `@hono/node-server` are installed as dependencies.
+- `@hono/vite-dev-server` is installed as a development dependency.
+- `server/app.ts` exports a minimal Hono app.
+- `vite.config.ts` includes `devServer` with `entry: 'server/app.ts'` and React Router data route exclusion.
 - `docker-compose.yml` exists with a Postgres 16 service.
 - `.docker-data/` is in `.gitignore`.
-- `.env.example` exists with `DATABASE_URL` and `PORT`.
+- `.env.example` exists with `DATABASE_URL`, `PORT`, and `APP_NAME`.
 - `.env` exists (gitignored) with local development values.
 - `package.json` includes `dev`, `build`, `start`, and `preview` scripts.

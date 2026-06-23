@@ -19,7 +19,7 @@ export const schema = {};
 ```ts
 import { createContext } from 'react-router';
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
-import { schema } from '~/db/schema';
+import type { schema } from '~/db/schema';
 
 export const appContext = createContext<{
   cloudflare: {
@@ -35,7 +35,7 @@ export const appContext = createContext<{
 ```ts
 import { createContext } from 'react-router';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { schema } from '~/db/schema';
+import type { schema } from '~/db/schema';
 
 export const appContext = createContext<{
   env: {
@@ -50,24 +50,27 @@ export const appContext = createContext<{
 **Cloudflare target** — update `workers/app.ts`:
 
 ```ts
+import { Hono } from 'hono';
 import { createRequestHandler, RouterContextProvider } from 'react-router';
 import { drizzle } from 'drizzle-orm/d1';
 import { appContext } from '~/context';
 import { schema } from '~/db/schema';
+
+const app = new Hono<{ Bindings: Env }>();
 
 const requestHandler = createRequestHandler(
   () => import('virtual:react-router/server-build'),
   import.meta.env.MODE,
 );
 
-export default {
-  async fetch(request, env, ctx) {
-    const db = drizzle(env.APP_DB, { schema });
-    const routerContext = new RouterContextProvider();
-    routerContext.set(appContext, { cloudflare: { env, ctx }, db });
-    return requestHandler(request, routerContext);
-  },
-} satisfies ExportedHandler<Env>;
+app.all('*', async (c) => {
+  const db = drizzle(c.env.APP_DB, { schema });
+  const routerContext = new RouterContextProvider();
+  routerContext.set(appContext, { cloudflare: { env: c.env, ctx: c.executionCtx }, db });
+  return requestHandler(c.req.raw, routerContext);
+});
+
+export default app;
 ```
 
 **Docker/Postgres target** — update `server/app.ts`:
@@ -77,12 +80,13 @@ import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { createRequestHandler, RouterContextProvider } from 'react-router';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { appContext } from '../app/context';
 import { schema } from '../app/db/schema';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool, { schema });
+const db = drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
 
 const app = new Hono();
 const requestHandler = createRequestHandler(
