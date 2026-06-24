@@ -23,6 +23,7 @@ At the start of each phase, check the resume signal for that phase. If `docs/con
 | 3 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
 | 4 Pass A — Plan All | all features in manifest are `ready`, `implemented`, `verified`, or `blocked` |
 | 4 Pass B — Implement Loop | all features in manifest are `verified` or `blocked` |
+| 5 — E2E Testing | `docs/e2e/test-plan.md` exists and all verified features have a passing E2E section |
 
 ## Workflow
 
@@ -148,7 +149,8 @@ For each feature in id order whose depends_on features are all "verified":
 
   Step 4b — Implement
   Run implementing-features for the feature. It works through tasks in dependency order,
-  committing after each task, and derives feature status from task state.
+  running pnpm typecheck, pnpm test, and pnpm lint after each task before committing,
+  and derives feature status from task state.
   Acceptance criteria:
   - [ ] All tasks "done", feature status derived to "implemented" in manifest
   - [ ] pnpm typecheck exits 0 after implementation
@@ -159,32 +161,52 @@ For each feature in id order whose depends_on features are all "verified":
   - [ ] Feature status = "verified" in manifest
   - [ ] pnpm typecheck, pnpm lint, pnpm test pass
 
-  Step 4d — Test
-  Run testing-features for the feature. Extends docs/e2e/test-plan.md and executes it.
-  Acceptance criteria:
-  - [ ] Feature section added to docs/e2e/test-plan.md
-  - [ ] All E2E steps pass for this feature
-
-  If 4d fails: fix with implementing-features targeting the failed steps, re-run verifying-features,
-  then re-run testing-features. Do not advance until 4d passes or the feature is set to "blocked".
-
-  Once 4d passes (or the feature is set to "blocked"), commit the feature's complete state:
-  - The feature spec file in docs/features/
-  - docs/features/manifest.json
-  - docs/e2e/test-plan.md
-  - Any source files changed for this feature
-
-  Commit message: `feat(<feature-title>): ✨ Implement, verify, and test <feature-title>`
-
-  If any other step fails, re-run the failing step before advancing. If a feature requires user
+  If any step fails, re-run the failing step before advancing. If a feature requires user
   input, set it to "blocked" and advance to the next eligible feature. Stop if all remaining
   features are blocked.
+
+  Once 4c passes (or the feature is set to "blocked"), commit the feature's complete state:
+  - The feature spec file in docs/features/
+  - docs/features/manifest.json
+  - Any source files changed for this feature
+
+  Commit message: `feat(<feature-title>): ✨ Implement and verify <feature-title>`
 
 After all features are in a terminal state, run:
   - pnpm build — fix and re-run until it exits 0
   - pnpm lint  — fix and re-run until it exits 0
 
 If any fixes were needed, commit them: `chore: 🔧 Fix build and lint after full feature pass`
+```
+
+### Phase 5 — E2E Testing
+
+```
+/goal Run E2E tests across all verified features and confirm a clean build.
+Complete when all acceptance criteria are met.
+
+Skip this phase if all features are "blocked" — nothing to test.
+
+For each feature with status "verified", in id order:
+  Run testing-features. It extends docs/e2e/test-plan.md and executes the steps.
+  Acceptance criteria:
+  - [ ] Feature section added to docs/e2e/test-plan.md
+  - [ ] All E2E steps pass for this feature
+
+  If E2E steps fail: fix with implementing-features targeting the failed steps,
+  re-run verifying-features (feature goes back to "implemented" → re-verify → "verified"),
+  then re-run testing-features. If the second E2E run also fails, set the feature to
+  "blocked" and continue to the next feature.
+
+After all features pass E2E (or are blocked):
+  - pnpm build — fix and re-run until it exits 0
+  - pnpm lint  — fix and re-run until it exits 0
+
+If any fixes were needed, commit them:
+  - docs/e2e/test-plan.md
+  - Any source files changed during E2E fixes
+
+Commit message: `feat: ✨ E2E tests pass and build is clean`
 ```
 
 ### Final Summary
@@ -205,9 +227,10 @@ Present a summary: capabilities wired, features implemented and verified, E2E re
 - [ ] Feature list approved before manifest was written.
 - [ ] Every feature planned (Pass A) and spec user-approved before any implementation began.
 - [ ] Cross-feature design gate confirmed after all specs written.
-- [ ] Every feature cycled through implement → verify → test in dependency order (Pass B).
+- [ ] Every feature cycled through implement → verify in dependency order (Pass B).
 - [ ] All features are in a terminal state (`verified` or `blocked`) in the manifest.
-- [ ] E2E tests pass per feature, `pnpm lint` and `pnpm build` exit 0.
+- [ ] E2E tests pass for all verified features in Phase 5, `pnpm lint` and `pnpm build` exit 0.
 - [ ] Feature list committed after user approval (Phase 3).
-- [ ] Every feature committed after its E2E tests pass (Step 4d).
-- [ ] Build/lint fix-up committed if any fixes were needed after the full feature pass.
+- [ ] Every feature committed after verify passes (Step 4c).
+- [ ] E2E tested for all verified features in Phase 5 before final build.
+- [ ] Build/lint fix-up committed if any fixes were needed after E2E pass.

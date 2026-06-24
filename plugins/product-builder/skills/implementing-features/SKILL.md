@@ -70,9 +70,11 @@ For each eligible task in order:
 
 **c) Verify the task** — walk every acceptance criterion for this task. Log unmet criteria as open questions in `docs/architecture.md`.
 
-**d) Finish the task** — set task `status` to `done` in `manifest.json`. Commit with a message referencing the task id and title (e.g. `feat(bookmarking): ✨ Task 02.01 — Schema and DAOs`).
+**d) Run checks** — run `pnpm typecheck`, `pnpm test`, and `pnpm lint`. All three must pass before committing. Fix any failures before advancing.
 
-**e) Derive feature status** — after each task commit, update the feature's `status` in `manifest.json`:
+**e) Finish the task** — set task `status` to `done` in `manifest.json`. Commit with a message referencing the task id and title (e.g. `feat(bookmarking): ✨ Task 02.01 — Schema and DAOs`).
+
+**f) Derive feature status** — after each task commit, update the feature's `status` in `manifest.json`:
 
 - Any task `implementing` → feature `implementing`
 - Any task `blocked` → feature `blocked`
@@ -115,6 +117,7 @@ Summarize what was built task by task, highlight open questions, and provide the
 - [ ] `docs/architecture.md` and `docs/data-model.md` read or created.
 - [ ] Tasks implemented in dependency order; no task started before its `depends_on` are `done`.
 - [ ] Each task: status set to `implementing` before starting, `done` after commit.
+- [ ] Each task: `pnpm typecheck`, `pnpm test`, and `pnpm lint` pass before committing.
 - [ ] Each task committed individually with a message referencing the task id.
 - [ ] Feature `status` derived and updated in manifest after each task commit.
 - [ ] All spec sections built: schema, DAOs, queries, services, routes, components.
