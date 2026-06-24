@@ -1,6 +1,6 @@
 {
   "name": "product-builder",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Turn a bootstrapped project into a working product by writing the PRD and building features. Requires a project bootstrapped by project-bootstrapper.",
   "author": {
     "name": "Adrian Hernandez-Mendez"
