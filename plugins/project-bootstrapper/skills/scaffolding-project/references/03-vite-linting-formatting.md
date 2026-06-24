@@ -176,6 +176,17 @@ export default defineConfig([
     files: ["tests/**/*.ts", "tests/**/*.tsx"],
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "off",
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@vitest/browser/context",
+              message: "Use vitest/browser instead.",
+            },
+          ],
+        },
+      ],
     },
   },
   {
