@@ -14,7 +14,7 @@ AICORE_AUTH_URL=<oauth-token-url>
 AICORE_CLIENT_ID=<client-id>
 AICORE_CLIENT_SECRET=<client-secret>
 # AICORE_RESOURCE_GROUP=default
-AICORE_MODEL_ID=<deployment-model-id>
+AICORE_MODEL_ID=sap-aicore/gpt-5.5
 ```
 
 Add placeholders to `.env.example`:
@@ -25,7 +25,7 @@ AICORE_AUTH_URL=
 AICORE_CLIENT_ID=
 AICORE_CLIENT_SECRET=
 # AICORE_RESOURCE_GROUP=default
-AICORE_MODEL_ID=
+AICORE_MODEL_ID=sap-aicore/gpt-5.5
 ```
 
 For production deployments, document in the target project's `README.md` that all `AICORE_*` variables must be set in the deployment environment and must never be committed to the repository.
