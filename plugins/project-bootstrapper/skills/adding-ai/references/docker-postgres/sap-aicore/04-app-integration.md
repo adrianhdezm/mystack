@@ -2,26 +2,7 @@
 
 ## App context
 
-Update `app/context.ts` to include `AIService` alongside existing context values.
-
-```ts
-import { createContext } from "react-router";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import type { AIService } from "~/services/ai.service";
-
-import type { schema } from "./db/schema";
-
-export const appContext = createContext<{
-  env: {
-    APP_NAME: string;
-  };
-  db: NodePgDatabase<typeof schema>;
-  ai: AIService;
-  // auth and files if present
-}>();
-```
-
-Preserve any additional context values already used by the app.
+Update `app/context.ts` following the same pattern as [docker-postgres/04-app-integration.md](../04-app-integration.md) — the context shape is identical regardless of provider. Preserve any additional context values already used by the app.
 
 ## Server entrypoint
 
