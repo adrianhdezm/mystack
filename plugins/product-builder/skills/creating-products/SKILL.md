@@ -15,13 +15,14 @@ At the start of each phase, check the resume signal for that phase. If `docs/con
 
 ## Resume Signals
 
-| Phase | Skip when |
-| --- | --- |
-| 0 — Bootstrap check | `project.deployment_target` is set in `docs/context.json` AND `project.name` is set |
-| 1 — PRD | `docs/prd.md` exists and is non-empty |
-| 2 — Product Capabilities | `capabilities.landing_page` and `capabilities.legal_pages` are `"ready"` or `"skipped"` |
-| 3 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
-| 4 — Per-Feature Loop | all features in manifest are `verified` or `blocked` |
+| Phase                     | Skip when                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| 0 — Bootstrap check       | `project.deployment_target` is set in `docs/context.json` AND `project.name` is set     |
+| 1 — PRD                   | `docs/prd.md` exists and is non-empty                                                   |
+| 2 — Product Capabilities  | `capabilities.landing_page` and `capabilities.legal_pages` are `"ready"` or `"skipped"` |
+| 3 — Feature List          | `docs/features/manifest.json` exists and contains at least one non-`listed` feature     |
+| 4 Pass A — Plan All       | all features in manifest are `ready`, `implemented`, `verified`, or `blocked`           |
+| 4 Pass B — Implement Loop | all features in manifest are `verified` or `blocked`                                    |
 
 ## Workflow
 
@@ -111,17 +112,33 @@ This phase is purely structural — no specs are written here.
 ### Phase 4 — Per-Feature Loop
 
 ```
-/goal Drive every feature through its full cycle: plan → implement → verify → test.
+/goal Drive every feature through plan → implement → verify → test in two passes.
 Complete when all features are "verified" or "blocked".
 
-Read docs/features/manifest.json before each iteration. For each feature in id order whose
-depends_on features are all "verified":
+Read docs/features/manifest.json before each iteration.
+
+--- Pass A: Plan All ---
+
+Skip Pass A if all features are already "ready", "implemented", "verified", or "blocked".
+
+For each feature in id order, regardless of depends_on:
 
   Step 4a — Plan
   Run planning-features for the feature. It writes the spec and populates tasks[] in the manifest.
   Acceptance criteria:
   - [ ] Spec file written to docs/features/
   - [ ] Feature status = "ready", tasks[] populated at "pending" in manifest
+  - [ ] User has approved the spec before moving to the next feature
+
+After all features reach "ready" (or "blocked"), present a summary of all specs:
+list each feature's id, title, and the key data-model decisions it introduces. Ask the user
+to confirm before starting implementation. This is the cross-feature design gate.
+
+--- Pass B: Implement Loop ---
+
+Skip Pass B if all features are already "verified" or "blocked".
+
+For each feature in id order whose depends_on features are all "verified":
 
   Step 4b — Implement
   Run implementing-features for the feature. It works through tasks in dependency order,
@@ -170,8 +187,9 @@ Commit the final state and present a summary: capabilities wired, features imple
 - [ ] Each phase completed all acceptance criteria before advancing.
 - [ ] `adding-landing-page` and `adding-legal-pages` run if their capabilities were `"planned"` in the PRD.
 - [ ] Feature list approved before manifest was written.
-- [ ] Every feature cycled through plan → implement → verify → test in dependency order.
-- [ ] Every feature spec was user-approved before implementation.
+- [ ] Every feature planned (Pass A) and spec user-approved before any implementation began.
+- [ ] Cross-feature design gate confirmed after all specs written.
+- [ ] Every feature cycled through implement → verify → test in dependency order (Pass B).
 - [ ] All features are in a terminal state (`verified` or `blocked`) in the manifest.
 - [ ] E2E tests pass per feature, `pnpm lint` and `pnpm build` exit 0.
 - [ ] Final summary presented to the user with commit hash and open questions.
