@@ -37,7 +37,7 @@ const ai = new AIService(
 );
 ```
 
-Wire `ai` into the `RouterContextProvider` in the Hono request handler:
+Wire `ai` into the `RouterContextProvider` in the server entrypoint:
 
 ```ts
 routerContext.set(appContext, {
