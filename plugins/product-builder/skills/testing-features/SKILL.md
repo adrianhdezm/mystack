@@ -56,7 +56,7 @@ A feature spec from `docs/features/` (e.g. `docs/features/02-bookmarking.spec.md
 
 ### 2) Write or Extend Test Plan
 
-If `docs/e2e/test-plan.md` does not exist, create it with the header and Setup section below. Then append a section for the target feature. Never remove or modify existing feature sections.
+If `tests/e2e/test-plan.md` does not exist, create it with the header and Setup section below. Then append a section for the target feature. Never remove or modify existing feature sections.
 
 ```markdown
 # E2E Test Plan
@@ -92,7 +92,7 @@ Run `pnpm dev` in the background. Navigate to the app root with `navigate_page` 
 
 ### 4) Prepare Test User
 
-Navigate to the login page. Attempt login with the default credentials. If login fails (user does not exist), register and log in. Take a screenshot: `docs/e2e/screenshots/00-login.png`.
+Navigate to the login page. Attempt login with the default credentials. If login fails (user does not exist), register and log in. Take a screenshot: `tests/e2e/screenshots/00-login.png`.
 
 ### 5) Execute Test Plan for Target Feature
 
@@ -100,7 +100,7 @@ Execute only the section for the target feature:
 
 1. Execute each step using `navigate_page`, `click`, `fill`, `fill_form`, `press_key`, `wait_for`.
 2. Verify the expected result is visible after each step.
-3. Take a screenshot at key moments and save to `docs/e2e/screenshots/NN-feature-name/step-NN.png`.
+3. Take a screenshot at key moments and save to `tests/e2e/screenshots/NN-feature-name/step-NN.png`.
 4. Record each step as **pass** or **fail** with a note if it failed.
 
 If a step fails, continue with remaining steps and note all failures.
@@ -138,11 +138,11 @@ Present the report.
 - [ ] Guard 1 passed — target feature confirmed `verified` in manifest.
 - [ ] Guard 2 passed — Chrome DevTools MCP tools confirmed available.
 - [ ] Target feature spec read completely including all task acceptance criteria.
-- [ ] `docs/e2e/test-plan.md` written or extended — existing sections untouched.
+- [ ] `tests/e2e/test-plan.md` written or extended — existing sections untouched.
 - [ ] New feature section presented and approved before execution.
 - [ ] Dev server started and confirmed reachable.
 - [ ] Test user registered or confirmed to exist.
 - [ ] Every step executed via Chrome DevTools MCP.
-- [ ] Screenshots saved to `docs/e2e/screenshots/NN-feature-name/`.
+- [ ] Screenshots saved to `tests/e2e/screenshots/NN-feature-name/`.
 - [ ] Dev server stopped after execution.
 - [ ] Test report presented with per-step pass/fail status.

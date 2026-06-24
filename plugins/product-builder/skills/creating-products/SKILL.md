@@ -23,7 +23,7 @@ At the start of each phase, check the resume signal for that phase. If `docs/con
 | 3 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
 | 4 Pass A — Plan All | all features in manifest are `ready`, `implemented`, `verified`, or `blocked` |
 | 4 Pass B — Implement Loop | all features in manifest are `verified` or `blocked` |
-| 5 — E2E Testing | `docs/e2e/test-plan.md` exists and all verified features have a passing E2E section |
+| 5 — E2E Testing | `tests/e2e/test-plan.md` exists and all verified features have a passing E2E section |
 
 ## Workflow
 
@@ -188,9 +188,9 @@ Complete when all acceptance criteria are met.
 Skip this phase if all features are "blocked" — nothing to test.
 
 For each feature with status "verified", in id order:
-  Run testing-features. It extends docs/e2e/test-plan.md and executes the steps.
+  Run testing-features. It extends tests/e2e/test-plan.md and executes the steps.
   Acceptance criteria:
-  - [ ] Feature section added to docs/e2e/test-plan.md
+  - [ ] Feature section added to tests/e2e/test-plan.md
   - [ ] All E2E steps pass for this feature
 
   If E2E steps fail: fix with implementing-features targeting the failed steps,
@@ -203,7 +203,7 @@ After all features pass E2E (or are blocked):
   - pnpm lint  — fix and re-run until it exits 0
 
 If any fixes were needed, commit them:
-  - docs/e2e/test-plan.md
+  - tests/e2e/test-plan.md
   - Any source files changed during E2E fixes
 
 Commit message: `feat: ✨ E2E tests pass and build is clean`

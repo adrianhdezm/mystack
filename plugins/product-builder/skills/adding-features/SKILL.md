@@ -163,7 +163,7 @@ fix introduced new code changes.
 Once E2E and build pass (or the feature is set to "blocked"), commit the feature's complete state:
 - The feature spec file in docs/features/
 - docs/features/manifest.json
-- docs/e2e/test-plan.md
+- tests/e2e/test-plan.md
 - Any source files changed for this feature
 
 Commit message: `feat(<feature-title>): ✨ Implement, verify, and test <feature-title>`
