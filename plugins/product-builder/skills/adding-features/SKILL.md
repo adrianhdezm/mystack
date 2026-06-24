@@ -77,6 +77,12 @@ and depends_on for the new feature — depends_on should list the ids of feature
 verified before this one can be implemented (derive from data dependencies and user-flow
 ordering described in the PRD). Get user approval before writing to the manifest.
 tasks[] is left as an empty array — planning-features will populate it in Phase 3.
+
+After the manifest entry is written and approved, commit:
+- docs/prd.md
+- docs/features/manifest.json
+
+Commit message: `feat: ✨ Register <feature-title> in manifest`
 ```
 
 ### Phase 3 — Plan Spec
@@ -153,11 +159,19 @@ Run testing-features for the feature. If E2E steps fail:
 Run pnpm build after E2E passes — this is the final clean-build confirmation. typecheck, lint,
 and test were already confirmed in Phase 4 and Phase 5; do not re-run them unless a Phase 6
 fix introduced new code changes.
+
+Once E2E and build pass (or the feature is set to "blocked"), commit the feature's complete state:
+- The feature spec file in docs/features/
+- docs/features/manifest.json
+- docs/e2e/test-plan.md
+- Any source files changed for this feature
+
+Commit message: `feat(<feature-title>): ✨ Implement, verify, and test <feature-title>`
 ```
 
 ### Final Summary
 
-Commit the final state. Present a summary: feature name, spec file, what was built task by task, verification result, test result, commit hash, and any open questions from `docs/architecture.md`. Do not write the summary to a file.
+Present a summary: feature name, spec file, what was built task by task, verification result, test result, and any open questions from `docs/architecture.md`. Do not write the summary to a file.
 
 ## References
 
@@ -173,3 +187,5 @@ Commit the final state. Present a summary: feature name, spec file, what was bui
 - [ ] Phase 4: Full vertical slice built task by task; each task committed; tests exist and pass; pnpm typecheck and pnpm test pass; feature "implemented".
 - [ ] Phase 5: Feature verified; if failed, re-implemented and re-verified at most once before blocking.
 - [ ] Phase 6: E2E steps pass; if failed, re-implement → re-verify → re-test at most once before blocking; pnpm build exits 0.
+- [ ] Phase 2 commit landed after manifest entry written (PRD + manifest).
+- [ ] Phase 6 commit landed after E2E and build pass (spec, manifest, source, test plan).

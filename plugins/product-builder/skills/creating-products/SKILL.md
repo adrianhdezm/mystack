@@ -15,14 +15,14 @@ At the start of each phase, check the resume signal for that phase. If `docs/con
 
 ## Resume Signals
 
-| Phase                     | Skip when                                                                               |
-| ------------------------- | --------------------------------------------------------------------------------------- |
-| 0 — Bootstrap check       | `project.deployment_target` is set in `docs/context.json` AND `project.name` is set     |
-| 1 — PRD                   | `docs/prd.md` exists and is non-empty                                                   |
-| 2 — Product Capabilities  | `capabilities.landing_page` and `capabilities.legal_pages` are `"ready"` or `"skipped"` |
-| 3 — Feature List          | `docs/features/manifest.json` exists and contains at least one non-`listed` feature     |
-| 4 Pass A — Plan All       | all features in manifest are `ready`, `implemented`, `verified`, or `blocked`           |
-| 4 Pass B — Implement Loop | all features in manifest are `verified` or `blocked`                                    |
+| Phase | Skip when |
+| --- | --- |
+| 0 — Bootstrap check | `project.deployment_target` is set in `docs/context.json` AND `project.name` is set |
+| 1 — PRD | `docs/prd.md` exists and is non-empty |
+| 2 — Product Capabilities | `capabilities.landing_page` and `capabilities.legal_pages` are `"ready"` or `"skipped"` |
+| 3 — Feature List | `docs/features/manifest.json` exists and contains at least one non-`listed` feature |
+| 4 Pass A — Plan All | all features in manifest are `ready`, `implemented`, `verified`, or `blocked` |
+| 4 Pass B — Implement Loop | all features in manifest are `verified` or `blocked` |
 
 ## Workflow
 
@@ -107,6 +107,12 @@ Order features so no feature has a higher id than a feature it depends on. Get u
 before writing the manifest.
 
 This phase is purely structural — no specs are written here.
+
+After the manifest is written and the user has approved, commit:
+- docs/prd.md
+- docs/features/manifest.json
+
+Commit message: `feat: ✨ Approve feature list and initialize manifest`
 ```
 
 ### Phase 4 — Per-Feature Loop
@@ -162,6 +168,14 @@ For each feature in id order whose depends_on features are all "verified":
   If 4d fails: fix with implementing-features targeting the failed steps, re-run verifying-features,
   then re-run testing-features. Do not advance until 4d passes or the feature is set to "blocked".
 
+  Once 4d passes (or the feature is set to "blocked"), commit the feature's complete state:
+  - The feature spec file in docs/features/
+  - docs/features/manifest.json
+  - docs/e2e/test-plan.md
+  - Any source files changed for this feature
+
+  Commit message: `feat(<feature-title>): ✨ Implement, verify, and test <feature-title>`
+
   If any other step fails, re-run the failing step before advancing. If a feature requires user
   input, set it to "blocked" and advance to the next eligible feature. Stop if all remaining
   features are blocked.
@@ -169,11 +183,13 @@ For each feature in id order whose depends_on features are all "verified":
 After all features are in a terminal state, run:
   - pnpm build — fix and re-run until it exits 0
   - pnpm lint  — fix and re-run until it exits 0
+
+If any fixes were needed, commit them: `chore: 🔧 Fix build and lint after full feature pass`
 ```
 
 ### Final Summary
 
-Commit the final state and present a summary: capabilities wired, features implemented and verified, E2E results per feature, build/lint results, commit hash, and open questions from `docs/architecture.md`. Do not write the summary to a file.
+Present a summary: capabilities wired, features implemented and verified, E2E results per feature, build/lint results, and open questions from `docs/architecture.md`. Do not write the summary to a file.
 
 ## References
 
@@ -192,4 +208,6 @@ Commit the final state and present a summary: capabilities wired, features imple
 - [ ] Every feature cycled through implement → verify → test in dependency order (Pass B).
 - [ ] All features are in a terminal state (`verified` or `blocked`) in the manifest.
 - [ ] E2E tests pass per feature, `pnpm lint` and `pnpm build` exit 0.
-- [ ] Final summary presented to the user with commit hash and open questions.
+- [ ] Feature list committed after user approval (Phase 3).
+- [ ] Every feature committed after its E2E tests pass (Step 4d).
+- [ ] Build/lint fix-up committed if any fixes were needed after the full feature pass.
