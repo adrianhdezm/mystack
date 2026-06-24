@@ -13,7 +13,7 @@ AICORE_BASE_URL=<ai-core-base-url>
 AICORE_AUTH_URL=<oauth-token-url>
 AICORE_CLIENT_ID=<client-id>
 AICORE_CLIENT_SECRET=<client-secret>
-AICORE_RESOURCE_GROUP=default
+# AICORE_RESOURCE_GROUP=default
 AICORE_MODEL_ID=<deployment-model-id>
 ```
 
@@ -24,7 +24,7 @@ AICORE_BASE_URL=
 AICORE_AUTH_URL=
 AICORE_CLIENT_ID=
 AICORE_CLIENT_SECRET=
-AICORE_RESOURCE_GROUP=default
+# AICORE_RESOURCE_GROUP=default
 AICORE_MODEL_ID=
 ```
 
@@ -32,6 +32,6 @@ For production deployments, document in the target project's `README.md` that al
 
 ## Expected Results
 
-- `.env` contains all six `AICORE_*` variables.
-- `.env.example` documents all six with placeholder values.
+- `.env` contains the five required `AICORE_*` variables. `AICORE_RESOURCE_GROUP` is commented out — uncomment and set it only if the deployment uses a non-default resource group.
+- `.env.example` documents all variables with placeholder values.
 - No `OPENAI_*` variables are added for this provider.

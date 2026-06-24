@@ -32,8 +32,8 @@ const ai = new AIService(
   process.env.AICORE_AUTH_URL!,
   process.env.AICORE_CLIENT_ID!,
   process.env.AICORE_CLIENT_SECRET!,
-  process.env.AICORE_RESOURCE_GROUP ?? "default",
   process.env.AICORE_MODEL_ID!,
+  process.env.AICORE_RESOURCE_GROUP,
 );
 ```
 

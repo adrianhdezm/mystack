@@ -19,15 +19,15 @@ export class AIService {
     accessTokenUrl: string,
     clientId: string,
     clientSecret: string,
-    resourceGroup: string,
     modelId: string,
+    resourceGroup?: string,
   ) {
     this.provider = createSapAiCoreProvider({
       baseUrl,
       accessTokenUrl,
       clientId,
       clientSecret,
-      resourceGroup,
+      ...(resourceGroup ? { resourceGroup } : {}),
     });
     this.modelId = modelId;
   }

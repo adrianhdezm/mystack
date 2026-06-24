@@ -135,6 +135,6 @@ On success write:
 **Docker/Postgres + SAP AI Core only:**
 
 - [ ] `ai` and `@ai-foundry/sap-aicore-provider` installed.
-- [ ] All six `AICORE_*` variables set in `.env`; `.env.example` has empty placeholders.
+- [ ] All required `AICORE_*` variables set in `.env`; `AICORE_RESOURCE_GROUP` commented out in `.env.example` (uncomment only if using a non-default resource group).
 - [ ] `AIService` has only a `model` getter — no `imageModel`.
 - [ ] No `OPENAI_*` variables added.
