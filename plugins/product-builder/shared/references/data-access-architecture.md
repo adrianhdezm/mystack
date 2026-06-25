@@ -5,7 +5,7 @@
 Data access is split into three layers. Each layer has a single responsibility and a clear boundary.
 
 | Layer | Location | Responsibility |
-|---|---|---|
+| --- | --- | --- |
 | DAO | `app/db/daos/<entity>.dao.ts` | Single-table CRUD. No joins, no business logic. |
 | Query | `app/db/queries/<parent>-<child>.query.ts` | Cross-table reads. Joins and aggregations. Read-only. |
 | Service | `app/services/<entity>.service.ts` | Business workflows. Composes DAOs and Queries. Owns transactions. |
@@ -59,7 +59,7 @@ export class ProjectService {
   async createProject(input: CreateProjectInput): Promise<Project> {
     return this.db.batch([
       // atomic operations
-    ])
+    ]);
   }
 }
 ```
@@ -75,10 +75,7 @@ export class ProjectService {
 `createSelectSchema` on a `jsonb` column infers the TypeScript type as `Json`, but Drizzle's `.returning()` resolves the column value to `unknown` at runtime. Cast explicitly at the DAO boundary — do not let `unknown` leak into service or route layers:
 
 ```ts
-const [row] = await this.db
-  .insert(analysisRecords)
-  .values(data)
-  .returning();
+const [row] = await this.db.insert(analysisRecords).values(data).returning();
 return row as AnalysisRecord;
 ```
 
