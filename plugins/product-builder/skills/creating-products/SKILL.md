@@ -138,8 +138,10 @@ For each feature in id order, regardless of depends_on:
   - [ ] User has approved the spec before moving to the next feature
 
 After all features reach "ready" (or "blocked"), present a summary of all specs:
-list each feature's id, title, and the key data-model decisions it introduces. Ask the user
-to confirm before starting implementation. This is the cross-feature design gate.
+list each feature's id, title, and the key data-model decisions it introduces. Do not
+begin Pass B until the user has confirmed all specs in a single approval message. If the
+user approves only some specs, plan the remaining ones before proceeding. This is the
+cross-feature design gate — it is a hard block, not a soft confirmation.
 
 --- Pass B: Implement Loop ---
 
@@ -226,7 +228,7 @@ Present a summary: capabilities wired, features implemented and verified, E2E re
 - [ ] `adding-landing-page` and `adding-legal-pages` run if their capabilities were `"planned"` in the PRD.
 - [ ] Feature list approved before manifest was written.
 - [ ] Every feature planned (Pass A) and spec user-approved before any implementation began.
-- [ ] Cross-feature design gate confirmed after all specs written.
+- [ ] Cross-feature design gate confirmed after all specs written — user approved all specs together before any implementing-features call.
 - [ ] Every feature cycled through implement → verify in dependency order (Pass B).
 - [ ] All features are in a terminal state (`verified` or `blocked`) in the manifest.
 - [ ] E2E tests pass for all verified features in Phase 5, `pnpm lint` and `pnpm build` exit 0.

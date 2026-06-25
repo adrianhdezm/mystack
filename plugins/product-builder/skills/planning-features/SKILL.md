@@ -31,6 +31,7 @@ A product feature described in user terms — e.g. "Users should be able to book
 - Read all existing `docs/features/*.spec.md` — know what is already planned and what task ids are already in use.
 - Read `docs/features/manifest.json` if it exists — confirm the feature's current status and check existing task ids.
 - Scan the codebase: `app/db/schema.ts`, `app/db/daos/`, `app/db/queries/`, `app/services/`, `app/routes/`, `app/components/`.
+- For every service method, DAO, query, or schema change the spec will introduce, grep the codebase to check if it already exists. If it does, mark it **already implemented** in the spec and exclude it from task scope — do not re-spec work that is already in place.
 - Read [data-access-architecture.md](../../shared/references/data-access-architecture.md) for DAO, query, service, and transaction conventions.
 - Load `react-router-patterns` for route, loader, action, and page conventions.
 - Read all `docs/conventions/*.md` for project-specific patterns. Specs must align with them.
@@ -72,6 +73,7 @@ If `docs/features/manifest.json` exists:
 - [ ] `docs/context.json` guard passed (`project.name` is set).
 - [ ] Clarifying questions asked when description was ambiguous.
 - [ ] Existing specs, manifest, and codebase scanned before planning.
+- [ ] Every proposed service method, DAO, and query checked against existing code — already-implemented items excluded from task scope.
 - [ ] Feature scope aligns with `docs/prd.md`.
 - [ ] One spec file written per feature.
 - [ ] Each task is a vertical slice the user can interact with in the browser.

@@ -96,6 +96,23 @@ export async function action({ context, params, request }: Route.ActionArgs) {
 
 Fetcher forms can submit to resource actions when the mutation should not navigate.
 
+**Resource routes consumed by `useFetcher`** — a resource route that returns `redirect()` does not populate `fetcher.data`; the fetcher stays in `idle` state and the caller never receives a response signal. Always return `data({ ok: true })` (or a relevant payload) from any action that will be called via `fetcher.Form` or `fetcher.submit()`. Let the caller handle navigation:
+
+```tsx
+// resource route action
+return data({ ok: true });
+
+// caller — navigate or revalidate after the fetcher completes
+const revalidator = useRevalidator();
+useEffect(() => {
+  if (fetcher.state === "idle" && fetcher.data?.ok) {
+    revalidator.revalidate();
+  }
+}, [fetcher.state, fetcher.data]);
+```
+
+Never return `redirect()` from a route consumed by a fetcher.
+
 ## Auth And Permissions
 
 Resource routes must apply the same auth and authorization rules as page routes:
@@ -128,3 +145,4 @@ Set content type and cache headers intentionally for file, JSON, and export resp
 - [ ] Responses include only necessary data.
 - [ ] File/export endpoints set appropriate headers.
 - [ ] Webhooks validate signatures before trusting payloads.
+- [ ] Actions consumed by `useFetcher` return `data({ ok: true })`, not `redirect()`.

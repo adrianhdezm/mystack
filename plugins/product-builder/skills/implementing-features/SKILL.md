@@ -63,6 +63,8 @@ For each eligible task in order:
 - Queries at `app/db/queries/<parent>-<child>.query.ts` + test at `tests/integration/db/queries/<parent>-<child>.query.test.ts`.
 - Services at `app/services/<entity>.service.ts` + test at `tests/integration/services/<entity>.service.test.ts`.
 - Route modules at `app/routes/<route>.tsx` + test at `tests/unit/routes/<route>.test.tsx` using `createRoutesStub` with loader/action stubs.
+- Route components must never import server-only modules (`node:*`, database clients, S3 clients, or server services) directly. If data requiring server-only logic is needed in a component, move that logic to a service and call it from the route's loader or action — never from the component body.
+- After adding any file under `app/components/ui/`, remove the `"use client"` directive from that file — React Router SSR projects do not use it and it breaks browser unit tests.
 - For cross-table data, check for an existing Query in `app/db/queries/` before creating one — follow [data-access-architecture.md](../../shared/references/data-access-architecture.md) conventions exactly.
 - Follow `docs/conventions/` and avoid listed anti-patterns.
 - When the task is ambiguous, make a reasonable choice and log it in `docs/architecture.md`.
@@ -121,6 +123,8 @@ Summarize what was built task by task, highlight open questions, and provide the
 - [ ] Each task committed individually with a message referencing the task id.
 - [ ] Feature `status` derived and updated in manifest after each task commit.
 - [ ] All spec sections built: schema, DAOs, queries, services, routes, components.
+- [ ] No route component imports server-only modules directly — server logic lives in services called from loaders/actions.
+- [ ] `"use client"` removed from every file added under `app/components/ui/`.
 - [ ] Integration test exists for every DAO, Query, and Service.
 - [ ] Unit test exists for every route component.
 - [ ] `docs/data-model.md` reflects current `app/db/schema.ts`.
